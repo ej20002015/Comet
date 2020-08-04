@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Application.h"
+#include "Log.h"
+
 extern Comet::Application* Comet::getApplicationInstance();
 
 int main(int argc, char** argv)

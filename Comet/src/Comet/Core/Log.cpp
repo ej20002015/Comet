@@ -15,9 +15,9 @@ namespace Comet
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Comet.log", true));
 
-		//Set logger patterns for each sink (file sink contains no colour information so explicitly writes log level)
-		logSinks[0]->set_pattern("%^[%T] %n: %v%$");  //For console
-		logSinks[1]->set_pattern("[%T] [%l] %n: %v"); //For file
+		//Set logger format for each sink (file sink format contains no colour information)
+		logSinks[0]->set_pattern("%^[%T] [%l] %n: %v%$");  //For console
+		logSinks[1]->set_pattern("[%T] [%l] %n: %v");      //For file
 
 		s_cometLogger = std::make_shared<spdlog::logger>("COMET", begin(logSinks), end(logSinks));
 		spdlog::register_logger(s_cometLogger);
