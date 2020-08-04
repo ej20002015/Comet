@@ -8,7 +8,11 @@ workspace "Comet"
         "Release"
     }
 
-outputDirectory = "%{cfg.build}-%{cfg.system}-%{cfg.architecture}"
+outputDirectory = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+-- Dictionary to store include directory paths relative from the root Comet folder
+includeDirectories = {}
+includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include/"
 
 project "Comet"
     location "Comet"
@@ -28,6 +32,7 @@ project "Comet"
 
     includedirs
     {
+        "%{includeDirectories.spdlog}"
     }
 
     filter "system:windows"
@@ -66,7 +71,8 @@ project "Application"
 
     includedirs
     {
-        "Comet/src"
+        "Comet/src",
+        "%{includeDirectories.spdlog}"
     }
 
     filter "system:windows"
