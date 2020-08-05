@@ -5,10 +5,10 @@
 class Game : public Comet::Application
 {
 public:
-	Game() { CMT_CLIENT_INFO("Welcome to Comet"); };
-	~Game() override { CMT_CLIENT_INFO("Game destroyed"); std::cin.get(); }
+	Game() { Comet::Log::clientInfo("Welcome to Comet"); };
+	~Game() override { Comet::Log::clientInfo("Game destroyed"); std::cin.get(); }
 
-	void run() override { CMT_CLIENT_INFO("Running"); }
+	void run() override { Comet::Log::clientInfo("Running"); Comet::Log::clientInfo("Running"); }
 };
 
 Comet::Application* Comet::getApplicationInstance()
