@@ -12,7 +12,7 @@ namespace Comet
 		virtual void run() = 0;
 
 	private:
-		Application* instance;
+		Application* m_instance;
 	};
 
 	//TO BE DEFINED BY CLIENT PROGRAMS

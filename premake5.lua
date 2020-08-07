@@ -32,6 +32,7 @@ project "Comet"
 
     includedirs
     {
+        "Comet/src",
         "%{includeDirectories.spdlog}"
     }
 

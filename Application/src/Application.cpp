@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Comet/Events/KeyboardEvent.h"
+
 class Game : public Comet::Application
 {
 public:
