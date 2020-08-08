@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Event.h"
-
 #include "Comet/Core/Input.h"
 
 #include <sstream>
@@ -30,14 +29,14 @@ namespace Comet
 
 		CMT_EVENT_CLASS_TYPE(KeyPressedEvent)
 		
-		int getRepeatCount() const { return m_repeatCount; }
-
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_keyCode << " (" << m_repeatCount << ") repeats";
+			ss << "KeyPressedEvent: " << m_keyCode << " (" << m_repeatCount << " repeats)";
 			return ss.str();
 		}
+		
+		int getRepeatCount() const { return m_repeatCount; }
 
 	private:
 		int m_repeatCount;

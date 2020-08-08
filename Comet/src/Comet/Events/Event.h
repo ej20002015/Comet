@@ -13,7 +13,7 @@ namespace Comet
 	enum class EventType
 	{
 		None = 0,
-		WindowResizedEvent, WindowClosedEvent, WindowFocusEvent, WindowLostFocusEvent, WindowMovedEvent,
+		WindowResizedEvent, WindowClosedEvent, WindowFocusedEvent, WindowLostFocusEvent, WindowMovedEvent,
 		KeyPressedEvent, KeyReleasedEvent,
 		MouseMovedEvent, MouseButtonPressedEvent, MouseButtonReleasedEvent, MouseScrolledEvent
 	};
@@ -68,7 +68,7 @@ namespace Comet
 		template<typename T, typename F>
 		bool dispatch(const F& function)
 		{
-			if (m_event.getEventType() == T::getStaticType())
+			if (m_event.getEventType() == T::getStaticEventType())
 			{
 				m_event.handled = function(static_cast<T&>(m_event));
 				return true;
