@@ -9,5 +9,8 @@ a variadic list of deduced types that are determined by the compiler when the la
 In the instance of the dispatcher class, the argument(s) would become a one reference to a Event subclass (e.g. key pressed event). The decltype(auto) return type
 tells the compiler to deduce the return type of the lamda at compile time, when the bound member function is known and thus the return type is known. When passed
 to a function, the lamda is sent as a compiler generated struct type. Therefore templates can be used to take in the lamda (see the 'Dispatcher.dispatch()' method).
+
+The ellipsis after the auto&& argument type declaration indicates that args is a pack of arguments. decltype(args) explicitly gets the types of the arguments. The elipsis
+after (args) unpacks the arguments and passes them to the function.
 */
 #define CMT_BIND_EVENT_FUNCTION(function) [this](auto&&... args) -> decltype(auto) { return this->function(std::forward<decltype(args)>(args)...); }

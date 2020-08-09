@@ -1,3 +1,4 @@
+#include "CometPCH.h"
 #include "Log.h"
 
 #include "spdlog/sinks/basic_file_sink.h"

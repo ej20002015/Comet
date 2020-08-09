@@ -24,6 +24,9 @@ project "Comet"
     targetdir ("bin/" .. outputDirectory .. "/%{prj.name}")
     objdir ("bin-int/" .. outputDirectory .. "/%{prj.name}")
 
+    pchheader "CometPCH.h"
+    pchsource "Comet/src/CometPCH.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",
