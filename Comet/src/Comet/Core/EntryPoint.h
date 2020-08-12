@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CometPCH.h"
+
 #include "Application.h"
 #include "Log.h"
 

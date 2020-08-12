@@ -12,7 +12,18 @@ outputDirectory = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Dictionary to store include directory paths relative from the root Comet folder
 includeDirectories = {}
-includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include/"
+includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include"
+includeDirectories["GLFW"] = "Comet/Vendor/GLFW/include"
+
+-- Dependencies virtual folder for Comet
+group "CometDependencies"
+	include "Comet/Vendor/GLFW"
+group ""
+
+-- Dependencies folder for Comet and client applications (no such dependencies at the moment)
+
+group "CometAndClientDependencies"
+group ""
 
 project "Comet"
     location "Comet"
@@ -36,7 +47,13 @@ project "Comet"
     includedirs
     {
         "Comet/src",
-        "%{includeDirectories.spdlog}"
+        "%{includeDirectories.spdlog}",
+        "%{includeDirectories.GLFW}"
+    }
+
+    links
+    {
+        "GLFW"
     }
 
     filter "system:windows"

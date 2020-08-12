@@ -1,5 +1,9 @@
 #pragma once
 
+#include "CometPCH.h"
+
+#include "Window.h"
+
 namespace Comet
 {
 
@@ -9,10 +13,11 @@ namespace Comet
 		Application();
 		virtual ~Application();
 
-		virtual void run() = 0;
+		virtual void run();
 
 	private:
-		Application* m_instance;
+		std::unique_ptr<Window> m_window;
+		bool m_running;
 	};
 
 	//TO BE DEFINED BY CLIENT PROGRAMS

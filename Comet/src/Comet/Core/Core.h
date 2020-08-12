@@ -14,3 +14,17 @@ The ellipsis after the auto&& argument type declaration indicates that args is a
 after (args) unpacks the arguments and passes them to the function.
 */
 #define CMT_BIND_EVENT_FUNCTION(function) [this](auto&&... args) -> decltype(auto) { return this->function(std::forward<decltype(args)>(args)...); }
+
+#ifdef CMT_DEBUG
+	#ifdef CMT_PLATFORM_WINDOWS
+		#define CMT_BREAKPOINT() __debugbreak()
+	#else 
+		#define CMT_BREAKPOINT()
+	#endif
+
+	#define CMT_CLIENT_ASSERT(x, ...) { if(!(x)) { Comet::Log::clientError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+	#define CMT_COMET_ASSERT(x, ...) { if(!(x)) { Comet::Log::cometError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+#else
+	#define CMT_CLIENT_ASSERT(x, ...)
+	#define CMT_COMET_ASSERT(x, ...)
+#endif

@@ -11,20 +11,11 @@
 class Game : public Comet::Application
 {
 public:
-	Game() 
+	Game()
 	{
-		Comet::Log::clientInfo("Welcome to Comet");
-
-		Comet::KeyPressedEvent e(Comet::KeyCode::None, 0);
-		Comet::EventDispatcher dispatcher(e);
-		dispatcher.dispatch<Comet::KeyPressedEvent>(CMT_BIND_EVENT_FUNCTION(Game::test));
-	};
-
-	bool test(Comet::KeyPressedEvent& e) { Comet::Log::clientInfo("TEST"); return true; }
+	}
 
 	~Game() override { Comet::Log::clientInfo("Game destroyed"); std::cin.get(); }
-
-	void run() override { Comet::Log::clientInfo("Running"); Comet::Log::clientInfo("Running"); }
 };
 
 Comet::Application* Comet::getApplicationInstance()

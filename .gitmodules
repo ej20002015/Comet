@@ -1,3 +1,6 @@
 [submodule "Comet/Vendor/spdlog"]
 	path = Comet/Vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Comet/Vendor/GLFW"]
+	path = Comet/Vendor/GLFW
+	url = https://github.com/ej20002015/glfw
