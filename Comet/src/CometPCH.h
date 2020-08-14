@@ -2,7 +2,6 @@
 
 //Comet files
 #include "Comet/Core/Log.h"
-#include "Comet/Events/Event.h"
 #include "Comet/Core/Core.h"
 
 //STL Misc files

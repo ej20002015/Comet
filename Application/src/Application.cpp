@@ -2,20 +2,20 @@
 
 #include <iostream>
 
-#include <algorithm>
-
-#include "Comet/Events/KeyboardEvent.h"
-#include "Comet/Events/MouseEvent.h"
-#include "Comet/Events/ApplicationEvent.h"
+#include "ExampleLayer.h"
 
 class Game : public Comet::Application
 {
 public:
 	Game()
 	{
+		Comet::Layer* layer = new ExampleLayer;
+		pushLayer(layer);
+		popLayer(layer);
+		delete layer;
 	}
 
-	~Game() override { Comet::Log::clientInfo("Game destroyed"); std::cin.get(); }
+	~Game() override { Comet::Log::clientInfo("Game destroyed"); }
 };
 
 Comet::Application* Comet::getApplicationInstance()

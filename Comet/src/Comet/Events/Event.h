@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Comet/Core/Core.h"
+#include "spdlog/fmt/ostr.h"
 
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ namespace Comet
 	{
 		None = 0,
 		WindowResizedEvent, WindowClosedEvent, WindowFocusedEvent, WindowLostFocusEvent, WindowMovedEvent,
-		KeyPressedEvent, KeyReleasedEvent,
+		KeyPressedEvent, KeyReleasedEvent, KeyTypedEvent,
 		MouseMovedEvent, MouseButtonPressedEvent, MouseButtonReleasedEvent, MouseScrolledEvent
 	};
 
@@ -52,17 +53,10 @@ namespace Comet
 #define CMT_EVENT_CLASS_CATEGORY(category)\
 	virtual int getEventCategory() const override { return category; }
 
-	//Any class that implements this interface and registers itself with an event creater (like a window) will have this method called when an event occurs
-	class IEventListener
-	{
-	public:
-		virtual void onEvent(Event& event) = 0;
-	};
-
 	class EventDispatcher
 	{
 	public:
-		EventDispatcher(Event& event) : m_event(event) {}
+		EventDispatcher(Event& e) : m_event(e) {}
 
 		//function is a lamda function that wraps the callback function to execute and F will be infered by the compiler
 		template<typename T, typename F>
@@ -82,6 +76,6 @@ namespace Comet
 	};
 
 	//For printing using output streams
-	inline std::ostream& operator <<(std::ostream& os, const Event& event) { return os << event.toString(); }
+	inline std::ostream& operator <<(std::ostream& os, const Event& e) { return os << e.toString(); }
 
 }

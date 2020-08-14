@@ -24,7 +24,7 @@ namespace Comet
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(KeyCode keyCode, int repeatCount) : MouseButtonEvent(keyCode), m_repeatCount(repeatCount) {}
+		MouseButtonPressedEvent(KeyCode keyCode, int repeatCount = 0) : MouseButtonEvent(keyCode), m_repeatCount(repeatCount) {}
 
 		CMT_EVENT_CLASS_TYPE(MouseButtonPressedEvent)
 

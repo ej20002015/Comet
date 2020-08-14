@@ -24,7 +24,15 @@ after (args) unpacks the arguments and passes them to the function.
 
 	#define CMT_CLIENT_ASSERT(x, ...) { if(!(x)) { Comet::Log::clientError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
 	#define CMT_COMET_ASSERT(x, ...) { if(!(x)) { Comet::Log::cometError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+
+
+	#define STRINGIFY2(x) #x
+	#define STRINGIFY1(x) STRINGIFY2(x)
+	#define LOCATION __FILE__ ":" STRINGIFY1(__LINE__)
+
+	#define CMT_STATIC_ASSERT(x, description) static_assert(x, "Static Assert Failed (" LOCATION "): " description)
 #else
 	#define CMT_CLIENT_ASSERT(x, ...)
 	#define CMT_COMET_ASSERT(x, ...)
+	#define CMT_STATIC_ASSERT(x, description)
 #endif

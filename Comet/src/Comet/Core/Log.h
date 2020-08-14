@@ -21,27 +21,27 @@ namespace Comet
 
 		//For logging within the Comet engine
 		template<typename... Args>
-		inline static void cometTrace(Args... args)     { s_cometLogger->trace(std::forward<Args>(args)...); }
+		inline static void cometTrace(Args&&... args)     { s_cometLogger->trace(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void cometInfo(Args... args)      { s_cometLogger->info(std::forward<Args>(args)...); }
+		inline static void cometInfo(Args&&... args)      { s_cometLogger->info(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void cometWarn(Args... args)      { s_cometLogger->warn(std::forward<Args>(args)...); }
+		inline static void cometWarn(Args&&... args)      { s_cometLogger->warn(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void cometError(Args... args)     { s_cometLogger->error(std::forward<Args>(args)...); }
+		inline static void cometError(Args&&... args)     { s_cometLogger->error(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void cometCritical(Args... args)  { s_cometLogger->Critical(std::forward<Args>(args)...); }
+		inline static void cometCritical(Args&&... args)  { s_cometLogger->Critical(std::forward<Args>(args)...); }
 		
 		//For logging from client applications
 		template<typename... Args>					    
-		inline static void clientTrace(Args... args)    { s_clientLogger->trace(std::forward<Args>(args)...); }
+		inline static void clientTrace(Args&&... args)    { s_clientLogger->trace(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void clientInfo(Args... args)     { s_clientLogger->info(std::forward<Args>(args)...); }
+		inline static void clientInfo(Args&&... args)     { s_clientLogger->info(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void clientWarn(Args... args)     { s_clientLogger->warn(std::forward<Args>(args)...); }
+		inline static void clientWarn(Args&&... args)     { s_clientLogger->warn(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void clientError(Args... args)    { s_clientLogger->error(std::forward<Args>(args)...); }
+		inline static void clientError(Args&&... args)    { s_clientLogger->error(std::forward<Args>(args)...); }
 		template<typename... Args>
-		inline static void clientCritical(Args... args) { s_clientLogger->Critical(std::forward<Args>(args)...); }
+		inline static void clientCritical(Args&&... args) { s_clientLogger->Critical(std::forward<Args>(args)...); }
 	
 	private:
 		static std::shared_ptr<spdlog::logger> s_cometLogger, s_clientLogger;

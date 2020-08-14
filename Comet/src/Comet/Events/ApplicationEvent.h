@@ -59,10 +59,23 @@ namespace Comet
 	class WindowMovedEvent : public Event
 	{
 	public:
-		WindowMovedEvent() = default;
+		WindowMovedEvent(uint32_t xPos, uint32_t yPos) : m_xPos(xPos), m_yPos(yPos) {}
 
 		CMT_EVENT_CLASS_TYPE(WindowMovedEvent)
 		CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_APPLICATION)
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowMovedEvent: (" << m_xPos << ", " << m_yPos << ")";
+			return ss.str();
+		}
+
+		uint32_t getXPos() const { return m_xPos; }
+		uint32_t getYPos() const { return m_yPos; }
+
+	private:
+		uint32_t m_xPos, m_yPos;
 	};
 
 }

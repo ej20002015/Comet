@@ -1,11 +1,20 @@
 #include "CometPCH.h"
 #include "WindowsWindow.h"
 
+#include "Comet/Events/Event.h"
+#include "Comet/Events/ApplicationEvent.h"
+#include "Comet/Events/KeyboardEvent.h"
+#include "Comet/Events/MouseEvent.h"
+
 namespace Comet
 {
 	//Counts the number of GLFW windows in order to init and terminate GLFW at the appropriate times
 	uint8_t WindowsWindow::s_GLFWWindowCount = 0;
 	
+	static void glfwErrorCallback(int errorCode, const char* description)
+	{
+		Log::cometError("GLFW error {0}: {1}", errorCode, description);
+	}
 
 	WindowsWindow::WindowsWindow(const Window::WindowProperties& properties)
 	{
@@ -52,6 +61,142 @@ namespace Comet
 		//This data will be sent by glfw when any glfw callback function is called and can be modified
 		glfwSetWindowUserPointer(m_window, &m_windowData);
 		setVSync(true);
+
+		//SET UP EVENT CALLBACKS FOR GLFW
+
+		//Error callback
+		glfwSetErrorCallback(glfwErrorCallback);
+		
+		//Application Events
+		glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+			windowData.width = width;
+			windowData.height = height;
+
+			WindowResizedEvent e(width, height);
+			windowData.callbackFunction(e);
+		});
+
+		glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			WindowClosedEvent e;
+			windowData.callbackFunction(e);
+		});
+
+		glfwSetWindowFocusCallback(m_window, [](GLFWwindow* window, int focused)
+		{
+			WindowData& windowData = *(WindowData*)(glfwGetWindowUserPointer(window));
+
+			if (focused)
+			{
+				WindowFocusedEvent e;
+				windowData.callbackFunction(e);
+			}
+			else
+			{
+				WindowLostFocusEvent e;
+				windowData.callbackFunction(e);
+			}
+		});
+
+		glfwSetWindowPosCallback(m_window, [](GLFWwindow* window, int x, int y)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			WindowMovedEvent e(x, y);
+			windowData.callbackFunction(e);
+		});
+
+		//Keyboard events
+		glfwSetKeyCallback(m_window, [](GLFWwindow* window, int keyCode, int scanCode, int action, int mods)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			//Need to scope the code within the case blocks as all case statements share a scope
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent e(static_cast<KeyCode>(keyCode));
+					windowData.callbackFunction(e);
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent e(static_cast<KeyCode>(keyCode), 1);
+					windowData.callbackFunction(e);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent e(static_cast<KeyCode>(keyCode));
+					windowData.callbackFunction(e);
+					break;
+				}
+				default:
+				{
+					Log::cometError("Unknown key action");
+					break;
+				}
+			}
+		});
+
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int unicodeKeyCode)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			KeyTypedEvent e(static_cast<KeyCode>(unicodeKeyCode));
+			windowData.callbackFunction(e);
+		});
+
+		glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int mouseKeyCode, int action, int mods)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent e(static_cast<KeyCode>(mouseKeyCode));
+					windowData.callbackFunction(e);
+					break;
+				}
+
+				//GLFW does not currently support mouse button repeat events
+
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent e(static_cast<KeyCode>(mouseKeyCode));
+					windowData.callbackFunction(e);
+					break;
+				}
+
+				default:
+				{
+					Log::cometError("Unknown key action");
+					break;
+				}
+			}
+		});
+
+		glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			MouseMovedEvent e(xPos, yPos);
+			windowData.callbackFunction(e);
+		});
+
+		glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			MouseScrolledEvent e(xOffset, yOffset);
+			windowData.callbackFunction(e);
+		});
 	}
 
 	void WindowsWindow::shutdown()

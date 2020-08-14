@@ -25,7 +25,7 @@ namespace Comet
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(KeyCode keyCode, int repeatCount) : KeyEvent(keyCode), m_repeatCount(repeatCount) {}
+		KeyPressedEvent(KeyCode keyCode, int repeatCount = 0) : KeyEvent(keyCode), m_repeatCount(repeatCount) {}
 
 		CMT_EVENT_CLASS_TYPE(KeyPressedEvent)
 		
@@ -53,6 +53,22 @@ namespace Comet
 		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << m_keyCode;
+			return ss.str();
+		}
+	};
+
+	//To support text input using unicode characters
+	class KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(KeyCode keyCode) : KeyEvent(keyCode) {}
+
+		CMT_EVENT_CLASS_TYPE(KeyTypedEvent)
+
+		std::string toString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_keyCode;
 			return ss.str();
 		}
 	};
