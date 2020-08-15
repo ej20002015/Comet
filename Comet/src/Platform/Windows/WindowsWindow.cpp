@@ -6,6 +6,9 @@
 #include "Comet/Events/KeyboardEvent.h"
 #include "Comet/Events/MouseEvent.h"
 
+//TODO: TEMP
+#include "glad/glad.h"
+
 namespace Comet
 {
 	//Counts the number of GLFW windows in order to init and terminate GLFW at the appropriate times
@@ -58,6 +61,11 @@ namespace Comet
 
 		m_window = glfwCreateWindow((int)m_windowData.width, (int)m_windowData.height, m_windowData.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_window);
+
+		//TODO: TEMP SET UP OF GLAD
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		CMT_COMET_ASSERT(status, "Failed to initialise Glad");
+
 		//This data will be sent by glfw when any glfw callback function is called and can be modified
 		glfwSetWindowUserPointer(m_window, &m_windowData);
 		setVSync(true);

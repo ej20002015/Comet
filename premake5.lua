@@ -14,10 +14,12 @@ outputDirectory = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 includeDirectories = {}
 includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include"
 includeDirectories["GLFW"] = "Comet/Vendor/GLFW/include"
+includeDirectories["Glad"] = "Comet/Vendor/Glad/include"
 
 -- Dependencies virtual folder for Comet
 group "CometDependencies"
 	include "Comet/Vendor/GLFW"
+    include "Comet/Vendor/Glad"
 group ""
 
 -- Dependencies folder for Comet and client applications (no such dependencies at the moment)
@@ -48,12 +50,19 @@ project "Comet"
     {
         "Comet/src",
         "%{includeDirectories.spdlog}",
-        "%{includeDirectories.GLFW}"
+        "%{includeDirectories.GLFW}",
+        "%{includeDirectories.Glad}"
     }
 
     links
     {
-        "GLFW"
+        "GLFW",
+        "Glad"
+    }
+
+    defines
+    {
+        "GLFW_INCLUDE_NONE"
     }
 
     filter "system:windows"
