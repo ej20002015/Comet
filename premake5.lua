@@ -15,11 +15,13 @@ includeDirectories = {}
 includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include"
 includeDirectories["GLFW"] = "Comet/Vendor/GLFW/include"
 includeDirectories["Glad"] = "Comet/Vendor/Glad/include"
+includeDirectories["ImGui"] = "Comet/Vendor/ImGui"
 
 -- Dependencies virtual folder for Comet
 group "CometDependencies"
 	include "Comet/Vendor/GLFW"
     include "Comet/Vendor/Glad"
+    include "Comet/Vendor/ImGui"
 group ""
 
 -- Dependencies folder for Comet and client applications (no such dependencies at the moment)
@@ -51,13 +53,15 @@ project "Comet"
         "Comet/src",
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.GLFW}",
-        "%{includeDirectories.Glad}"
+        "%{includeDirectories.Glad}",
+        "%{includeDirectories.ImGui}"
     }
 
     links
     {
         "GLFW",
-        "Glad"
+        "Glad",
+        "ImGui"
     }
 
     defines

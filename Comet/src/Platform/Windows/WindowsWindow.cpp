@@ -64,7 +64,7 @@ namespace Comet
 
 		//TODO: TEMP SET UP OF GLAD
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		CMT_COMET_ASSERT(status, "Failed to initialise Glad");
+		CMT_COMET_ASSERT(status, "Could not initialise Glad");
 
 		//This data will be sent by glfw when any glfw callback function is called and can be modified
 		glfwSetWindowUserPointer(m_window, &m_windowData);
