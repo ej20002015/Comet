@@ -6,9 +6,16 @@
 namespace Comet
 {
 
+	//TODO: Need to set this up as a proper singleton
+
+	Application* Application::s_instance = nullptr;
+
 	Application::Application()
 		: m_running(true)
 	{
+		CMT_COMET_ASSERT(!s_instance, "Application already exists");
+		s_instance = this;
+
 		m_window = std::unique_ptr<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 	}

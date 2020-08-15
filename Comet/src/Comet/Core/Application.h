@@ -16,6 +16,8 @@ namespace Comet
 		Application();
 		virtual ~Application();
 
+		static Application& get() { return *s_instance; }
+
 		virtual void run();
 
 		virtual void onEvent(Event& e);
@@ -25,10 +27,13 @@ namespace Comet
 		void pushOverlay(Layer* overlay);
 		void popOverlay(Layer* overlay);
 
+		Window& getWindow() const { return *m_window; }
+
 	private:
 		bool onWindowClosed(WindowClosedEvent& e);
 
 	private:
+		static Application* s_instance;
 		std::unique_ptr<Window> m_window;
 		LayerStack m_layerStack;
 		bool m_running;

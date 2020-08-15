@@ -13,6 +13,8 @@ public:
 		pushLayer(layer);
 		popLayer(layer);
 		delete layer;
+
+		pushOverlay(new Comet::ImGuiLayer);
 	}
 
 	~Game() override { Comet::Log::clientInfo("Game destroyed"); }
