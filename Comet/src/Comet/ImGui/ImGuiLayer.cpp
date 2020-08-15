@@ -1,11 +1,14 @@
 #include "CometPCH.h"
 #include "ImGuiLayer.h"
 
+#include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
+
 #include "Comet/Core/Application.h"
 
-#include "imgui.h"
+//TODO: TEMPORARY
 #include "GLFW/glfw3.h"
+#include "glad/glad.h"
 
 namespace Comet
 {
@@ -16,7 +19,7 @@ namespace Comet
 
 	void ImGuiLayer::onAttach()
 	{
-		ImGui::CreateContext();
+        ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -77,6 +80,98 @@ namespace Comet
 
 	void ImGuiLayer::onEvent(Event& e)
 	{
+        EventDispatcher dispatcher(e);
+
+        dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onWindowResizeEvent));
+
+        dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onKeyPressedEvent));
+        dispatcher.dispatch<KeyReleasedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onKeyReleasedEvent));
+        dispatcher.dispatch<KeyTypedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onKeyTypedEvent));
+
+        dispatcher.dispatch<MouseButtonPressedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onMouseButtonPressedEvent));
+        dispatcher.dispatch<MouseButtonReleasedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onMouseButtonReleasedEvent));
+        dispatcher.dispatch<MouseMovedEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onMouseMovedEvent));
+        dispatcher.dispatch<MouseScrolledEvent>(CMT_BIND_EVENT_FUNCTION(ImGuiLayer::onMouseScrolledEvent));
 	}
+
+    bool ImGuiLayer::onWindowResizeEvent(WindowResizedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize = ImVec2(e.getWidth(), e.getHeight());
+        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+        //TODO: TEMPORARY
+        glViewport(0, 0, e.getWidth(), e.getHeight());
+
+        return false;
+    }
+
+    bool ImGuiLayer::onKeyPressedEvent(KeyPressedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.KeysDown[static_cast<int>(e.getKeyCode())] = true;
+
+        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] | io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] | io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] | io.KeysDown[GLFW_KEY_RIGHT_ALT];
+        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] | io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+
+        return false;
+    }
+
+    bool ImGuiLayer::onKeyReleasedEvent(KeyReleasedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.KeysDown[static_cast<int>(e.getKeyCode())] = false;
+
+        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] | io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] | io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] | io.KeysDown[GLFW_KEY_RIGHT_ALT];
+        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] | io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+
+        return false;
+    }
+
+    bool ImGuiLayer::onKeyTypedEvent(KeyTypedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        uint32_t keyNum = static_cast<uint32_t>(e.getKeyCode());
+        if (keyNum > 0 && keyNum < 0x10000)
+            io.AddInputCharacter(keyNum);
+
+        return false;
+    }
+
+    bool ImGuiLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseDown[static_cast<int>(e.getKeyCode())] = true;
+
+        return false;
+    }
+
+    bool ImGuiLayer::onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseDown[static_cast<int>(e.getKeyCode())] = false;
+
+        return false;
+    }
+
+    bool ImGuiLayer::onMouseMovedEvent(MouseMovedEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MousePos = ImVec2(e.getMousePosX(), e.getMousePosY());
+
+        return false;
+    }
+
+    bool ImGuiLayer::onMouseScrolledEvent(MouseScrolledEvent& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        io.MouseWheel += e.getYOffset();
+        io.MouseWheelH += e.getXOffset();
+
+        return false;
+    }
 
 }

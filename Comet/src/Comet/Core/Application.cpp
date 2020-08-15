@@ -2,11 +2,10 @@
 #include "Application.h"
 
 #include "Comet/Events/Event.h"
+#include "glad/glad.h"
 
 namespace Comet
 {
-
-	//TODO: Need to set this up as a proper singleton
 
 	Application* Application::s_instance = nullptr;
 
@@ -20,14 +19,13 @@ namespace Comet
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 	}
 
-	Application::~Application()
-	{
-	}
-
 	void Application::run()
 	{
 		while (m_running)
 		{
+			//TODO: TEMP
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
 
@@ -41,7 +39,7 @@ namespace Comet
 
 		EventDispatcher dispatcher(e);
 
-		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_EVENT_FUNCTION(Application::onWindowClosed));
+		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_EVENT_FUNCTION(Application::onWindowClosedEvent));
 
 		//Propagate events down the layer stack in reverse order (from the top item on the stack downwards - overlays to layers)
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++)
@@ -73,7 +71,7 @@ namespace Comet
 		m_layerStack.popOverlay(overlay);
 	}
 
-	bool Application::onWindowClosed(WindowClosedEvent& e)
+	bool Application::onWindowClosedEvent(WindowClosedEvent& e)
 	{
 		m_running = false;
 		return true;
