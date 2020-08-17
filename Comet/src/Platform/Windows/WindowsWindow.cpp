@@ -62,6 +62,9 @@ namespace Comet
 		m_window = glfwCreateWindow((int)m_windowData.width, (int)m_windowData.height, m_windowData.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_window);
 
+		//Set up input instance for windows platform
+		
+
 		//TODO: TEMP SET UP OF GLAD
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		CMT_COMET_ASSERT(status, "Could not initialise Glad");

@@ -1,7 +1,8 @@
 #pragma once
-
 #include "CometPCH.h"
+
 #include "Comet/Core/Window.h"
+#include "WindowsInput.h"
 
 #include "GLFW/glfw3.h"
 
@@ -35,6 +36,7 @@ namespace Comet
 
 	private:
 		GLFWwindow* m_window;
+		WindowsInput* m_input;
 
 		//Specific data required for the windowing implementation
 		struct WindowData

@@ -1,4 +1,5 @@
 #pragma once
+#include "CometPCH.h"
 
 #define CMT_BIT(x) (x << 1)
 

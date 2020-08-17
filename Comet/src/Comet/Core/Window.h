@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CometPCH.h"
 
 #include "Comet/Events/Event.h"

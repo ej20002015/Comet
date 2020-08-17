@@ -3,6 +3,7 @@
 
 #include "Comet/Events/Event.h"
 #include "glad/glad.h"
+#include "Input.h"
 
 namespace Comet
 {
@@ -17,6 +18,9 @@ namespace Comet
 
 		m_window = std::unique_ptr<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
+
+		//Initialise input
+		Input::init();
 	}
 
 	void Application::run()
@@ -28,6 +32,10 @@ namespace Comet
 
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
+
+			auto[x, y] = Input::getMousePosition();
+
+			Log::cometInfo("Mouse pos: {0}, {1}", x, y);
 
 			m_window->onUpdate();
 		}

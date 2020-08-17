@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CometPCH.h"
 
 #include "Window.h"

@@ -1,8 +1,7 @@
 #pragma once
+#include "CometPCH.h"
 
 #include "Event.h"
-
-#include <sstream>
 
 namespace Comet
 {

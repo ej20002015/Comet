@@ -1,10 +1,9 @@
 #pragma once
+#include "CometPCH.h"
 
 #include "Comet/Core/Core.h"
-#include "spdlog/fmt/ostr.h"
 
-#include <string>
-#include <vector>
+#include "spdlog/fmt/ostr.h"
 
 namespace Comet
 {

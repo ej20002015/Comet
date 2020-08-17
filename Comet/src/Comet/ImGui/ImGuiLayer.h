@@ -1,8 +1,7 @@
 #pragma once
-
 #include "CometPCH.h"
-#include "Comet/Core/Layer.h"
 
+#include "Comet/Core/Layer.h"
 #include "Comet/Events/Event.h"
 #include "Comet/Events/ApplicationEvent.h"
 #include "Comet/Events/KeyboardEvent.h"
