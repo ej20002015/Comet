@@ -5,6 +5,8 @@
 #include "Comet/Events/ApplicationEvent.h"
 #include "Comet/Events/KeyboardEvent.h"
 #include "Comet/Events/MouseEvent.h"
+#include "Comet/Core/KeyCodes.h"
+#include "Comet/Core/MouseCodes.h"
 
 //TODO: TEMP
 #include "glad/glad.h"
@@ -171,7 +173,7 @@ namespace Comet
 			{
 				case GLFW_PRESS:
 				{
-					MouseButtonPressedEvent e(static_cast<KeyCode>(mouseKeyCode));
+					MouseButtonPressedEvent e(static_cast<MouseCode>(mouseKeyCode));
 					windowData.callbackFunction(e);
 					break;
 				}
@@ -180,7 +182,7 @@ namespace Comet
 
 				case GLFW_RELEASE:
 				{
-					MouseButtonReleasedEvent e(static_cast<KeyCode>(mouseKeyCode));
+					MouseButtonReleasedEvent e(static_cast<MouseCode>(mouseKeyCode));
 					windowData.callbackFunction(e);
 					break;
 				}

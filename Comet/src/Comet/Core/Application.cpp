@@ -16,6 +16,7 @@ namespace Comet
 		CMT_COMET_ASSERT(!s_instance, "Application already exists");
 		s_instance = this;
 
+		//Initialise window
 		m_window = std::unique_ptr<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 
@@ -33,18 +34,12 @@ namespace Comet
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
 
-			auto[x, y] = Input::getMousePosition();
-
-			Log::cometInfo("Mouse pos: {0}, {1}", x, y);
-
 			m_window->onUpdate();
 		}
 	}
 
 	void Application::onEvent(Event& e)
 	{
-		Log::cometInfo(e);
-
 		EventDispatcher dispatcher(e);
 
 		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_EVENT_FUNCTION(Application::onWindowClosedEvent));

@@ -115,7 +115,7 @@ namespace Comet
         io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] | io.KeysDown[GLFW_KEY_RIGHT_ALT];
         io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] | io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 
-        return false;
+        return io.WantCaptureKeyboard;
     }
 
     bool ImGuiLayer::onKeyReleasedEvent(KeyReleasedEvent& e)
@@ -128,7 +128,7 @@ namespace Comet
         io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] | io.KeysDown[GLFW_KEY_RIGHT_ALT];
         io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] | io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 
-        return false;
+        return io.WantCaptureKeyboard;
     }
 
     bool ImGuiLayer::onKeyTypedEvent(KeyTypedEvent& e)
@@ -138,7 +138,7 @@ namespace Comet
         if (keyNum > 0 && keyNum < 0x10000)
             io.AddInputCharacter(keyNum);
 
-        return false;
+        return io.WantCaptureKeyboard;
     }
 
     bool ImGuiLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
@@ -146,7 +146,7 @@ namespace Comet
         ImGuiIO& io = ImGui::GetIO();
         io.MouseDown[static_cast<int>(e.getKeyCode())] = true;
 
-        return false;
+        return io.WantCaptureMouse;
     }
 
     bool ImGuiLayer::onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
@@ -154,7 +154,7 @@ namespace Comet
         ImGuiIO& io = ImGui::GetIO();
         io.MouseDown[static_cast<int>(e.getKeyCode())] = false;
 
-        return false;
+        return io.WantCaptureMouse;
     }
 
     bool ImGuiLayer::onMouseMovedEvent(MouseMovedEvent& e)
@@ -162,7 +162,7 @@ namespace Comet
         ImGuiIO& io = ImGui::GetIO();
         io.MousePos = ImVec2(e.getMousePosX(), e.getMousePosY());
 
-        return false;
+        return io.WantCaptureMouse;
     }
 
     bool ImGuiLayer::onMouseScrolledEvent(MouseScrolledEvent& e)
@@ -171,7 +171,7 @@ namespace Comet
         io.MouseWheel += e.getYOffset();
         io.MouseWheelH += e.getXOffset();
 
-        return false;
+        return io.WantCaptureMouse;
     }
 
 }

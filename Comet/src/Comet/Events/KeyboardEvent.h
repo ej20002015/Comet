@@ -2,7 +2,7 @@
 #include "CometPCH.h"
 
 #include "Event.h"
-#include "Comet/Core/Input.h"
+#include "Comet/Core/KeyCodes.h"
 
 namespace Comet
 {

@@ -10,7 +10,7 @@ namespace Comet
 	{
 	protected:
 		bool i_isKeyPressed(KeyCode keyCode) const override;
-		bool i_isMouseButtonPressed(KeyCode keyCode) const override;
+		bool i_isMouseButtonPressed(MouseCode mouseCode) const override;
 
 		std::pair<float, float> i_getMousePosition() const override;
 	};

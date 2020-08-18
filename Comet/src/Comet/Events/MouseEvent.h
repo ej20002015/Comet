@@ -2,7 +2,7 @@
 #include "CometPCH.h"
 
 #include "Event.h"
-#include "Comet/Core/Input.h"
+#include "Comet/Core/MouseCodes.h"
 
 namespace Comet
 {
@@ -10,27 +10,27 @@ namespace Comet
 	class MouseButtonEvent : public Event
 	{
 	public:
-		MouseButtonEvent(KeyCode keyCode) : m_keyCode(keyCode) {}
+		MouseButtonEvent(MouseCode mouseCode) : m_mouseCode(mouseCode) {}
 
 		CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_MOUSE_BUTTON | EventCategory::EVENT_CATEGORY_MOUSE| EventCategory::EVENT_CATEGORY_INPUT)
 
-		KeyCode getKeyCode() const { return m_keyCode; }
+		MouseCode getKeyCode() const { return m_mouseCode; }
 
 	protected:
-		KeyCode m_keyCode;
+		MouseCode m_mouseCode;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(KeyCode keyCode, int repeatCount = 0) : MouseButtonEvent(keyCode), m_repeatCount(repeatCount) {}
+		MouseButtonPressedEvent(MouseCode mouseCode, int repeatCount = 0) : MouseButtonEvent(mouseCode), m_repeatCount(repeatCount) {}
 
 		CMT_EVENT_CLASS_TYPE(MouseButtonPressedEvent)
 
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << m_keyCode << " (" << m_repeatCount << " repeats)";
+			ss << "MouseButtonPressedEvent: " << m_mouseCode << " (" << m_repeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -43,14 +43,14 @@ namespace Comet
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(KeyCode keyCode) : MouseButtonEvent(keyCode) {}
+		MouseButtonReleasedEvent(MouseCode mouseCode) : MouseButtonEvent(mouseCode) {}
 
 		CMT_EVENT_CLASS_TYPE(MouseButtonReleasedEvent)
 
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonReleasedEvent: " << m_keyCode;
+			ss << "MouseButtonReleasedEvent: " << m_mouseCode;
 			return ss.str();
 		}
 	};

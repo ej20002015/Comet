@@ -11,8 +11,6 @@ public:
 	{
 		Comet::Layer* layer = new ExampleLayer;
 		pushLayer(layer);
-		popLayer(layer);
-		delete layer;
 
 		pushOverlay(new Comet::ImGuiLayer);
 	}
