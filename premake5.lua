@@ -16,6 +16,7 @@ includeDirectories["spdlog"] = "Comet/Vendor/spdlog/include"
 includeDirectories["GLFW"] = "Comet/Vendor/GLFW/include"
 includeDirectories["Glad"] = "Comet/Vendor/Glad/include"
 includeDirectories["ImGui"] = "Comet/Vendor/ImGui"
+includeDirectories["GLM"] = "Comet/Vendor/GLM"
 
 -- Dependencies virtual folder for Comet
 group "CometDependencies"
@@ -54,7 +55,8 @@ project "Comet"
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.GLFW}",
         "%{includeDirectories.Glad}",
-        "%{includeDirectories.ImGui}"
+        "%{includeDirectories.ImGui}",
+        "%{includeDirectories.GLM}"
     }
 
     links
@@ -106,7 +108,8 @@ project "Application"
     includedirs
     {
         "Comet/src",
-        "%{includeDirectories.spdlog}"
+        "%{includeDirectories.spdlog}",
+        "%{includeDirectories.GLM}"
     }
 
     filter "system:windows"

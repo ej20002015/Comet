@@ -7,3 +7,6 @@
 [submodule "Comet/Vendor/imgui"]
 	path = Comet/Vendor/imgui
 	url = https://github.com/ej20002015/imgui
+[submodule "Comet/Vendor/GLM"]
+	path = Comet/Vendor/GLM
+	url = https://github.com/g-truc/glm
