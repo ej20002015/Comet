@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Comet/Events/ApplicationEvent.h"
 #include "Layer.h"
+#include "Comet/ImGui/ImGuiLayer.h"
 #include "LayerStack.h"
 
 int main(int argc, char** argv);
@@ -37,6 +38,7 @@ namespace Comet
 	private:
 		static Application* s_instance;
 		std::unique_ptr<Window> m_window;
+		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_layerStack;
 		bool m_running;
 		friend int ::main(int argc, char** argv);

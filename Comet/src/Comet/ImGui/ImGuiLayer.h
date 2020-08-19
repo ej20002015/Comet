@@ -18,26 +18,20 @@ namespace Comet
 
 		void onAttach() override;
 		void onDetach() override;
-		void onUpdate() override;
 		void onEvent(Event& e) override;
 
-	private:
-		//For application events
-		bool onWindowResizeEvent(WindowResizedEvent& e);
+		//Called to set up ImGui to render a frame
+		void begin();
+		//Called to render ImGui
+		void end();
 
-		//For keyboard events
-		bool onKeyPressedEvent(KeyPressedEvent& e);
-		bool onKeyReleasedEvent(KeyReleasedEvent& e);
-		bool onKeyTypedEvent(KeyTypedEvent& e);
-
-		//For mouse events
-		bool onMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-		bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-		bool onMouseMovedEvent(MouseMovedEvent& e);
-		bool onMouseScrolledEvent(MouseScrolledEvent& e);
+		void setBlockEvents(bool blockEvents) { m_blockEvents = blockEvents; }
+		bool getBlockEvents() const { return m_blockEvents; }
 
 	private:
 		float m_time = 0.0f;
+		//Determines whether ImGui Events are blocked or passed down to other layers in the stack
+		bool m_blockEvents = true;
 	};
 
 }

@@ -20,6 +20,10 @@ namespace Comet
 		m_window = std::unique_ptr<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 
+		//Create ImGui Layer
+		m_ImGuiLayer = new ImGuiLayer;
+		pushOverlay(m_ImGuiLayer);
+
 		//Initialise input
 		Input::init();
 	}
@@ -33,6 +37,12 @@ namespace Comet
 
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
+
+			//Render all the ImGui ui set up by the layers in the stack
+			m_ImGuiLayer->begin();
+			for (auto layer : m_layerStack)
+				layer->onImGuiRender();
+			m_ImGuiLayer->end();
 
 			m_window->onUpdate();
 		}

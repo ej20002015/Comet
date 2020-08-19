@@ -11,8 +11,6 @@ public:
 	{
 		Comet::Layer* layer = new ExampleLayer;
 		pushLayer(layer);
-
-		pushOverlay(new Comet::ImGuiLayer);
 	}
 
 	~Game() override { Comet::Log::clientInfo("Game destroyed"); }

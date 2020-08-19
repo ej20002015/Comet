@@ -12,10 +12,12 @@ namespace Comet
 		Layer(const std::string& name = "Layer") : m_name(name) {}
 		virtual ~Layer() = default;
 
-		virtual void onAttach() = 0;
-		virtual void onDetach() = 0;
-		virtual void onUpdate() = 0;
-		virtual void onEvent(Event& e) = 0;
+		virtual void onAttach() {}
+		virtual void onDetach() {}
+		virtual void onUpdate() {}
+		//Each layer can define ImGui logic within this method without having to start a frame or call render code - allows all layers to render ui on the application ImGuiLayer
+		virtual void onImGuiRender() {}
+		virtual void onEvent(Event& e) {}
 
 		const std::string& getName() const { return m_name; }
 

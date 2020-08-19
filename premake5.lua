@@ -109,6 +109,7 @@ project "Application"
     {
         "Comet/src",
         "%{includeDirectories.spdlog}",
+        "%{includeDirectories.ImGui}",
         "%{includeDirectories.GLM}"
     }
 
