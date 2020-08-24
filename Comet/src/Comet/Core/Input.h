@@ -14,10 +14,10 @@ namespace Comet
 
 		static void init();
 
-		static bool isKeyPressed(KeyCode keyCode) { return s_instance->i_isKeyPressed(keyCode); }
-		static bool isMouseButtonPressed(MouseCode mouseCode) { return s_instance->i_isMouseButtonPressed(mouseCode); }
+		static bool isKeyPressed(KeyCode keyCode);
+		static bool isMouseButtonPressed(MouseCode mouseCode);
 
-		static std::pair<float, float> getMousePosition() {	return s_instance->i_getMousePosition(); }
+		static std::pair<float, float> getMousePosition();
 		static float getMouseXPosition() { return getMousePosition().first; }
 		static float getMouseYPosition() { return getMousePosition().second; }
 
@@ -30,7 +30,7 @@ namespace Comet
 		virtual std::pair<float, float> i_getMousePosition() const = 0;
 
 	private:
-		static std::unique_ptr<Input> s_instance;
+		static Unique<Input> s_instance;
 	};
 
 }

@@ -37,7 +37,7 @@ namespace Comet
 
 	private:
 		static Application* s_instance;
-		std::unique_ptr<Window> m_window;
+		Unique<Window> m_window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_layerStack;
 		bool m_running;

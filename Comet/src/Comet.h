@@ -12,3 +12,7 @@
 #include "Comet/Events/ApplicationEvent.h"
 #include "Comet/Events/KeyboardEvent.h"
 #include "Comet/Events/MouseEvent.h"
+
+//Renderer
+#include "Comet/Renderer/RendererAPI.h"
+#include "Comet/Renderer/VertexBuffer.h"

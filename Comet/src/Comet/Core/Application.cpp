@@ -4,6 +4,7 @@
 #include "Comet/Events/Event.h"
 #include "glad/glad.h"
 #include "Input.h"
+#include "Comet/Renderer/RendererAPI.h"
 
 namespace Comet
 {
@@ -17,7 +18,7 @@ namespace Comet
 		s_instance = this;
 
 		//Initialise window
-		m_window = std::unique_ptr<Window>(Window::create());
+		m_window = Unique<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 
 		//Create ImGui Layer
@@ -26,6 +27,9 @@ namespace Comet
 
 		//Initialise input
 		Input::init();
+
+		//Initialise rendererAPI
+		RendererAPI::init();
 	}
 
 	void Application::run()

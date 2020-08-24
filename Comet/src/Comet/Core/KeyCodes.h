@@ -4,7 +4,7 @@
 namespace Comet
 {
 
-	typedef enum class KeyCode : uint16_t
+	enum class KeyCode : uint16_t
 	{
 		//Taken from glfw3.h
 

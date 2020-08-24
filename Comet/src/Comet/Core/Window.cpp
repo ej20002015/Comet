@@ -10,10 +10,10 @@
 namespace Comet
 {
 
-    std::unique_ptr<Window> Window::create(const WindowProperties& properties)
+    Unique<Window> Window::create(const WindowProperties& properties)
     {
         #ifdef CMT_PLATFORM_WINDOWS
-            return std::make_unique<WindowsWindow>(properties);
+            return createUnique<WindowsWindow>(properties);
         #else
             CMT_COMET_ASSERT(false, "Unknown platform");
             return nullptr;

@@ -24,7 +24,7 @@ namespace Comet
 
 		using EventCallbackFunction = std::function<void(Event&)>;
 
-		static std::unique_ptr<Window> create(const WindowProperties& properties = WindowProperties());
+		static Unique<Window> create(const WindowProperties& properties = WindowProperties());
 
 		virtual ~Window() = default;
 

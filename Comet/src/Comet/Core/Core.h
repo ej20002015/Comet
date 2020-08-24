@@ -1,6 +1,8 @@
 #pragma once
 #include "CometPCH.h"
 
+#include <memory>
+
 #define CMT_BIT(x) (x << 1)
 
 
@@ -37,3 +39,24 @@ after (args) unpacks the arguments and passes them to the function.
 	#define CMT_COMET_ASSERT(x, ...)
 	#define CMT_STATIC_ASSERT(x, description)
 #endif
+
+namespace Comet
+{
+
+	template<typename T>
+	using Reference = std::shared_ptr<T>;
+	template<typename T, typename... Args>
+	constexpr Reference<T> createReference(Args&&... args)
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
+	template<typename T>
+	using Unique = std::unique_ptr<T>;
+	template<typename T, typename... Args>
+	constexpr Unique<T> createUnique(Args&&... args)
+	{
+		return std::make_unique<T>(std::forward<Args>(args)...);
+	}
+
+}

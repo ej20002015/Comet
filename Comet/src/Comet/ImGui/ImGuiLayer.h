@@ -20,6 +20,8 @@ namespace Comet
 		void onDetach() override;
 		void onEvent(Event& e) override;
 
+		void onImGuiRender() override;
+
 		//Called to set up ImGui to render a frame
 		void begin();
 		//Called to render ImGui

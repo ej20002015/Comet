@@ -5,11 +5,11 @@
 #include "Comet/Events/ApplicationEvent.h"
 #include "Comet/Events/KeyboardEvent.h"
 #include "Comet/Events/MouseEvent.h"
+
 #include "Comet/Core/KeyCodes.h"
 #include "Comet/Core/MouseCodes.h"
 
-//TODO: TEMP
-#include "glad/glad.h"
+#include "Comet/Renderer/RenderingContext.h"
 
 namespace Comet
 {
@@ -62,14 +62,9 @@ namespace Comet
 		}
 
 		m_window = glfwCreateWindow((int)m_windowData.width, (int)m_windowData.height, m_windowData.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_window);
 
-		//Set up input instance for windows platform
-		
-
-		//TODO: TEMP SET UP OF GLAD
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		CMT_COMET_ASSERT(status, "Could not initialise Glad");
+		//Create RenderingContext
+		m_context = RenderingContext::create(m_window);
 
 		//This data will be sent by glfw when any glfw callback function is called and can be modified
 		glfwSetWindowUserPointer(m_window, &m_windowData);

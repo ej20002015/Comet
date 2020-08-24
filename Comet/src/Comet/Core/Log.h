@@ -1,6 +1,8 @@
 #pragma once
 #include "CometPCH.h"
 
+#include "Core.h"
+
 #include "spdlog/spdlog.h"
 
 namespace Comet
@@ -12,8 +14,8 @@ namespace Comet
 		static void init();
 
 #ifdef CMT_LOG_MACROS
-		inline static std::shared_ptr<spdlog::logger>& getCometLogger() { return s_cometLogger; }
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return s_clientLogger; }
+		inline static Reference<spdlog::logger>& getCometLogger() { return s_cometLogger; }
+		inline static Reference<spdlog::logger>& getClientLogger() { return s_clientLogger; }
 #endif
 
 		//For logging within the Comet engine
@@ -41,7 +43,7 @@ namespace Comet
 		inline static void clientCritical(Args&&... args) { s_clientLogger->Critical(std::forward<Args>(args)...); }
 	
 	private:
-		static std::shared_ptr<spdlog::logger> s_cometLogger, s_clientLogger;
+		static Reference<spdlog::logger> s_cometLogger, s_clientLogger;
 	};
 
 }
