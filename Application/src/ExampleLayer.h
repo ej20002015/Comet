@@ -11,9 +11,6 @@ public:
 
 	void onAttach() override 
 	{
-		Comet::Reference<Comet::VertexBuffer> vertexBuffer = Comet::VertexBuffer::create(0);
-		Comet::Log::clientInfo("VB id: {0}", vertexBuffer->getRendererID());
-
 		Comet::RendererAPI::setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	}
 	void onDetach() override {}

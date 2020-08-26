@@ -6,6 +6,9 @@
 #include "Input.h"
 #include "Comet/Renderer/RendererAPI.h"
 
+//temp
+#include "TriangleLayer.h"
+
 namespace Comet
 {
 
@@ -30,6 +33,9 @@ namespace Comet
 
 		//Initialise rendererAPI
 		RendererAPI::init();
+
+		//Create triangle layer
+		pushLayer(new TriangleLayer());
 	}
 
 	void Application::run()

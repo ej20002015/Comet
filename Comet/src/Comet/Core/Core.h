@@ -43,6 +43,8 @@ after (args) unpacks the arguments and passes them to the function.
 namespace Comet
 {
 
+	using byte = uint8_t;
+
 	template<typename T>
 	using Reference = std::shared_ptr<T>;
 	template<typename T, typename... Args>

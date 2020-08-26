@@ -7,6 +7,10 @@
 #include "Comet/ImGui/ImGuiLayer.h"
 #include "LayerStack.h"
 
+#include "Comet/Renderer/IndexBuffer.h"
+#include "Comet/Renderer/VertexBuffer.h"
+#include "Comet/Renderer/Pipeline.h"
+
 int main(int argc, char** argv);
 
 namespace Comet
@@ -41,6 +45,12 @@ namespace Comet
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_layerStack;
 		bool m_running;
+
+		Reference<Pipeline> m_pipeline;
+		Reference<VertexBuffer> m_vb;
+		Reference<IndexBuffer> m_ib;
+
+	private:
 		friend int ::main(int argc, char** argv);
 	};
 

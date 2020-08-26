@@ -15,4 +15,3 @@
 
 //Renderer
 #include "Comet/Renderer/RendererAPI.h"
-#include "Comet/Renderer/VertexBuffer.h"

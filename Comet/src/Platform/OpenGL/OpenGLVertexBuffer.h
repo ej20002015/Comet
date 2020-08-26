@@ -4,6 +4,8 @@
 #include "Comet/Renderer/VertexBuffer.h"
 #include "Comet/Renderer/RendererAPI.h"
 
+#include "Comet/Core/Buffer.h"
+
 namespace Comet
 {
 
@@ -25,7 +27,7 @@ namespace Comet
 		RendererID m_rendererID = 0;
 		uint32_t m_size;
 		VertexBufferUsage m_usage;
-		void* m_localData;
+		Unique<Buffer> m_localData;
 	};
 
 }

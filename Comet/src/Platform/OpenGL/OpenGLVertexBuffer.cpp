@@ -20,12 +20,13 @@ namespace Comet
 
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(void* data, uint32_t size, VertexBufferUsage usage)
-		: m_localData(data), m_size(size), m_usage(usage)
+		: m_size(size), m_usage(usage)
 	{
 		//TODO: IMPLEMENT OWN BUFFER CLASS TO HAVE SECURE OWNERSHIP AND MOVEMENT
+		m_localData = Buffer::create(data, size);
 
 		glCreateBuffers(1, &m_rendererID);
-		glNamedBufferData(m_rendererID, m_size, m_localData, getOpenGLUsage(m_usage));
+		glNamedBufferData(m_rendererID, m_size, m_localData->getData(), getOpenGLUsage(m_usage));
 	}
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size, VertexBufferUsage usage)
@@ -49,9 +50,10 @@ namespace Comet
 
 	void OpenGLVertexBuffer::setData(void* data, uint32_t size, uint32_t offset)
 	{
-		m_localData = data;
+		m_localData = Buffer::create(data, size);
 		m_size = size;
-		glNamedBufferSubData(m_rendererID, offset, size, data);
+
+		glNamedBufferSubData(m_rendererID, offset, size, m_localData->getData());
 	}
 
 }
