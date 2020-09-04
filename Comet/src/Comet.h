@@ -14,4 +14,8 @@
 #include "Comet/Events/MouseEvent.h"
 
 //Renderer
-#include "Comet/Renderer/RendererAPI.h"
+#include "Comet/Renderer/Renderer.h"
+
+//TEMP
+
+#include "Comet/Renderer/Shader.h"

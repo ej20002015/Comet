@@ -10,7 +10,7 @@ namespace Comet
 	{
 		glfwMakeContextCurrent(windowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		CMT_COMET_ASSERT(status, "Could not initialise Glad");
+		CMT_COMET_ASSERT_MESSAGE(status, "Could not initialise Glad");
 	}
 
 	void Comet::OpenGLContext::swapBuffers()

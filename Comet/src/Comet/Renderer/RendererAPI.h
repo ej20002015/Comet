@@ -1,6 +1,8 @@
 #pragma once
 #include "CometPCH.h"
 
+#include "glm/glm.hpp"
+
 namespace Comet
 {
 
@@ -10,6 +12,11 @@ namespace Comet
     {
         NONE,
         OPENGL
+    };
+
+    enum class PrimitiveType
+    {
+        NONE, TRIANGLES, LINES
     };
 
     struct RendererAPICapabilities
@@ -23,6 +30,8 @@ namespace Comet
         int maxTextureUnits = 0;
     };
 
+    //For use by renderer class - not direct use by clients
+
     class RendererAPI
     {
     public:
@@ -31,7 +40,10 @@ namespace Comet
         static void init();
         static void shutdown();
 
-        static void setClearColor(float r, float g, float b, float a);
+        static void drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = true);
+
+        static void setClearColor(const glm::vec4& color);
+        static void clear();
 
         static const RendererAPICapabilities& getCapabilities();
 
@@ -43,7 +55,10 @@ namespace Comet
         virtual void i_init() = 0;
         virtual void i_shutdown() = 0;
 
-        virtual void i_setClearColor(float r, float g, float b, float a) = 0;
+        virtual void i_drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = true) = 0;
+
+        virtual void i_setClearColor(const glm::vec4& color) = 0;
+        virtual void i_clear() = 0;
 
     protected:
         static RendererAPICapabilities s_rendererAPICapabilities;

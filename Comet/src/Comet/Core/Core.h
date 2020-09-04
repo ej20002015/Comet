@@ -25,8 +25,11 @@ after (args) unpacks the arguments and passes them to the function.
 		#define CMT_BREAKPOINT()
 	#endif
 
-	#define CMT_CLIENT_ASSERT(x, ...) { if(!(x)) { Comet::Log::clientError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
-	#define CMT_COMET_ASSERT(x, ...) { if(!(x)) { Comet::Log::cometError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+	#define CMT_CLIENT_ASSERT_MESSAGE(x, ...) { if(!(x)) { Comet::Log::clientError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+	#define CMT_COMET_ASSERT_MESSAGE(x, ...) { if(!(x)) { Comet::Log::cometError("Assertion Failed: {0}", __VA_ARGS__); CMT_BREAKPOINT(); } }
+	
+	#define CMT_CLIENT_ASSERT(x) { if(!(x)) { CMT_BREAKPOINT(); } }
+	#define CMT_COMET_ASSERT(x) { if(!(x)) { CMT_BREAKPOINT(); } }
 
 
 	#define STRINGIFY2(x) #x
@@ -35,6 +38,8 @@ after (args) unpacks the arguments and passes them to the function.
 
 	#define CMT_STATIC_ASSERT(x, description) static_assert(x, "Static Assert Failed (" LOCATION "): " description)
 #else
+	#define CMT_CLIENT_ASSERT_MESSAGE(x, ...)
+	#define CMT_COMET_ASSERT_MESSAGE(x, ...)
 	#define CMT_CLIENT_ASSERT(x, ...)
 	#define CMT_COMET_ASSERT(x, ...)
 	#define CMT_STATIC_ASSERT(x, description)

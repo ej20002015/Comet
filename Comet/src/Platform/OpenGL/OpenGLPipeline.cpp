@@ -6,24 +6,24 @@
 namespace Comet
 {
 
-	static GLenum vertexBufferDataTypeToOpenGLBaseType(VertexBufferDataType type)
+	static GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	{
 		switch (type)
 		{
-			case VertexBufferDataType::Float:    return GL_FLOAT;
-			case VertexBufferDataType::Float2:   return GL_FLOAT;
-			case VertexBufferDataType::Float3:   return GL_FLOAT;
-			case VertexBufferDataType::Float4:   return GL_FLOAT;
-			case VertexBufferDataType::Mat3:     return GL_FLOAT;
-			case VertexBufferDataType::Mat4:     return GL_FLOAT;
-			case VertexBufferDataType::Int:      return GL_INT;
-			case VertexBufferDataType::Int2:     return GL_INT;
-			case VertexBufferDataType::Int3:     return GL_INT;
-			case VertexBufferDataType::Int4:     return GL_INT;
-			case VertexBufferDataType::Bool:     return GL_BOOL;
+			case ShaderDataType::Float:    return GL_FLOAT;
+			case ShaderDataType::Float2:   return GL_FLOAT;
+			case ShaderDataType::Float3:   return GL_FLOAT;
+			case ShaderDataType::Float4:   return GL_FLOAT;
+			case ShaderDataType::Mat3:     return GL_FLOAT;
+			case ShaderDataType::Mat4:     return GL_FLOAT;
+			case ShaderDataType::Int:      return GL_INT;
+			case ShaderDataType::Int2:     return GL_INT;
+			case ShaderDataType::Int3:     return GL_INT;
+			case ShaderDataType::Int4:     return GL_INT;
+			case ShaderDataType::Bool:     return GL_BOOL;
 			
 			default:
-				CMT_COMET_ASSERT(false, "Unknown Vertex Buffer Data Type");
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown Vertex Buffer Data Type");
 				return 0;
 		}
 	}
@@ -48,7 +48,7 @@ namespace Comet
 		uint32_t stride = m_spec.layout.getStride();
 		for (const auto& element : m_spec.layout)
 		{
-			GLenum openGLType = vertexBufferDataTypeToOpenGLBaseType(element.type);
+			GLenum openGLType = shaderDataTypeToOpenGLBaseType(element.type);
 			if (openGLType == GL_INT)
 			{
 				glVertexAttribIPointer(attributeIndex, 

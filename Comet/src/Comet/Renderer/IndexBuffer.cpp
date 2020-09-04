@@ -8,7 +8,7 @@ namespace Comet
 
     Reference<IndexBuffer> IndexBuffer::create(void* data, uint32_t count, IndexBufferUsage indexBufferUsage)
     {
-        CMT_COMET_ASSERT(data, "Data is null");
+        CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
 
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
@@ -17,7 +17,7 @@ namespace Comet
             break;
 
         default:
-            CMT_COMET_ASSERT(false, "Unknown GraphicsAPI");
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
             return nullptr;
             break;
         }
@@ -32,7 +32,7 @@ namespace Comet
             break;
 
         default:
-            CMT_COMET_ASSERT(false, "Unknown GraphicsAPI");
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
             return nullptr;
             break;
         }

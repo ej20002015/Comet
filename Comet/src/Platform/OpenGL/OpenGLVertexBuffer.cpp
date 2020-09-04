@@ -14,7 +14,7 @@ namespace Comet
 			case VertexBufferUsage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
 		}
 
-		CMT_COMET_ASSERT(false, "Unknown vertex buffer usage");
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown vertex buffer usage");
 		return 0;
 	}
 

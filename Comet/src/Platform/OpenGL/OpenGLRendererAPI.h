@@ -12,7 +12,10 @@ namespace Comet
 		void i_init() override;
 		void i_shutdown() override;
 
-		void i_setClearColor(float r, float g, float b, float a) override;
+		void i_drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = false) override;
+
+		void i_setClearColor(const glm::vec4& color) override;
+		void i_clear() override;
 	};
 
 }

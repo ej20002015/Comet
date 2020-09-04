@@ -57,7 +57,7 @@ namespace Comet
 		if (!s_GLFWWindowCount)
 		{
 			int success = glfwInit();
-			CMT_COMET_ASSERT(success, "Could not initialise GLFW");
+			CMT_COMET_ASSERT_MESSAGE(success, "Could not initialise GLFW");
 			s_GLFWWindowCount++;
 		}
 
@@ -194,7 +194,7 @@ namespace Comet
 		{
 			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			MouseMovedEvent e(xPos, yPos);
+			MouseMovedEvent e(static_cast<float>(xPos), static_cast<float>(yPos));
 			windowData.callbackFunction(e);
 		});
 
@@ -202,7 +202,7 @@ namespace Comet
 		{
 			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			MouseScrolledEvent e(xOffset, yOffset);
+			MouseScrolledEvent e(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			windowData.callbackFunction(e);
 		});
 	}

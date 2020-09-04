@@ -11,7 +11,7 @@ namespace Comet
 
     Unique<RenderingContext> RenderingContext::create(void* implementationWindowHandle)
     {
-        CMT_COMET_ASSERT(implementationWindowHandle, "Window handle is null")
+        CMT_COMET_ASSERT_MESSAGE(implementationWindowHandle, "Window handle is null")
 
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
@@ -20,7 +20,7 @@ namespace Comet
                 break;
 
             default:
-                CMT_COMET_ASSERT(false, "Unknown GraphicsAPI");
+                CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
                 return nullptr;
                 break;
         }

@@ -7,8 +7,6 @@ namespace Comet
 {
 
 	Unique<RendererAPI> RendererAPI::s_instance = nullptr;
-	//TODO: TEMPORARILY SETTING GRAPHICS API TYPE HERE - NEEDS TO BE SET BEFORE WINDOW IS CREATED BUT INIT NOT CALLED YET BECAUSE NEEDS GRAPHIC CONTEXT
-	RendererAPIType RendererAPI::s_currentRendererAPIType = RendererAPIType::OPENGL;
 	RendererAPICapabilities RendererAPI::s_rendererAPICapabilities = RendererAPICapabilities();
 
 	void RendererAPI::init()
@@ -23,7 +21,7 @@ namespace Comet
 			}
 			default:
 			{
-				CMT_COMET_ASSERT(false, "Unknown GraphicsAPI");
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
 				break;
 			}
 		}
@@ -31,19 +29,31 @@ namespace Comet
 
 	void RendererAPI::shutdown()
 	{
-		CMT_COMET_ASSERT(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
 		s_instance->i_shutdown();
 	}
 
-	void RendererAPI::setClearColor(float r, float g, float b, float a)
+	void RendererAPI::drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest)
 	{
-		CMT_COMET_ASSERT(s_instance, "Need to initialise the RendererAPI class first by calling init()");
-		s_instance->i_setClearColor(r, g, b, a);
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		s_instance->i_drawIndexed(count, primitive, depthTest);
+	}
+
+	void RendererAPI::setClearColor(const glm::vec4& color)
+	{
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		s_instance->i_setClearColor(color);
+	}
+
+	void RendererAPI::clear()
+	{
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		s_instance->i_clear();
 	}
 
 	const RendererAPICapabilities& RendererAPI::getCapabilities()
 	{
-		CMT_COMET_ASSERT(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
 		return s_rendererAPICapabilities;
 	}
 

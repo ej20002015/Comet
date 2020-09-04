@@ -12,11 +12,11 @@ namespace Comet
 	{
 		switch (usage)
 		{
-		case IndexBufferUsage::STATIC:    return GL_STATIC_DRAW; break;
-		case IndexBufferUsage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
+			case IndexBufferUsage::STATIC:    return GL_STATIC_DRAW; break;
+			case IndexBufferUsage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
 		}
 
-		CMT_COMET_ASSERT(false, "Unknown index buffer usage");
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown index buffer usage");
 		return 0;
 	}
 

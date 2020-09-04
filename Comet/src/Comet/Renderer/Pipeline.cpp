@@ -10,7 +10,7 @@ namespace Comet
 
     Reference<Pipeline> Pipeline::create(const PipelineSpecification& spec)
     {
-        CMT_COMET_ASSERT(spec.layout.getElements().size(), "Layout is empty");
+        CMT_COMET_ASSERT_MESSAGE(spec.layout.getElements().size(), "Layout is empty");
 
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
@@ -19,7 +19,7 @@ namespace Comet
                 break;
 
             default:
-                CMT_COMET_ASSERT(false, "Unknown GraphicsAPI");
+                CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
                 return nullptr;
                 break;
         }

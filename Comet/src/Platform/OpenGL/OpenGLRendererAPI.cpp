@@ -6,13 +6,26 @@
 namespace Comet
 {
 
+	static GLenum getGLPrimitveType(PrimitiveType primitive)
+	{
+		switch (primitive)
+		{
+			case Comet::PrimitiveType::TRIANGLES:   return GL_TRIANGLES; break;
+			case Comet::PrimitiveType::LINES:       return GL_LINES; break;
+			default:
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown primitive type");
+				return 0;
+				break;
+		}
+	}
+
 	static void OpenGLLogMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 	{
 		switch (severity)
 		{
 			case GL_DEBUG_SEVERITY_HIGH:
 				Log::cometError("[OpenGL Debug HIGH] {0}", message);
-				CMT_COMET_ASSERT(false, "GL_DEBUG_SEVERITY_HIGH");
+				CMT_COMET_ASSERT_MESSAGE(false, "GL_DEBUG_SEVERITY_HIGH");
 				break;
 			case GL_DEBUG_SEVERITY_MEDIUM:
 				Log::cometWarn("[OpenGL Debug MEDIUM] {0}", message);
@@ -70,9 +83,25 @@ namespace Comet
 	{
 	}
 
-	void OpenGLRendererAPI::i_setClearColor(float r, float g, float b, float a)
+	void OpenGLRendererAPI::i_drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest)
 	{
-		glClearColor(r, g, b, a);
+		if (!depthTest)
+			glDisable(GL_DEPTH_TEST);
+
+		glDrawElements(getGLPrimitveType(primitive), count, GL_UNSIGNED_INT, nullptr);
+
+		if (!depthTest)
+			glEnable(GL_DEPTH_TEST);
+	}
+
+	void OpenGLRendererAPI::i_clear()
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::i_setClearColor(const glm::vec4& color)
+	{
+		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
 }

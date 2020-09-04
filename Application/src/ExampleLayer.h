@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 
+#include "glm/glm.hpp"
+
 class ExampleLayer : public Comet::Layer
 {
 public:
@@ -11,7 +13,9 @@ public:
 
 	void onAttach() override 
 	{
-		Comet::RendererAPI::setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		Comet::RendererAPI::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		m_testShader = Comet::Shader::create("assets/shaders/test.glsl");
+		m_testShader->bind();
 	}
 	void onDetach() override {}
 	void onUpdate() override {}
@@ -37,4 +41,7 @@ public:
 
 		ImGui::End();
 	}
+
+private:
+	Comet::Reference<Comet::Shader> m_testShader;
 };

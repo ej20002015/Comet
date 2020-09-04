@@ -4,7 +4,7 @@
 #include "Comet/Events/Event.h"
 #include "glad/glad.h"
 #include "Input.h"
-#include "Comet/Renderer/RendererAPI.h"
+#include "Comet/Renderer/Renderer.h"
 
 //temp
 #include "TriangleLayer.h"
@@ -17,7 +17,7 @@ namespace Comet
 	Application::Application()
 		: m_running(true)
 	{
-		CMT_COMET_ASSERT(!s_instance, "Application already exists");
+		CMT_COMET_ASSERT_MESSAGE(!s_instance, "Application already exists");
 		s_instance = this;
 
 		//Initialise window
@@ -31,8 +31,8 @@ namespace Comet
 		//Initialise input
 		Input::init();
 
-		//Initialise rendererAPI
-		RendererAPI::init();
+		//Initialise renderer
+		Renderer::init();
 
 		//Create triangle layer
 		pushLayer(new TriangleLayer());
@@ -42,8 +42,7 @@ namespace Comet
 	{
 		while (m_running)
 		{
-			//TODO: TEMP
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Renderer::clear();
 
 			for (auto layer : m_layerStack)
 				layer->onUpdate();

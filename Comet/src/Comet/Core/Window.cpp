@@ -15,7 +15,7 @@ namespace Comet
         #ifdef CMT_PLATFORM_WINDOWS
             return createUnique<WindowsWindow>(properties);
         #else
-            CMT_COMET_ASSERT(false, "Unknown platform");
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown platform");
             return nullptr;
         #endif
     }

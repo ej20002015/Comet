@@ -4,7 +4,10 @@
 #include "Layer.h"
 #include "Comet/Renderer/Pipeline.h"
 #include "Comet/Renderer/VertexBuffer.h"
+#include "Comet/Renderer/ShaderDataType.h"
 #include "Comet/Renderer/IndexBuffer.h"
+
+#include "Comet/Renderer/Renderer.h"
 
 #include "glad/glad.h"
 
@@ -18,7 +21,7 @@ namespace Comet
 
 		void onAttach() override
 		{
-			RendererAPI::setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			Renderer::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
 			float triangleVertexData[] = {
 				 0.0f,  0.5f,  0.0f,
@@ -29,7 +32,7 @@ namespace Comet
 
 			PipelineSpecification spec;
 			spec.layout = {
-				{"a_Coordinates", VertexBufferDataType::Float3}
+				{"a_Coordinates", ShaderDataType::Float3}
 			};
 			m_pipeline = Pipeline::create(spec);
 
@@ -46,7 +49,7 @@ namespace Comet
 			m_pipeline->bind();
 			m_ib->bind();
 
-			glDrawElements(GL_TRIANGLES, m_ib->getCount(), GL_UNSIGNED_INT, 0);
+			Renderer::drawIndexed(m_ib->getCount(), PrimitiveType::TRIANGLES);
 		}
 
 	private:

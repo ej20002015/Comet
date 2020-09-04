@@ -6,9 +6,11 @@
 
 //STL Misc files
 #include <iostream>
+#include <fstream>
 #include <cstdint>
 #include <memory>
 #include <functional>
+#include <filesystem>
 
 //STL Data structures
 #include <string>
