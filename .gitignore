@@ -2,6 +2,11 @@
 !vendor/bin/premake/
 bin-int/
 
+#comet files
+**.SPIRVBinary.vert
+**.SPIRVBinary.frag
+**.SPIRVBinary.comp
+
 #log files
 **.log
 

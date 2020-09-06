@@ -1,13 +1,12 @@
 #include "CometPCH.h"
 #include "OpenGLShader.h"
 
-//spir-v/shaderc/SPIRV-Cross
-#include "shaderc/shaderc.hpp"
-#include "spvc/spvc.hpp"
-#include "spirv_cross/spirv_glsl.hpp"
+#include "Platform/SPIR-V/SpirvTools.h"
 
 namespace Comet
 {
+
+	std::unordered_map<uint32_t, UniformBuffer> OpenGLShader::s_uniformBuffers;
 
 	static GLenum getGLShaderType(const std::string& typeToken)
 	{
@@ -47,7 +46,10 @@ namespace Comet
 	void OpenGLShader::reload()
 	{
 		std::string source = getSourceFromFile();
-		load(source);
+		//Split source by the type of shader
+		m_shaderSources = getSeparateShaderSources(source);
+
+		load();
 	}
 
 	void OpenGLShader::bind()
@@ -73,15 +75,50 @@ namespace Comet
 		return source;
 	}
 
-	void OpenGLShader::load(const std::string& source)
-	{
-		//Split source into the types of shaders
-		m_shaderSources = getSeparateShaderSources(source);
-		
-		std::array<std::vector<uint32_t>, 2> vulkanBinaries;
-		getOrCompileVulkanBinaries(vulkanBinaries);
+	void OpenGLShader::load()
+	{	
+		std::array<std::vector<uint32_t>, 2> binaries;
+		SpirvShaderInformation vertexShaderInfo = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, optimisation);
+		SpirvShaderInformation fragmentShaderInfo = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, optimisation);
 
-		reflect(vulkanBinaries);
+		binaries[0] = vertexShaderInfo.binary;
+		binaries[1] = fragmentShaderInfo.binary;
+
+		//TODO: NEEDS TO BE MOVED INTO OWN OpenGLUniformBufferClass
+
+		for (UniformBuffer uniformBuffer : vertexShaderInfo.uniformBuffers)
+		{
+			if (s_uniformBuffers.find(uniformBuffer.getBindingPoint()) == s_uniformBuffers.end())
+			{
+				uint32_t bufferID;
+				glCreateBuffers(1, &bufferID);
+				glNamedBufferData(bufferID, uniformBuffer.getSize(), nullptr, GL_DYNAMIC_DRAW);
+				glBindBufferBase(GL_UNIFORM_BUFFER, uniformBuffer.getBindingPoint(), bufferID);
+				uniformBuffer.setRendererID(bufferID);
+				s_uniformBuffers[uniformBuffer.getBindingPoint()] = uniformBuffer;
+			}
+		}
+
+		glm::vec4 color(0.1f, 0.8f, 0.8f, 1.0f);
+
+		for (UniformBuffer uniformBuffer : fragmentShaderInfo.uniformBuffers)
+		{
+			if (s_uniformBuffers.find(uniformBuffer.getBindingPoint()) == s_uniformBuffers.end())
+			{
+				uint32_t bufferID;
+				glCreateBuffers(1, &bufferID);
+				glNamedBufferData(bufferID, uniformBuffer.getSize(), nullptr, GL_DYNAMIC_DRAW);
+				glBindBufferBase(GL_UNIFORM_BUFFER, uniformBuffer.getBindingPoint(), bufferID);
+				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+				uniformBuffer.setRendererID(bufferID);
+				s_uniformBuffers[uniformBuffer.getBindingPoint()] = uniformBuffer;
+			}
+
+			if (uniformBuffer.getBindingPoint() == 0)
+			{
+				glNamedBufferSubData(uniformBuffer.getRendererID(), 0, uniformBuffer.getSize(), (const void*)&color[0]);
+			}
+		}
 
 		//TODO: update
 
@@ -91,12 +128,12 @@ namespace Comet
 		m_rendererID = glCreateProgram();
 
 		GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-		glShaderBinary(1, &vertexShaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, vulkanBinaries[0].data(), static_cast<GLsizei>(vulkanBinaries[0].size() * sizeof(uint32_t)));
+		glShaderBinary(1, &vertexShaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, binaries[0].data(), static_cast<GLsizei>(binaries[0].size() * sizeof(uint32_t)));
 		glSpecializeShader(vertexShaderID, "main", 0, nullptr, nullptr);
 		glAttachShader(m_rendererID, vertexShaderID);
 
 		GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderBinary(1, &fragmentShaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, vulkanBinaries[1].data(), static_cast<GLsizei>(vulkanBinaries[1].size() * sizeof(uint32_t)));
+		glShaderBinary(1, &fragmentShaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, binaries[1].data(), static_cast<GLsizei>(binaries[1].size() * sizeof(uint32_t)));
 		glSpecializeShader(fragmentShaderID, "main", 0, nullptr, nullptr);
 		glAttachShader(m_rendererID, fragmentShaderID);
 
@@ -121,12 +158,8 @@ namespace Comet
 			glDeleteShader(fragmentShaderID);
 		}
 
-		//getOrCompileOpenGLBinaries(openGLBinaries, vulkanBinaries);
-
 		glDetachShader(m_rendererID, vertexShaderID);
 		glDetachShader(m_rendererID, fragmentShaderID);
-
-		//Create openGL program and shaders
 	}
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::getSeparateShaderSources(const std::string& source)
@@ -165,312 +198,5 @@ namespace Comet
 		CMT_COMET_ASSERT_MESSAGE(shaderSources.size(), "No shader source code found - make sure to label the types of shaders using '#type [shaderType]'")
 		return shaderSources;
 	}
-
-	void OpenGLShader::getOrCompileVulkanBinaries(std::array<std::vector<uint32_t>, 2>& vulkanBinaries)
-	{
-		//See if vulkan binaries have already been generated for this shader, and if so retrieve them
-
-		//Vertex
-		{
-			std::filesystem::path path = m_filepath;
-			path = path.parent_path() / "cached" / (m_name + ".vulkanBinary.vert");
-			std::string cachedBinaryPath = path.string();
-
-			std::ifstream input(cachedBinaryPath, std::ios::binary);
-			if (input)
-			{
-				Log::cometInfo("Retrieving cached shader at {0}", cachedBinaryPath);
-				input.seekg(0, input.end);
-				uint64_t size = static_cast<uint64_t>(input.tellg());
-				input.seekg(0, input.beg);
-
-				vulkanBinaries[0] = std::vector<uint32_t>(size / sizeof(uint32_t));
-				input.read((char*)vulkanBinaries[0].data(), size);
-				input.close();
-			}
-		}
-
-		//Fragment
-		{
-			std::filesystem::path path = m_filepath;
-			path = path.parent_path() / "cached" / (m_name + ".vulkanBinary.frag");
-			std::string cachedBinaryPath = path.string();
-
-			std::ifstream input(cachedBinaryPath, std::ios::binary);
-			if (input)
-			{
-				Log::cometInfo("Retrieving cached shader at {0}", cachedBinaryPath);
-				input.seekg(0, input.end);
-				uint64_t size = static_cast<uint64_t>(input.tellg());
-				input.seekg(0, input.beg);
-
-				vulkanBinaries[1] = std::vector<uint32_t>(size / sizeof(uint32_t));
-				input.read((char*)vulkanBinaries[1].data(), size);
-				input.close();
-			}
-		}
-
-		//If cached vulkan binaries have not be found then create them
-
-		//Vertex
-		if (vulkanBinaries[0].size() == 0)
-		{
-			Log::cometInfo("Compiling and caching shader {0}", m_name);
-			//Compile binary
-			shaderc::Compiler compiler;
-			shaderc::CompileOptions options;
-			options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
-
-			if (optimisation)
-				options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-			const std::string& source = m_shaderSources.at(GL_VERTEX_SHADER);
-			std::string name = m_name + " [VERTEX]";
-			shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderc_vertex_shader, name.c_str(), options);
-
-			if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-			{
-				Log::cometError(result.GetErrorMessage());
-				CMT_COMET_ASSERT(false);
-			}
-
-			vulkanBinaries[0] = std::vector<uint32_t>(result.cbegin(), result.cend());
-
-			//Cache compiled binary
-			std::filesystem::path path = m_filepath;
-			std::filesystem::path cachedDirectoryPath = path.parent_path() / "cached";
-			path = cachedDirectoryPath / (m_name + ".vulkanBinary.vert");
-			std::string cachedBinaryPath = path.string();
-
-			//Create 'cached' directory if it does not exist
-			std::filesystem::create_directory(cachedDirectoryPath);
-
-			std::ofstream output(cachedBinaryPath, std::ios::binary);
-			if (!output)
-			{
-				Log::cometError("Cannot create file to cache shader binary at {0}", cachedBinaryPath);
-				CMT_COMET_ASSERT(false);
-			}
-
-			output.write((char*)vulkanBinaries[0].data(), vulkanBinaries[0].size() * sizeof(uint32_t));
-			output.close();
-		}
-
-		//Fragment
-		if (vulkanBinaries[1].size() == 0)
-		{
-			Log::cometInfo("Compiling and caching shader {0}", m_name);
-			//Compile binary
-			shaderc::Compiler compiler;
-			shaderc::CompileOptions options;
-			options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
-
-			if (optimisation)
-				options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-			const std::string& source = m_shaderSources.at(GL_FRAGMENT_SHADER);
-			std::string name = m_name + " [FRAGMENT]";
-			shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderc_fragment_shader, name.c_str(), options);
-
-			if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-			{
-				Log::cometError(result.GetErrorMessage());
-				CMT_COMET_ASSERT(false);
-			}
-
-			vulkanBinaries[1] = std::vector<uint32_t>(result.cbegin(), result.cend());
-
-			//Cache compiled binary
-			std::filesystem::path path = m_filepath;
-			std::filesystem::path cachedDirectoryPath = path.parent_path() / "cached";
-			path = cachedDirectoryPath / (m_name + ".vulkanBinary.frag");
-			std::string cachedBinaryPath = path.string();
-
-			//Create 'cached' directory if it does not exist
-			std::filesystem::create_directory(cachedDirectoryPath);
-
-			std::ofstream output(cachedBinaryPath, std::ios::binary);
-			if (!output)
-			{
-				Log::cometError("Cannot create file to cache shader binary at {0}", cachedBinaryPath);
-				CMT_COMET_ASSERT(false);
-			}
-
-			output.write((char*)vulkanBinaries[1].data(), vulkanBinaries[1].size() * sizeof(uint32_t));
-			output.close();
-		}
-	}
-
-	void OpenGLShader::reflect(const std::array<std::vector<uint32_t>, 2>& vulkanBinaries)
-	{
-		spirv_cross::CompilerGLSL glsl(vulkanBinaries[0]);
-
-		// The SPIR-V is now parsed, and we can perform reflection on it.
-		spirv_cross::ShaderResources resources = glsl.get_shader_resources();
-
-		// Get all sampled images in the shader.
-		for (auto& resource : resources.uniform_buffers)
-		{
-			unsigned set = glsl.get_decoration(resource.id, spv::DecorationDescriptorSet);
-			unsigned binding = glsl.get_decoration(resource.id, spv::DecorationBinding);
-
-			auto& bufferType = glsl.get_type(resource.base_type_id);
-			int memberCount = bufferType.member_types.size();
-			uint32_t bindingPoint = glsl.get_decoration(resource.id, spv::DecorationBinding);
-			std::string name = resource.name;
-			uint32_t bufferSize = glsl.get_declared_struct_size(bufferType);
-
-
-			Log::cometTrace("Image {0} at set = {1}, binding = {2}", resource.name.c_str(), set, binding);
-
-			//// Modify the decoration to prepare it for GLSL.
-			//glsl.unset_decoration(resource.id, spv::DecorationDescriptorSet);
-
-			//// Some arbitrary remapping if we want.
-			//glsl.set_decoration(resource.id, spv::DecorationBinding, set * 16 + binding);
-		}
-
-		// Set some options.
-		//spirv_cross::CompilerGLSL::Options options;
-		//options.version = 310;
-		//options.es = true;
-		//glsl.set_options(options);
-
-		//// Compile to GLSL, ready to give to GL driver.
-		//std::string source = glsl.compile();
-	}
-
-	//void OpenGLShader::getOrCompileOpenGLBinaries(std::array<std::vector<uint32_t>, 2>& openGLBinaries, const std::array<std::vector<uint32_t>, 2>& vulkanBinaries)
-	//{
-	//	//See if OpenGL binaries have already been generated for this shader, and if so retrieve them
-
-	//	//Vertex
-	//	{
-	//		std::filesystem::path path = m_filepath;
-	//		path = path.parent_path() / "cached" / (m_name + ".OpenGLBinary.vert");
-	//		std::string cachedBinaryPath = path.string();
-
-	//		std::ifstream input(cachedBinaryPath, std::ios::binary);
-	//		if (input)
-	//		{
-	//			input.seekg(0, input.end);
-	//			uint64_t size = static_cast<uint64_t>(input.tellg());
-	//			input.seekg(0, input.beg);
-
-	//			openGLBinaries[0] = std::vector<uint32_t>(size / sizeof(uint32_t));
-	//			input.read((char*)openGLBinaries[0].data(), size);
-	//			input.close();
-	//		}
-	//	}
-
-	//	//Fragment
-	//	{
-	//		std::filesystem::path path = m_filepath;
-	//		path = path.parent_path() / "cached" / (m_name + ".OpenGLBinary.frag");
-	//		std::string cachedBinaryPath = path.string();
-
-	//		std::ifstream input(cachedBinaryPath, std::ios::binary);
-	//		if (input)
-	//		{
-	//			input.seekg(0, input.end);
-	//			uint64_t size = static_cast<uint64_t>(input.tellg());
-	//			input.seekg(0, input.beg);
-
-	//			openGLBinaries[1] = std::vector<uint32_t>(size / sizeof(uint32_t));
-	//			input.read((char*)openGLBinaries[1].data(), size);
-	//			input.close();
-	//		}
-	//	}
-
-	//	//If cached OpenGL binaries have not be found then create them
-
-	//	//Vertex
-	//	if (openGLBinaries[0].size() == 0)
-	//	{
-	//		//Compile binary
-	//		shaderc::Compiler compiler;
-	//		shaderc::CompileOptions options;
-	//		options.SetTargetEnvironment(shaderc_target_env_opengl_compat, shaderc_env_version_opengl_4_5);
-
-	//		if (optimisation)
-	//			options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-	//		//shaderc_spvc::
-
-	//		const std::string& source = m_shaderSources.at(GL_VERTEX_SHADER);
-	//		std::string name = m_name + " [VERTEX]";
-	//		shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderc_vertex_shader, name.c_str(), options);
-
-	//		if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-	//		{
-	//			Log::cometError(result.GetErrorMessage());
-	//			CMT_COMET_ASSERT(false);
-	//		}
-
-	//		openGLBinaries[0] = std::vector<uint32_t>(result.cbegin(), result.cend());
-
-	//		//Cache compiled binary
-	//		std::filesystem::path path = m_filepath;
-	//		std::filesystem::path cachedDirectoryPath = path.parent_path() / "cached";
-	//		path = cachedDirectoryPath / (m_name + ".vulkanBinary.vert");
-	//		std::string cachedBinaryPath = path.string();
-
-	//		//Create 'cached' directory if it does not exist
-	//		std::filesystem::create_directory(cachedDirectoryPath);
-
-	//		std::ofstream output(cachedBinaryPath, std::ios::binary);
-	//		if (!output)
-	//		{
-	//			Log::cometError("Cannot create file to cache shader binary at {0}", cachedBinaryPath);
-	//			CMT_COMET_ASSERT(false);
-	//		}
-
-	//		output.write((char*)vulkanBinaries[0].data(), vulkanBinaries[0].size() * sizeof(uint32_t));
-	//		output.close();
-	//	}
-
-	//	//Fragment
-	//	if (vulkanBinaries[1].size() == 0)
-	//	{
-	//		//Compile binary
-	//		shaderc::Compiler compiler;
-	//		shaderc::CompileOptions options;
-	//		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
-
-	//		if (optimisation)
-	//			options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-	//		const std::string& source = m_shaderSources.at(GL_FRAGMENT_SHADER);
-	//		std::string name = m_name + " [FRAGMENT]";
-	//		shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderc_fragment_shader, name.c_str(), options);
-
-	//		if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-	//		{
-	//			Log::cometError(result.GetErrorMessage());
-	//			CMT_COMET_ASSERT(false);
-	//		}
-
-	//		openGLBinaries[1] = std::vector<uint32_t>(result.cbegin(), result.cend());
-
-	//		//Cache compiled binary
-	//		std::filesystem::path path = m_filepath;
-	//		std::filesystem::path cachedDirectoryPath = path.parent_path() / "cached";
-	//		path = cachedDirectoryPath / (m_name + ".vulkanBinary.frag");
-	//		std::string cachedBinaryPath = path.string();
-
-	//		//Create 'cached' directory if it does not exist
-	//		std::filesystem::create_directory(cachedDirectoryPath);
-
-	//		std::ofstream output(cachedBinaryPath, std::ios::binary);
-	//		if (!output)
-	//		{
-	//			Log::cometError("Cannot create file to cache shader binary at {0}", cachedBinaryPath);
-	//			CMT_COMET_ASSERT(false);
-	//		}
-
-	//		output.write((char*)vulkanBinaries[1].data(), vulkanBinaries[1].size() * sizeof(uint32_t));
-	//		output.close();
-	//	}
-	//}
 
 }

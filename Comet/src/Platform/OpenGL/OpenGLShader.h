@@ -24,11 +24,8 @@ namespace Comet
 
 	private:
 		std::string getSourceFromFile();
-		void load(const std::string& source);
+		void load();
 		std::unordered_map<GLenum, std::string> getSeparateShaderSources(const std::string& source);
-		void getOrCompileVulkanBinaries(std::array<std::vector<uint32_t>, 2>& vulkanBinaries);
-		//void getOrCompileOpenGLBinaries(std::array<std::vector<uint32_t>, 2>& openGLBinaries, const std::array<std::vector<uint32_t>, 2>& vulkanBinaries);
-		void reflect(const std::array<std::vector<uint32_t>, 2>& vulkanBinaries);
 
 	private:
 		RendererID m_rendererID = 0;
@@ -36,6 +33,11 @@ namespace Comet
 		std::string m_filepath;
 		std::unordered_map<GLenum, std::string> m_shaderSources;
 		bool m_isCompute = false;
+
+		static std::unordered_map<uint32_t, UniformBuffer> s_uniformBuffers;
+		std::unordered_map<std::string, UniformStruct> m_uniformStructs;
+		std::unordered_map<std::string, UniformResource> m_resources;
+		std::unordered_map<std::string, GLint> m_uniformLocations;
 	};
 
 }

@@ -8,17 +8,17 @@ namespace Comet
 	{
 		switch (type)
 		{
-		case ShaderDataType::Float:     return 4;
-		case ShaderDataType::Float2:    return 2 * 4;
-		case ShaderDataType::Float3:    return 3 * 4;
-		case ShaderDataType::Float4:    return 4 * 4;
-		case ShaderDataType::Mat3:      return 3 * 3 * 4;
-		case ShaderDataType::Mat4:      return 4 * 4 * 4;
-		case ShaderDataType::Int:       return 4;
-		case ShaderDataType::Int2:      return 2 * 4;
-		case ShaderDataType::Int3:      return 3 * 4;
-		case ShaderDataType::Int4:      return 4 * 4;
-		case ShaderDataType::Bool:      return 1;
+		case ShaderDataType::FLOAT:     return 4;
+		case ShaderDataType::FLOAT2:    return 2 * 4;
+		case ShaderDataType::FLOAT3:    return 3 * 4;
+		case ShaderDataType::FLOAT4:    return 4 * 4;
+		case ShaderDataType::MAT3:      return 3 * 3 * 4;
+		case ShaderDataType::MAT4:      return 4 * 4 * 4;
+		case ShaderDataType::INT:       return 4;
+		case ShaderDataType::INT2:      return 2 * 4;
+		case ShaderDataType::INT3:      return 3 * 4;
+		case ShaderDataType::INT4:      return 4 * 4;
+		case ShaderDataType::BOOL:      return 1;
 
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown Shader Data Type");
@@ -30,17 +30,39 @@ namespace Comet
 	{
 		switch (type)
 		{
-		case ShaderDataType::Float:     return 1;
-		case ShaderDataType::Float2:    return 2;
-		case ShaderDataType::Float3:    return 3;
-		case ShaderDataType::Float4:    return 4;
-		case ShaderDataType::Mat3:      return 3 * 3;
-		case ShaderDataType::Mat4:      return 4 * 4;
-		case ShaderDataType::Int:       return 1;
-		case ShaderDataType::Int2:      return 2;
-		case ShaderDataType::Int3:      return 3;
-		case ShaderDataType::Int4:      return 4;
-		case ShaderDataType::Bool:      return 1;
+		case ShaderDataType::FLOAT:     return 1;
+		case ShaderDataType::FLOAT2:    return 2;
+		case ShaderDataType::FLOAT3:    return 3;
+		case ShaderDataType::FLOAT4:    return 4;
+		case ShaderDataType::MAT3:      return 3 * 3;
+		case ShaderDataType::MAT4:      return 4 * 4;
+		case ShaderDataType::INT:       return 1;
+		case ShaderDataType::INT2:      return 2;
+		case ShaderDataType::INT3:      return 3;
+		case ShaderDataType::INT4:      return 4;
+		case ShaderDataType::BOOL:      return 1;
+
+		default:
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown Shader Data Type");
+			return 0;
+		}
+	}
+
+	std::string getShaderDataTypeString(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::FLOAT:     return "FLOAT";
+		case ShaderDataType::FLOAT2:    return "FLOAT2";
+		case ShaderDataType::FLOAT3:    return "FLOAT3";
+		case ShaderDataType::FLOAT4:    return "FLOAT4";
+		case ShaderDataType::MAT3:      return "MAT3";
+		case ShaderDataType::MAT4:      return "MAT4";
+		case ShaderDataType::INT:       return "INT";
+		case ShaderDataType::INT2:      return "INT2";
+		case ShaderDataType::INT3:      return "INT3";
+		case ShaderDataType::INT4:      return "INT4";
+		case ShaderDataType::BOOL:      return "BOOL";
 
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown Shader Data Type");

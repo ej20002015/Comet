@@ -2,6 +2,7 @@
 #include "CometPCH.h"
 
 #include "Renderer.h"
+#include "UniformBuffer.h"
 
 namespace Comet
 {

@@ -2,22 +2,12 @@
 
 #version 450 core
 
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec2 texCoord;
+layout (location = 0) in vec4 position;
 
-layout (binding = 0) uniform UniformBufferObject
-{
-	mat4 model;
-    mat4 view;
-    mat4 proj;
-} ubo;
-
-layout (location = 2) out vec4 data;
+layout (binding = 1) uniform sampler2D u_color;
 
 void main()
 {
-	vec4 pos = ubo.model * position;
-	data = pos;
 	gl_Position = position;
 }
 
@@ -25,12 +15,14 @@ void main()
 
 #version 450 core
 
-layout (location = 2) in vec4 data;
+layout (binding = 0) uniform UniformBufferObject
+{
+	vec4 color;
+} ubo;
 
 layout(location = 0) out vec4 color;
 
-
 void main()
 {
-	color = vec4(0.8f, 0.2f, 0.1f, 1.0f);
+	color = ubo.color;
 }

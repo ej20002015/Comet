@@ -32,7 +32,7 @@ namespace Comet
 
 			PipelineSpecification spec;
 			spec.layout = {
-				{"a_Coordinates", ShaderDataType::Float3}
+				{"a_Coordinates", ShaderDataType::FLOAT3}
 			};
 			m_pipeline = Pipeline::create(spec);
 

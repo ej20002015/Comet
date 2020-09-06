@@ -10,17 +10,17 @@ namespace Comet
 	{
 		switch (type)
 		{
-			case ShaderDataType::Float:    return GL_FLOAT;
-			case ShaderDataType::Float2:   return GL_FLOAT;
-			case ShaderDataType::Float3:   return GL_FLOAT;
-			case ShaderDataType::Float4:   return GL_FLOAT;
-			case ShaderDataType::Mat3:     return GL_FLOAT;
-			case ShaderDataType::Mat4:     return GL_FLOAT;
-			case ShaderDataType::Int:      return GL_INT;
-			case ShaderDataType::Int2:     return GL_INT;
-			case ShaderDataType::Int3:     return GL_INT;
-			case ShaderDataType::Int4:     return GL_INT;
-			case ShaderDataType::Bool:     return GL_BOOL;
+			case ShaderDataType::FLOAT:    return GL_FLOAT;
+			case ShaderDataType::FLOAT2:   return GL_FLOAT;
+			case ShaderDataType::FLOAT3:   return GL_FLOAT;
+			case ShaderDataType::FLOAT4:   return GL_FLOAT;
+			case ShaderDataType::MAT3:     return GL_FLOAT;
+			case ShaderDataType::MAT4:     return GL_FLOAT;
+			case ShaderDataType::INT:      return GL_INT;
+			case ShaderDataType::INT2:     return GL_INT;
+			case ShaderDataType::INT3:     return GL_INT;
+			case ShaderDataType::INT4:     return GL_INT;
+			case ShaderDataType::BOOL:     return GL_BOOL;
 			
 			default:
 				CMT_COMET_ASSERT_MESSAGE(false, "Unknown Vertex Buffer Data Type");
