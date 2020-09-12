@@ -2,6 +2,7 @@
 #include "CometPCH.h"
 
 #include "Comet/Events/Event.h"
+#include "Comet/Renderer/RenderingContext.h"
 
 namespace Comet
 {
@@ -38,6 +39,7 @@ namespace Comet
 		virtual bool getVSync() const = 0;
 
 		virtual void* getImplementationWindow() const = 0;
+		virtual const RenderingContext& getRenderingContext() const = 0;
 	};
 
 }

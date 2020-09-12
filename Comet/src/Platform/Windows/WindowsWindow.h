@@ -27,6 +27,7 @@ namespace Comet
 		bool getVSync() const override { return m_windowData.VSync; }
 
 		void* getImplementationWindow() const override { return m_window; }
+		const RenderingContext& getRenderingContext() const override{ return *m_context; }
 
 	public:
 		static uint8_t s_GLFWWindowCount;

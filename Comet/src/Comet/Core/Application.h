@@ -38,6 +38,7 @@ namespace Comet
 	private:
 		void run();
 		bool onWindowClosedEvent(WindowClosedEvent& e);
+		bool onWindowResizedEvent(WindowResizedEvent& e);
 
 	private:
 		static Application* s_instance;

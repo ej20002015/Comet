@@ -2,6 +2,9 @@
 #include "CometPCH.h"
 
 #include "Comet/Renderer/shader.h"
+#include "Platform/SPIR-V/SpirvTools.h"
+
+#include "OpenGLUniformBuffer.h"
 
 #include "glad/glad.h"
 
@@ -17,6 +20,11 @@ namespace Comet
 		virtual void reload() override;
 
 		void bind() override;
+
+		virtual void setUniformBuffer(uint32_t bindingPoint, void* data) override;
+		virtual void setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset = 0) override;
+
+		//TODO: HAVE METHODS TO SET UNIFORM STRUCT MEMBERS
 		
 		const std::string& getName() const override { return m_name; }
 		const std::string& getFilepath() const override { return m_filepath; }
@@ -26,6 +34,7 @@ namespace Comet
 		std::string getSourceFromFile();
 		void load();
 		std::unordered_map<GLenum, std::string> getSeparateShaderSources(const std::string& source);
+		void setUpShaderUniformsAndResources();
 
 	private:
 		RendererID m_rendererID = 0;
@@ -34,10 +43,12 @@ namespace Comet
 		std::unordered_map<GLenum, std::string> m_shaderSources;
 		bool m_isCompute = false;
 
-		static std::unordered_map<uint32_t, UniformBuffer> s_uniformBuffers;
-		std::unordered_map<std::string, UniformStruct> m_uniformStructs;
-		std::unordered_map<std::string, UniformResource> m_resources;
-		std::unordered_map<std::string, GLint> m_uniformLocations;
+		std::vector<SpirvShaderInformation> m_shaderInformationVulkan;
+
+		//TODO: MAYBE NOT A MAP?
+		static std::unordered_map<uint32_t, Reference<OpenGLUniformBuffer>> s_uniformBuffers;
+		std::unordered_map<std::string, OpenGLUniformStruct> m_uniformStructs;
+		std::unordered_map<std::string, OpenGLUniformResource> m_resources;
 	};
 
 }

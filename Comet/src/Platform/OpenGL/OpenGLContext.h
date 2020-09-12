@@ -13,7 +13,8 @@ namespace Comet
 	public:
 		OpenGLContext(GLFWwindow* windowHandle);
 		
-		void swapBuffers() override;
+		void swapBuffers() const override;
+		void onResize(uint32_t width, uint32_t height) const override;
 
 	private:
 		GLFWwindow* m_windowHandle;

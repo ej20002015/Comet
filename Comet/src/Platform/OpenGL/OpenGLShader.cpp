@@ -1,12 +1,10 @@
 #include "CometPCH.h"
 #include "OpenGLShader.h"
 
-#include "Platform/SPIR-V/SpirvTools.h"
-
 namespace Comet
 {
 
-	std::unordered_map<uint32_t, UniformBuffer> OpenGLShader::s_uniformBuffers;
+	std::unordered_map<uint32_t, Reference<OpenGLUniformBuffer>> OpenGLShader::s_uniformBuffers;
 
 	static GLenum getGLShaderType(const std::string& typeToken)
 	{
@@ -57,6 +55,36 @@ namespace Comet
 		glUseProgram(m_rendererID);
 	}
 
+	void OpenGLShader::setUniformBuffer(uint32_t bindingPoint, void* data)
+	{
+		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
+		{
+			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
+			Log::cometInfo("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
+			uniformBuffer.setData(data, uniformBuffer.getDescriptor().getSize());
+		}
+		else
+		{
+			Log::cometError("No uniform buffer exists at binding point {0}", bindingPoint);
+			CMT_COMET_ASSERT(false);
+		}
+	}
+
+	void OpenGLShader::setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset)
+	{
+		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
+		{
+			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
+			Log::cometInfo("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
+			uniformBuffer.setData(data, size, offset);
+		}
+		else
+		{
+			Log::cometError("No uniform buffer exists at binding point {0}", bindingPoint);
+			CMT_COMET_ASSERT(false);
+		}
+	}
+
 	std::string OpenGLShader::getSourceFromFile()
 	{
 		std::string source;
@@ -78,47 +106,20 @@ namespace Comet
 	void OpenGLShader::load()
 	{	
 		std::array<std::vector<uint32_t>, 2> binaries;
-		SpirvShaderInformation vertexShaderInfo = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, optimisation);
-		SpirvShaderInformation fragmentShaderInfo = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, optimisation);
 
-		binaries[0] = vertexShaderInfo.binary;
-		binaries[1] = fragmentShaderInfo.binary;
+		//All shaders are written in vulkan so compile vulkan GLSL to spirv and get reflection info
+		SpirvShaderInformation vertexShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::VULKAN, optimisation);
+		m_shaderInformationVulkan.push_back(vertexShaderInfoVulkan);
+		SpirvShaderInformation fragmentShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::VULKAN, optimisation);
+		m_shaderInformationVulkan.push_back(fragmentShaderInfoVulkan);
 
-		//TODO: NEEDS TO BE MOVED INTO OWN OpenGLUniformBufferClass
+		//Get OpenGL source version of the shader code
+		std::string vertexShaderSourceOpenGL = SpirvTools::getOpenGLFromBinary(vertexShaderInfoVulkan.binary);
+		std::string fragmentShaderSourceOpenGL = SpirvTools::getOpenGLFromBinary(fragmentShaderInfoVulkan.binary);
 
-		for (UniformBuffer uniformBuffer : vertexShaderInfo.uniformBuffers)
-		{
-			if (s_uniformBuffers.find(uniformBuffer.getBindingPoint()) == s_uniformBuffers.end())
-			{
-				uint32_t bufferID;
-				glCreateBuffers(1, &bufferID);
-				glNamedBufferData(bufferID, uniformBuffer.getSize(), nullptr, GL_DYNAMIC_DRAW);
-				glBindBufferBase(GL_UNIFORM_BUFFER, uniformBuffer.getBindingPoint(), bufferID);
-				uniformBuffer.setRendererID(bufferID);
-				s_uniformBuffers[uniformBuffer.getBindingPoint()] = uniformBuffer;
-			}
-		}
-
-		glm::vec4 color(0.1f, 0.8f, 0.8f, 1.0f);
-
-		for (UniformBuffer uniformBuffer : fragmentShaderInfo.uniformBuffers)
-		{
-			if (s_uniformBuffers.find(uniformBuffer.getBindingPoint()) == s_uniformBuffers.end())
-			{
-				uint32_t bufferID;
-				glCreateBuffers(1, &bufferID);
-				glNamedBufferData(bufferID, uniformBuffer.getSize(), nullptr, GL_DYNAMIC_DRAW);
-				glBindBufferBase(GL_UNIFORM_BUFFER, uniformBuffer.getBindingPoint(), bufferID);
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
-				uniformBuffer.setRendererID(bufferID);
-				s_uniformBuffers[uniformBuffer.getBindingPoint()] = uniformBuffer;
-			}
-
-			if (uniformBuffer.getBindingPoint() == 0)
-			{
-				glNamedBufferSubData(uniformBuffer.getRendererID(), 0, uniformBuffer.getSize(), (const void*)&color[0]);
-			}
-		}
+		//Get spirv OpenGL code
+		binaries[0] = SpirvTools::compile(vertexShaderSourceOpenGL, m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, optimisation);
+		binaries[1] = SpirvTools::compile(fragmentShaderSourceOpenGL, m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, optimisation);
 
 		//TODO: update
 
@@ -160,6 +161,8 @@ namespace Comet
 
 		glDetachShader(m_rendererID, vertexShaderID);
 		glDetachShader(m_rendererID, fragmentShaderID);
+
+		setUpShaderUniformsAndResources();
 	}
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::getSeparateShaderSources(const std::string& source)
@@ -197,6 +200,41 @@ namespace Comet
 
 		CMT_COMET_ASSERT_MESSAGE(shaderSources.size(), "No shader source code found - make sure to label the types of shaders using '#type [shaderType]'")
 		return shaderSources;
+	}
+
+	void OpenGLShader::setUpShaderUniformsAndResources()
+	{
+		//Loop through all reflected shaders
+
+		for (SpirvShaderInformation shaderInfoVulkan : m_shaderInformationVulkan)
+		{
+
+			//Set up uniform buffers
+
+			for (UniformBufferDescriptor uniformBufferDescriptor : shaderInfoVulkan.uniformBuffers)
+			{
+				if (s_uniformBuffers.find(uniformBufferDescriptor.getBindingPoint()) == s_uniformBuffers.end())
+				{
+					Reference<OpenGLUniformBuffer> uniformBuffer = OpenGLUniformBuffer::create(uniformBufferDescriptor);
+					s_uniformBuffers[uniformBuffer->getDescriptor().getBindingPoint()] = uniformBuffer;
+				}
+			}
+
+			//Set up uniform structs
+
+			for (UniformStructDescriptor uniformStructDescriptor : shaderInfoVulkan.uniformStructs)
+			{
+				OpenGLUniformStruct uniformStruct(uniformStructDescriptor, m_rendererID);
+				m_uniformStructs[uniformStructDescriptor.getName()] = uniformStruct;
+			}
+
+			//TODO: Set up shader resources
+		}
+
+		//TEMP
+		/*glm::vec4 color(0.1f, 0.8f, 0.8f, 1.0f);
+		glUseProgram(m_rendererID);
+		m_uniformStructs.at("ubo").setMemberData("color", true);*/
 	}
 
 }

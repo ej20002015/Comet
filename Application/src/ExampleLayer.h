@@ -11,11 +11,13 @@ class ExampleLayer : public Comet::Layer
 public:
 	ExampleLayer() : Layer("ExampleLayer") {}
 
-	void onAttach() override 
+	void onAttach() override
 	{
 		Comet::RendererAPI::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		m_testShader = Comet::Shader::create("assets/shaders/test.glsl");
 		m_testShader->bind();
+		glm::vec4 color(0.1f, 0.8f, 0.8f, 1.0f);
+		m_testShader->setUniformBuffer(0, &color[0]);
 	}
 	void onDetach() override {}
 	void onUpdate() override {}

@@ -3,9 +3,9 @@
 bin-int/
 
 #comet files
-**.SPIRVBinary.vert
-**.SPIRVBinary.frag
-**.SPIRVBinary.comp
+**.vert
+**.frag
+**.comp
 
 #log files
 **.log
