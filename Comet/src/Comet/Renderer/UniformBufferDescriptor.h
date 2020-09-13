@@ -10,6 +10,7 @@ namespace Comet
 	class UniformDescriptor
 	{
 	public:
+		UniformDescriptor() = default;
 		UniformDescriptor(const std::string & name, ShaderDataType type, uint32_t size)
 			: m_name(name), m_type(type), m_size(size) {}
 
@@ -26,6 +27,7 @@ namespace Comet
 	class UniformBufferElementDescriptor : public UniformDescriptor
 	{
 	public:
+		UniformBufferElementDescriptor() = default;
 		UniformBufferElementDescriptor(const std::string& name, ShaderDataType type, uint32_t size, uint32_t offset)
 			: UniformDescriptor(name, type, size), m_offset(offset) {}
 
@@ -38,7 +40,8 @@ namespace Comet
 	class UniformResourceDescriptor : public UniformDescriptor
 	{
 	public:
-		UniformResourceDescriptor(const std::string & name, ShaderDataType type, uint32_t size, uint32_t bindingPoint)
+		UniformResourceDescriptor() = default;
+		UniformResourceDescriptor(const std::string& name, ShaderDataType type, uint32_t size, uint32_t bindingPoint)
 			: UniformDescriptor(name, type, size), m_bindingPoint(bindingPoint) {}
 
 		uint32_t getBindingPoint() const { return m_bindingPoint; }

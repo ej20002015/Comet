@@ -228,13 +228,14 @@ namespace Comet
 				m_uniformStructs[uniformStructDescriptor.getName()] = uniformStruct;
 			}
 
-			//TODO: Set up shader resources
-		}
+			//Set up shader resources
 
-		//TEMP
-		/*glm::vec4 color(0.1f, 0.8f, 0.8f, 1.0f);
-		glUseProgram(m_rendererID);
-		m_uniformStructs.at("ubo").setMemberData("color", true);*/
+			for (UniformResourceDescriptor uniformResourceDescriptor : shaderInfoVulkan.uniformResources)
+			{
+				OpenGLUniformResource uniformResource(uniformResourceDescriptor, m_rendererID);
+				m_resources[uniformResourceDescriptor.getName()] = uniformResource;
+			}
+		}
 	}
 
 }

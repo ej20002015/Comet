@@ -37,8 +37,14 @@ namespace Comet
 		//Retrieve locations of uniform struct members
 		for (UniformDescriptor member : descriptor)
 		{
-			std::string memberName = getMemberFullName(member.getName());
-			m_locations[memberName] = glGetUniformLocation(programID, memberName.c_str());
+			std::string memberFullName = getMemberFullName(member.getName());
+			GLint location = glGetUniformLocation(programID, memberFullName.c_str());
+			if (location == -1)
+			{
+				Log::cometError("Cannot get location of uniform {0}", m_descriptor.getName());
+				CMT_COMET_ASSERT(false);
+			}
+			m_locations[memberFullName] = location;
 		}
 	}
 
@@ -218,6 +224,22 @@ namespace Comet
 		std::stringstream ss;
 		ss << m_descriptor.getName() << "." << memberName;
 		return ss.str();
+	}
+
+	OpenGLUniformResource::OpenGLUniformResource(const UniformResourceDescriptor& descriptor, RendererID programID)
+		: m_descriptor(descriptor)
+	{
+		GLint location = glGetUniformLocation(programID, m_descriptor.getName().c_str());
+		if (location == -1)
+		{
+			Log::cometError("Cannot get location of uniform {0}", m_descriptor.getName());
+			CMT_COMET_ASSERT(false);
+		}
+		else
+		{
+			glUseProgram(programID);
+			glUniform1i(location, m_descriptor.getBindingPoint());
+		}
 	}
 
 }

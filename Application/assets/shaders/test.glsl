@@ -4,8 +4,6 @@
 
 layout (location = 0) in vec4 position;
 
-layout (binding = 1) uniform sampler2D u_color;
-
 void main()
 {
 	gl_Position = position;
@@ -15,14 +13,17 @@ void main()
 
 #version 450 core
 
-layout (binding = 0) uniform UniformBufferObject
+layout (push_constant) uniform UniformBufferObject
 {
 	vec4 color;
 } ubo;
 
 layout(location = 0) out vec4 color;
 
+layout (binding = 0) uniform sampler2D u_color;
+
 void main()
 {
 	color = ubo.color;
+	color += texture(u_color, vec2(0.0f, 0.0f));
 }

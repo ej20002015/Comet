@@ -32,8 +32,8 @@ namespace Comet
 	class OpenGLUniformResource : public UniformResource
 	{
 	public:
-		OpenGLUniformResource(const UniformResourceDescriptor& descriptor)
-			: m_descriptor(descriptor) {}
+		OpenGLUniformResource(const UniformResourceDescriptor& descriptor, RendererID programID);
+		OpenGLUniformResource() = default;
 
 		const UniformResourceDescriptor& getDescriptor() const override { return m_descriptor; }
 
@@ -47,20 +47,20 @@ namespace Comet
 		OpenGLUniformStruct(const UniformStructDescriptor& descriptor, const RendererID programID);
 		OpenGLUniformStruct() = default;
 
-		void setMemberData(const std::string& memberName, float data);
-		void setMemberData(const std::string& memberName, glm::vec2 data);
-		void setMemberData(const std::string& memberName, glm::vec3 data);
-		void setMemberData(const std::string& memberName, glm::vec4 value);
+		void setMemberData(const std::string& memberName, float data) override;
+		void setMemberData(const std::string& memberName, glm::vec2 data) override;
+		void setMemberData(const std::string& memberName, glm::vec3 data) override;
+		void setMemberData(const std::string& memberName, glm::vec4 data) override;
 
-		void setMemberData(const std::string& memberName, glm::mat3 value);
-		void setMemberData(const std::string& memberName, glm::mat4 value);
+		void setMemberData(const std::string& memberName, glm::mat3 data) override;
+		void setMemberData(const std::string& memberName, glm::mat4 data) override;
 
-		void setMemberData(const std::string& memberName, int32_t value);
-		void setMemberData(const std::string& memberName, glm::ivec2 value);
-		void setMemberData(const std::string& memberName, glm::ivec3 value);
-		void setMemberData(const std::string& memberName, glm::ivec4 value);
+		void setMemberData(const std::string& memberName, int32_t data) override;
+		void setMemberData(const std::string& memberName, glm::ivec2 data) override;
+		void setMemberData(const std::string& memberName, glm::ivec3 data) override;
+		void setMemberData(const std::string& memberName, glm::ivec4 data) override;
 
-		void setMemberData(const std::string& memberName, bool value);
+		void setMemberData(const std::string& memberName, bool data) override;
 
 		const UniformStructDescriptor& getDescriptor() const override { return m_descriptor; }
 

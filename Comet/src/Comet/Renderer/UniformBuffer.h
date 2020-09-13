@@ -31,6 +31,21 @@ namespace Comet
 	public:
 		virtual ~UniformStruct() = default;
 
+		virtual void setMemberData(const std::string& memberName, float data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::vec2 data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::vec3 data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::vec4 data) = 0;
+
+		virtual void setMemberData(const std::string& memberName, glm::mat3 data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::mat4 data) = 0;
+
+		virtual void setMemberData(const std::string& memberName, int32_t data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::ivec2 data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::ivec3 data) = 0;
+		virtual void setMemberData(const std::string& memberName, glm::ivec4 data) = 0;
+
+		virtual void setMemberData(const std::string& memberName, bool data) = 0;
+
 		virtual const UniformStructDescriptor& getDescriptor() const = 0;
 	};
 

@@ -19,8 +19,6 @@ namespace Comet
 		COMPUTE
 	};
 
-
-	//TODO: USING UNIFORM BUFFER OBJECTS CURRENTLY - PERHAPS HAVE SPIRV SPECIFIC DESCRIPTORS
 	struct SpirvShaderInformation
 	{
 		std::vector<uint32_t> binary;

@@ -290,6 +290,16 @@ namespace Comet
 				Log::cometTrace("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
 			}
 		}
+
+		//Get all uniform samplers from the shader
+		for (auto& resource : resources.sampled_images)
+		{
+			const spirv_cross::SPIRType& samplerType = compiler.get_type(resource.base_type_id);
+			uint32_t samplerDimension = samplerType.image.dim;
+			std::string samplerName = resource.name;
+			uint32_t samplerBindingPoint = compiler.get_decoration(resource.id, spv::DecorationBinding);
+			shaderInfo.uniformResources.emplace_back(samplerName, ShaderDataType::INT, 4, samplerBindingPoint);
+		}
 	}
 
 }
