@@ -15,7 +15,3 @@
 
 //Renderer
 #include "Comet/Renderer/Renderer.h"
-
-//TEMP
-
-#include "Comet/Renderer/Shader.h"

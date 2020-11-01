@@ -19,6 +19,7 @@ includeDirectories["ImGui"] = "Comet/Vendor/ImGui"
 includeDirectories["GLM"] = "Comet/Vendor/GLM"
 includeDirectories["shaderc"] = "Comet/Vendor/shaderc/include"
 includeDirectories["SPIRVCross"] = "Comet/Vendor/SPIRV-Cross/include"
+includeDirectories["stb"] = "Comet/Vendor/stb/include"
 
 libDirectories = {}
 libDirectories["shaderc"] = "Vendor/shaderc/bin"
@@ -64,7 +65,8 @@ project "Comet"
         "%{includeDirectories.ImGui}",
         "%{includeDirectories.shaderc}",
         "%{includeDirectories.SPIRVCross}",
-        "%{includeDirectories.GLM}"
+        "%{includeDirectories.GLM}",
+        "%{includeDirectories.stb}"
     }
 
     links

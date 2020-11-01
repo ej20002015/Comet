@@ -13,8 +13,8 @@ namespace Comet
 	{
 		switch (type)
 		{
-		case ShaderEnvironment::VULKAN:     return ".VulkanBinary";  break;
-		case ShaderEnvironment::OPENGL:     return ".OpenGLBinary"; break;
+		case ShaderEnvironment::VULKAN:   return ".VulkanBinary";  break;
+		case ShaderEnvironment::OPENGL:   return ".OpenGLBinary"; break;
 		default:
 			Log::cometError("Unkown shader environment");
 			CMT_COMET_ASSERT(false);

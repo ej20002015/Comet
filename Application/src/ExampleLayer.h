@@ -13,21 +13,10 @@ public:
 
 	void onAttach() override
 	{
-		Comet::RendererAPI::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-		m_testShader = Comet::Shader::create("assets/shaders/test.glsl");
-		m_color = { 0.1f, 0.8f, 0.8f, 1.0f };
-		x = 0;
 	}
 	void onDetach() override {}
 	void onUpdate() override 
 	{
-		float r = (glm::sin(x) + 1) * 0.5;
-		float g = (glm::sin(x + 0.5) + 1) * 0.5;
-		float b = (glm::sin(x + 1.0) + 1) * 0.5;
-		m_color = { r, g, b, 1.0f };
-		m_testShader->bind();
-		m_testShader->setUniformData("ubo.color", m_color);
-		x += 0.005f;
 	}
 	//void onEvent(Comet::Event& e) override { Comet::Log::clientInfo("{0} event: {1}", m_name, e); }
 
@@ -51,9 +40,4 @@ public:
 
 		ImGui::End();
 	}
-
-private:
-	Comet::Reference<Comet::Shader> m_testShader;
-	glm::vec4 m_color;
-	float x;
 };
