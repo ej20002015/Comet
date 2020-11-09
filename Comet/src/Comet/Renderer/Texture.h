@@ -51,6 +51,7 @@ namespace Comet
 	public:
 		virtual ~TextureCube() = default;
 
+		static Reference<TextureCube> create(const TextureFormat textureFormat, const uint32_t width, const uint32_t height);
 		static Reference<TextureCube> create(const std::string& filepath, const bool SRGB = false);
 
 		virtual const std::string& getFilepath() const = 0;

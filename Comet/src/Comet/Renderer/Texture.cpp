@@ -48,6 +48,21 @@ namespace Comet
         }
     }
 
+    Reference<TextureCube> TextureCube::create(const TextureFormat textureFormat, const uint32_t width, const uint32_t height)
+    {
+        switch (RendererAPI::getCurrrentRendererAPIType())
+        {
+        case RendererAPIType::OPENGL:
+            return createReference<OpenGLTextureCube>(textureFormat, width, height);
+            break;
+
+        default:
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+            return nullptr;
+            break;
+        }
+    }
+
     Reference<TextureCube> TextureCube::create(const std::string& filepath, const bool SRGB)
     {
         CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");

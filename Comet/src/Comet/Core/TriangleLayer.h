@@ -49,6 +49,7 @@ namespace Comet
 			m_x = 0;
 
 			m_texture = Texture2D::create("assets/textures/container2.png");
+			m_cubeMap = TextureCube::create("assets/cubeMaps/skyBox.jpg");
 		}
 		void onDetach() override {}
 		void onUpdate() override 
@@ -75,6 +76,7 @@ namespace Comet
 		Reference<IndexBuffer> m_ib;
 		Reference<Shader> m_shader;
 		Reference<Texture2D> m_texture;
+		Reference<TextureCube> m_cubeMap;
 		glm::vec4 m_color;
 		float m_x;
 	};

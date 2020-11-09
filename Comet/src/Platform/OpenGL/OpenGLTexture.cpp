@@ -105,7 +105,7 @@ namespace Comet
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
 
 		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		GLenum textureWrap = getGLTextureWrap(wrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, textureWrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, textureWrap);
@@ -140,16 +140,188 @@ namespace Comet
 		glBindTextureUnit(slot, m_rendererID);
 	}
 
-	OpenGLTextureCube::OpenGLTextureCube(const std::string& filepath, const bool SRGB)
+	//NEEDS TO BE TESTED FULLY - SEEMS TO BE WORKING
+
+	OpenGLTextureCube::OpenGLTextureCube(const TextureFormat textureFormat, const uint32_t width, const uint32_t height)
+		: m_textureFormat(textureFormat), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath("NONE")
 	{
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_rendererID);
+
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameterf(m_rendererID, GL_TEXTURE_MAX_ANISOTROPY, RendererAPI::getCapabilities().maxAnisotropy);
+
+		GLenum glTextureFormat = getGLInternalTextureFormat(textureFormat);
+		m_HDR = glTextureFormat == GL_RGBA16F;
+		glTextureStorage2D(m_rendererID, m_mipMapLevels, glTextureFormat, width, height);
+	}
+
+	OpenGLTextureCube::OpenGLTextureCube(const std::string& filepath, const bool SRGB)
+		: m_filepath(filepath), m_SRGB(SRGB)
+	{
+		int32_t width, height, BPP;
+		void* imageData;
+
+		//openGL expects pixels to start at bottom left so y direction needs to be flipped
+		stbi_set_flip_vertically_on_load(1);
+
+		if (stbi_is_hdr(filepath.c_str()))
+		{
+			Log::cometInfo("Loading HDR Cube Map Texture {0}, SRGB = {1}", filepath, SRGB);
+			imageData = stbi_loadf(filepath.c_str(), &width, &height, &BPP, 0);
+			m_HDR = true;
+			m_textureFormat = TextureFormat::FLOAT16;
+		}
+		else
+		{
+			int32_t requiredChannels;;
+			Log::cometInfo("Loading SDR Cube Map Texture {0}, SRGB = {1}", filepath, SRGB);
+
+			if (SRGB)
+			{
+				requiredChannels = STBI_rgb;
+				m_textureFormat = TextureFormat::RGB;
+			}
+			else
+			{
+				requiredChannels = STBI_rgb_alpha;
+				m_textureFormat = TextureFormat::RGBA;
+			}
+
+			imageData = stbi_load(filepath.c_str(), &width, &height, &BPP, requiredChannels);
+			m_HDR = false;
+		}
+
+		if (!imageData)
+		{
+			Log::cometError("{0} Cube Map Texture could not be loaded - {1}", filepath, stbi_failure_reason());
+			CMT_COMET_ASSERT(false);
+			return;
+		}
+
+		m_localData = Buffer::create(imageData, width * height * BPP);
+		m_width = width;
+		m_height = height;
+
+		uint32_t faceWidth = width / 4;
+		uint32_t faceHeight = height / 3;
+		if (faceWidth != faceHeight)
+		{
+			Log::cometError("{0} Cube Map Texture does not have square faces", filepath);
+			CMT_COMET_ASSERT(false);
+			return;
+		}
+
+		//Allocate space for each separate face
+		std::array<uint8_t*, 6> faces;
+		for (uint32_t i = 0; i < 6; ++i)
+			faces[i] = new uint8_t[faceWidth * faceHeight * BPP];
+
+		uint32_t faceIndex = 0;
+
+		//Get Image data for the 4 horizontally arranged cube faces
+		uint32_t yTopLeft = faceHeight;
+		uint32_t xTopLeft = 0;
+		for (uint32_t i = 0; i < 4; ++i)
+		{
+			for (uint32_t y = 0; y < faceHeight; ++y)
+			{
+				for (uint32_t x = 0; x < faceWidth; ++x)
+				{
+					for (int32_t b = 0; b < BPP; ++b)
+						faces[faceIndex][(y * faceWidth) + x + b] = (*m_localData)[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
+				}
+			}
+			xTopLeft += faceWidth;
+			++faceIndex;
+		}
+
+		//Get image data for the remaining 2 vertically arranged cube faces
+		yTopLeft = 0;
+		xTopLeft = faceWidth * 2;
+		for (uint32_t i = 0; i < 3; ++i)
+		{
+			//Skip middle face as this data has already been pulled
+			if (i == 1)
+			{
+				yTopLeft += faceHeight;
+				continue;
+			}
+
+			for (uint32_t y = 0; y < faceHeight; ++y)
+			{
+				for (uint32_t x = 0; x < faceWidth; ++x)
+				{
+					for (int32_t b = 0; b < BPP; ++b)
+						faces[faceIndex][(y * faceWidth) + x + b] = (*m_localData)[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
+				}
+			}
+
+			yTopLeft += faceHeight;
+			++faceIndex;
+		}
+
+
+		m_mipMapLevels = Texture::calculateMipMapLevelsNeeded(width, height);
+
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_rendererID);
+
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameterf(m_rendererID, GL_TEXTURE_MAX_ANISOTROPY, RendererAPI::getCapabilities().maxAnisotropy);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
+
+		if (SRGB)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[2]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[0]);
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[4]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[5]);
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[1]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[3]);
+		}
+		else
+		{
+			GLenum dataType = (m_HDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[2]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[0]);
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[4]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[5]);
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[1]);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[3]);
+		}
+
+		glGenerateTextureMipmap(m_rendererID);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		for (uint32_t i = 0; i < 6; ++i)
+			delete[] faces[i];
+
+		if (imageData)
+			stbi_image_free(imageData);
 	}
 
 	OpenGLTextureCube::~OpenGLTextureCube()
 	{
+		glDeleteTextures(1, &m_rendererID);
 	}
 
 	void OpenGLTextureCube::bind(const uint32_t slot) const
 	{
+		glBindTextureUnit(slot, m_rendererID);
 	}
 
 }

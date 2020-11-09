@@ -41,6 +41,7 @@ namespace Comet
 	class OpenGLTextureCube : public TextureCube
 	{
 	public:
+		OpenGLTextureCube(const TextureFormat textureFormat, const uint32_t width, const uint32_t height);
 		OpenGLTextureCube(const std::string& filepath, const bool SRGB = false);
 		~OpenGLTextureCube() override;
 
