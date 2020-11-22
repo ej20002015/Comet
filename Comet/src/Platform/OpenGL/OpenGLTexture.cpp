@@ -203,11 +203,11 @@ namespace Comet
 		}
 
 		m_localData = Buffer::create(imageData, width * height * BPP);
-		m_width = width;
-		m_height = height;
 
 		uint32_t faceWidth = width / 4;
 		uint32_t faceHeight = height / 3;
+		m_width = faceWidth;
+		m_height = faceHeight;
 		if (faceWidth != faceHeight)
 		{
 			Log::cometError("{0} Cube Map Texture does not have square faces", filepath);

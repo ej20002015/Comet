@@ -8,6 +8,7 @@
 #include "Comet/Renderer/IndexBuffer.h"
 #include "Comet/Renderer/Shader.h"
 #include "Comet/Renderer/Texture.h"
+#include "Comet/Renderer/Framebuffer.h"
 
 #include "Comet/Renderer/Renderer.h"
 
@@ -50,6 +51,11 @@ namespace Comet
 
 			m_texture = Texture2D::create("assets/textures/container2.png");
 			m_cubeMap = TextureCube::create("assets/cubeMaps/skyBox.jpg");
+
+			FramebufferSpecification framebufferSpecification;
+			framebufferSpecification.samples = 8;
+			framebufferSpecification.format = FramebufferFormat::FLOAT16;
+			m_framebuffer = Framebuffer::create(framebufferSpecification);
 		}
 		void onDetach() override {}
 		void onUpdate() override 
@@ -77,6 +83,7 @@ namespace Comet
 		Reference<Shader> m_shader;
 		Reference<Texture2D> m_texture;
 		Reference<TextureCube> m_cubeMap;
+		Reference<Framebuffer> m_framebuffer;
 		glm::vec4 m_color;
 		float m_x;
 	};
