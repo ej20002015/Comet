@@ -6,6 +6,8 @@
 namespace Comet
 {
 
+	//TODO: Create getters for the color and depth attachments' formats
+
 	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:
@@ -17,16 +19,21 @@ namespace Comet
 
 		void resize(uint32_t width, uint32_t height, bool forceRecreate = false) override;
 
-		void bindColorTexture(uint32_t slot) const override;
+		void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const override;
+		void bindDepthTexture(uint32_t slot = 0) const override;
 
 		RendererID getRendererID() const override { return m_rendererID; };
-		RendererID getColorAttachmentRendererID() const override { return m_colorAttachmentRendererID; }
+
+		RendererID getColorAttachmentRendererID(uint32_t attachmentIndex = 0) const override { return m_colorAttachmentsRendererID[attachmentIndex]; }
 		RendererID getDepthAttachmentRendererID() const override { return m_depthAttachmentRendererID; }
 
 		const FramebufferSpecification& getSpecification() const override { return m_specification; }
 
 	private:
-		RendererID m_rendererID = 0, m_colorAttachmentRendererID = 0, m_depthAttachmentRendererID = 0;
+		RendererID m_rendererID = 0;
+		std::vector<RendererID> m_colorAttachmentsRendererID;
+		RendererID m_depthAttachmentRendererID = 0;
+
 		FramebufferSpecification m_specification;
 	};
 

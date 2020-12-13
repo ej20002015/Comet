@@ -54,7 +54,6 @@ namespace Comet
 
 			FramebufferSpecification framebufferSpecification;
 			framebufferSpecification.samples = 8;
-			framebufferSpecification.format = FramebufferFormat::FLOAT16;
 			m_framebuffer = Framebuffer::create(framebufferSpecification);
 		}
 		void onDetach() override {}

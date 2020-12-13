@@ -7,9 +7,34 @@
 namespace Comet
 {
 
-	enum class FramebufferFormat
+	enum class FramebufferColorAttachmentFormat
 	{
-		RGBA, FLOAT16
+		RGBA8,
+		RGBA16F,
+		RGBA32F
+	};
+
+	enum class FramebufferDepthAttachmentFormat
+	{
+		DEPTH24STENCIL8
+	};
+
+	struct FramebufferColorAttachmentsSpecification
+	{
+		FramebufferColorAttachmentsSpecification() = default;
+		FramebufferColorAttachmentsSpecification(const std::initializer_list<FramebufferColorAttachmentFormat>& attachments) : attachments(attachments) {}
+
+		std::vector<FramebufferColorAttachmentFormat> attachments;
+	};
+
+	struct FramebufferDepthAttachmentSpecification
+	{
+		FramebufferDepthAttachmentSpecification() = default;
+		FramebufferDepthAttachmentSpecification(FramebufferDepthAttachmentFormat attachment) : attachment(attachment) {}
+
+		FramebufferDepthAttachmentSpecification& operator= (const FramebufferDepthAttachmentFormat& attachment);
+
+		FramebufferDepthAttachmentFormat attachment;
 	};
 
 	struct FramebufferSpecification
@@ -17,11 +42,11 @@ namespace Comet
 		uint32_t width = 1280;
 		uint32_t height = 720;
 		glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-		FramebufferFormat format = FramebufferFormat::RGBA;
+		FramebufferColorAttachmentsSpecification colorAttachments = { FramebufferColorAttachmentFormat::RGBA16F };
+		FramebufferDepthAttachmentSpecification depthAttachment = FramebufferDepthAttachmentFormat::DEPTH24STENCIL8;
 		uint32_t samples = 1;
 
-		//If true then render to the screen
-		bool swapChainTarget = false;
+		bool resize = true;
 	};
 
 	class Framebuffer
@@ -36,10 +61,12 @@ namespace Comet
 
 		virtual void resize(uint32_t width, uint32_t height, bool forceRecreate = false) = 0;
 
-		virtual void bindColorTexture(uint32_t slot = 0) const = 0;
+		virtual void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const = 0;
+		virtual void bindDepthTexture(uint32_t slot = 0) const = 0;
 
 		virtual RendererID getRendererID() const = 0;
-		virtual RendererID getColorAttachmentRendererID() const = 0;
+
+		virtual RendererID getColorAttachmentRendererID(uint32_t attachmentIndex = 0) const = 0;
 		virtual RendererID getDepthAttachmentRendererID() const = 0;
 
 		virtual const FramebufferSpecification& getSpecification() const = 0;
@@ -51,7 +78,7 @@ namespace Comet
 		FramebufferPool(uint32_t maxPoolSize = 32);
 
 		void add(const Reference<Framebuffer>& framebuffer);
-		void static addToGlobalPool(const Reference<Framebuffer>& framebuffer);
+		static void addToGlobalPool(const Reference<Framebuffer>& framebuffer);
 
 		const std::vector<Reference<Framebuffer>>& getPool() const { return m_pool; }
 		static const std::vector<Reference<Framebuffer>>& getGlobalPool() { return s_instance->getPool(); }

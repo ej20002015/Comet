@@ -6,6 +6,13 @@
 namespace Comet
 {
 
+    FramebufferDepthAttachmentSpecification& FramebufferDepthAttachmentSpecification::operator= (const FramebufferDepthAttachmentFormat& attachment)
+    {
+        this->attachment = attachment;
+
+        return *this;
+    }
+
     Reference<Framebuffer> Framebuffer::create(const FramebufferSpecification& specification)
     {
         switch (RendererAPI::getCurrrentRendererAPIType())
