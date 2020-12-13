@@ -13,6 +13,7 @@ namespace Comet
         case RendererAPIType::OPENGL:
             return createReference<OpenGLRenderPass>(specification);
             break;
+
         default:
             CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
             return nullptr;
