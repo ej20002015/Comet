@@ -9,7 +9,6 @@ namespace Comet
     FramebufferDepthAttachmentSpecification& FramebufferDepthAttachmentSpecification::operator= (const FramebufferDepthAttachmentFormat& attachment)
     {
         this->attachment = attachment;
-
         return *this;
     }
 
