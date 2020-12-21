@@ -31,6 +31,21 @@ namespace Comet
 		}
     }
 
+    Reference<Texture2D> Texture2D::create(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap)
+    {
+        switch (RendererAPI::getCurrrentRendererAPIType())
+        {
+        case RendererAPIType::OPENGL:
+            return createReference<OpenGLTexture2D>(format, width, height, wrap);
+            break;
+
+        default:
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+            return nullptr;
+            break;
+        }
+    }
+
     Reference<Texture2D> Texture2D::create(const std::string& filepath, const bool SRGB, const TextureWrap wrap)
     {
         CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");

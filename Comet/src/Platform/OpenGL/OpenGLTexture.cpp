@@ -53,8 +53,26 @@ namespace Comet
 		}
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap)
+		: m_textureFormat(format), m_textureWrap(wrap), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath("NONE"), m_localData(nullptr)
+	{
+		m_HDR = m_textureFormat == TextureFormat::FLOAT16;
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
+
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		GLenum textureWrap = getGLTextureWrap(wrap);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, textureWrap);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, textureWrap);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_R, textureWrap);
+		glTextureParameterf(m_rendererID, GL_TEXTURE_MAX_ANISOTROPY, RendererAPI::getCapabilities().maxAnisotropy);
+
+		glTextureStorage2D(m_rendererID, m_mipMapLevels, getGLInternalTextureFormat(m_textureFormat), width, height);
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, const bool SRGB, const TextureWrap wrap)
-		: m_textureWrap(wrap), m_filepath(filepath), m_SRGB(SRGB)
+		: m_textureWrap(wrap), m_width(0), m_height(0), m_mipMapLevels(0), m_SRGB(SRGB), m_filepath(filepath)
 	{
 		int32_t width, height, BPP;
 		void* imageData;
@@ -138,6 +156,21 @@ namespace Comet
 	void OpenGLTexture2D::bind(const uint32_t slot) const
 	{
 		glBindTextureUnit(slot, m_rendererID);
+	}
+
+	void OpenGLTexture2D::setData(void* data, uint32_t size)
+	{
+		if (size > m_width * m_height * Texture::getBPP(m_textureFormat))
+		{
+			Log::cometError("Texture data overflow");
+			CMT_COMET_ASSERT(false);
+			return;
+		}
+
+		m_localData = Buffer::create(data, size);
+
+		GLenum dataType = (m_HDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
+		glTextureSubImage2D(m_rendererID, 0, 0, 0, m_height, m_width, getGLTextureFormat(m_textureFormat), dataType, data);
 	}
 
 	//NEEDS TO BE TESTED FULLY - SEEMS TO BE WORKING

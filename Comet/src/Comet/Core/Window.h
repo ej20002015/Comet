@@ -29,7 +29,7 @@ namespace Comet
 
 		virtual ~Window() = default;
 
-		virtual void onUpdate() = 0;
+		virtual void onUpdate(Timestep ts) = 0;
 
 		virtual uint32_t getWidth() const = 0;
 		virtual uint32_t getHeight() const = 0;
@@ -37,6 +37,8 @@ namespace Comet
 		virtual void setEventCallback(const EventCallbackFunction& callbackFunction) = 0;
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool getVSync() const = 0;
+
+		virtual float getWindowTime() const = 0;
 
 		virtual void* getImplementationWindow() const = 0;
 		virtual const RenderingContext& getRenderingContext() const = 0;

@@ -12,6 +12,8 @@
 #include "Comet/Events/ApplicationEvent.h"
 #include "Comet/Events/KeyboardEvent.h"
 #include "Comet/Events/MouseEvent.h"
+#include "Comet/Core/Timestep.h"
 
 //Renderer
 #include "Comet/Renderer/Renderer.h"
+#include "Comet/Renderer/Renderer2D.h"

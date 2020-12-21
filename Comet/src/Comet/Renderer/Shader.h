@@ -1,7 +1,7 @@
 #pragma once
 #include "CometPCH.h"
 
-#include "Renderer.h"
+#include "RendererAPI.h"
 #include "UniformBuffer.h"
 
 namespace Comet

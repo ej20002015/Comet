@@ -49,6 +49,7 @@ namespace Comet
 		std::unordered_map<GLenum, std::string> getSeparateShaderSources(const std::string& source);
 		void setUpShaderUniformsAndResources();
 		
+		//TODO: Support 'nested' structs
 		template<typename T>
 		void setUniformDataTemplate(const std::string& uniformName, T data)
 		{

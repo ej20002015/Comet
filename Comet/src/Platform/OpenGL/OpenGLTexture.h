@@ -10,10 +10,13 @@ namespace Comet
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
+		OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap = TextureWrap::CLAMP_TO_EDGE);
 		OpenGLTexture2D(const std::string& filepath, const bool SRGB = false, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
 		~OpenGLTexture2D() override;
 
 		void bind(const uint32_t slot = 0) const override;
+
+		void setData(void* data, uint32_t size) override;
 
 		TextureFormat getTextureFormat() const override { return m_textureFormat; }
 		uint32_t getWidth() const override { return m_width; }

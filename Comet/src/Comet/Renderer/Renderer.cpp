@@ -1,6 +1,8 @@
 #include "CometPCH.h"
 #include "Renderer.h"
 
+#include "Renderer2D.h"
+
 namespace Comet
 {
 
@@ -10,6 +12,13 @@ namespace Comet
 	void Renderer::init()
 	{
 		RendererAPI::init();
+		Renderer2D::init();
+	}
+
+	void Renderer::shutdown()
+	{
+		Renderer2D::shutdown();
+		RendererAPI::shutdown();
 	}
 
 	void Renderer::setClearColor(const glm::vec4& color)

@@ -3,6 +3,7 @@
 //Comet files
 #include "Comet/Core/Log.h"
 #include "Comet/Core/Core.h"
+#include "Comet/Core/Timestep.h"
 
 //STL Misc files
 #include <iostream>

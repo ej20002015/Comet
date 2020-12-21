@@ -23,6 +23,7 @@ namespace Comet
 		//Initialise window
 		m_window = Unique<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
+		//m_window->setVSync(false);
 
 		//Create ImGui Layer
 		m_ImGuiLayer = new ImGuiLayer;
@@ -33,19 +34,26 @@ namespace Comet
 
 		//Initialise renderer
 		Renderer::init();
+	}
 
-		//Create triangle layer
-		pushLayer(new TriangleLayer());
+	Application::~Application()
+	{
+		Renderer::shutdown();
 	}
 
 	void Application::run()
 	{
 		while (m_running)
 		{
+			//Calculate timestep
+			float currentTime = m_window->getWindowTime();
+			Timestep ts(currentTime - m_timeAtLastFrame);
+			m_timeAtLastFrame = currentTime;
+
 			Renderer::clear();
 
 			for (auto layer : m_layerStack)
-				layer->onUpdate();
+				layer->onUpdate(ts);
 
 			//Render all the ImGui ui set up by the layers in the stack
 			m_ImGuiLayer->begin();
@@ -53,7 +61,7 @@ namespace Comet
 				layer->onImGuiRender();
 			m_ImGuiLayer->end();
 
-			m_window->onUpdate();
+			m_window->onUpdate(ts);
 		}
 	}
 
@@ -68,7 +76,7 @@ namespace Comet
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++)
 		{
 			(*it)->onEvent(e);
-			//If event has been handled then do not pass it done to the other layers
+			//If event has been handled then do not pass it to the other layers
 			if (e.handled)
 				break;
 		}
@@ -103,6 +111,11 @@ namespace Comet
 	bool Application::onWindowResizedEvent(WindowResizedEvent& e)
 	{
 		m_window->getRenderingContext().onResize(e.getWidth(), e.getHeight());
+		
+		//Resize framebuffers
+		for (Reference<Framebuffer> framebuffer : FramebufferPool::getGlobalPool())
+			framebuffer->resize(e.getWidth(), e.getHeight());	
+
 		return false;
 	}
 

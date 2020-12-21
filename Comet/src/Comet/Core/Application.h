@@ -20,7 +20,7 @@ namespace Comet
 	{
 	public:
 		Application();
-		virtual ~Application() = default;
+		virtual ~Application();
 
 		Application(const Application&) = delete;
 
@@ -46,10 +46,7 @@ namespace Comet
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_layerStack;
 		bool m_running;
-
-		Reference<Pipeline> m_pipeline;
-		Reference<VertexBuffer> m_vb;
-		Reference<IndexBuffer> m_ib;
+		float m_timeAtLastFrame = 0.0f;
 
 	private:
 		friend int ::main(int argc, char** argv);

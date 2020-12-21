@@ -46,6 +46,7 @@ namespace Comet
 		FramebufferDepthAttachmentSpecification depthAttachment = FramebufferDepthAttachmentFormat::DEPTH24STENCIL8;
 		uint32_t samples = 1;
 
+		//TODO: Change to ratio
 		bool resize = true;
 	};
 

@@ -2,7 +2,7 @@
 #include "CometPCH.h"
 
 #include "ShaderDataType.h"
-#include "Renderer.h"
+#include "RendererAPI.h"
 
 namespace Comet
 {

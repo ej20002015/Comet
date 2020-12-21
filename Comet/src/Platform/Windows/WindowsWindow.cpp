@@ -34,7 +34,7 @@ namespace Comet
 		shutdown();
 	}
 
-	void WindowsWindow::onUpdate()
+	void WindowsWindow::onUpdate(Timestep ts)
 	{
 		glfwPollEvents();
 		m_context->swapBuffers();

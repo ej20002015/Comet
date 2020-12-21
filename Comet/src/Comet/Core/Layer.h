@@ -14,7 +14,7 @@ namespace Comet
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}
-		virtual void onUpdate() {}
+		virtual void onUpdate(Timestep ts) {}
 		//Each layer can define ImGui logic within this method without having to start a frame or call render code - allows all layers to render ui on the application ImGuiLayer
 		virtual void onImGuiRender() {}
 		virtual void onEvent(Event& e) {}

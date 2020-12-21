@@ -11,6 +11,11 @@
 #include "Comet/Renderer/Framebuffer.h"
 
 #include "Comet/Renderer/Renderer.h"
+#include "Comet/Renderer/Renderer2D.h"
+
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "imgui.h"
 
 #include "glad/glad.h"
 
@@ -20,13 +25,15 @@ namespace Comet
 	class TriangleLayer : public Layer
 	{
 	public:
-		TriangleLayer() : Layer("TriangleLayer") {}
+		TriangleLayer() : Layer("TriangleLayer"), m_ts(0.0f) {}
 
 		void onAttach() override
 		{
 			Renderer::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
-			float triangleVertexData[] = {
+			m_camera = Camera();
+
+			/*float triangleVertexData[] = {
 				 0.0f,  0.5f,  0.0f, 0.5f, 1.0f,
 				-0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
 				 0.5f, -0.5f,  0.0f, 1.0f, 0.0f
@@ -54,25 +61,40 @@ namespace Comet
 
 			FramebufferSpecification framebufferSpecification;
 			framebufferSpecification.samples = 8;
-			m_framebuffer = Framebuffer::create(framebufferSpecification);
+			m_framebuffer = Framebuffer::create(framebufferSpecification);*/
 		}
 		void onDetach() override {}
-		void onUpdate() override 
+		void onUpdate(Timestep ts) override 
 		{
-			m_vb->bind();
+			/*m_vb->bind();
 			m_pipeline->bind();
 			m_ib->bind();
-			m_texture->bind();
+			m_texture->bind();*/
 
-			float r = (glm::sin(m_x) + 1) * 0.5;
-			float g = (glm::sin(m_x + 0.5) + 1) * 0.5;
-			float b = (glm::sin(m_x + 1.0) + 1) * 0.5;
+			m_ts = ts;
+
+			float r = (glm::sin(m_x) + 1) * 100 * ts;
+			float g = (glm::sin(m_x + 0.5) + 1) * 100 * ts;
+			float b = (glm::sin(m_x + 1.0) + 1) * 100 * ts;
 			m_color = { r, g, b, 1.0f };
-			m_shader->bind();
+			//m_shader->bind();
 			//m_shader->setUniformData("ubo.color", m_color);
-			m_x += 0.005f;
+			m_x += 0.5f * ts;
 
-			Renderer::drawIndexed(m_ib->getCount(), PrimitiveType::TRIANGLES);
+			glm::mat4 cameraTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, m_x * 0.1f, 0.0f));
+
+			Renderer2D::beginScene(m_camera, cameraTransform);
+			Renderer2D::drawQuad(glm::mat4(1.0f), m_color);
+			Renderer2D::endScene();
+		}
+
+		void onImGuiRender() override
+		{
+			ImGui::Begin("Test");
+
+			ImGui::Text("Frametime: %fms", m_ts.getMilliseconds());
+
+			ImGui::End();
 		}
 
 	private:
@@ -84,7 +106,9 @@ namespace Comet
 		Reference<TextureCube> m_cubeMap;
 		Reference<Framebuffer> m_framebuffer;
 		glm::vec4 m_color;
-		float m_x;
+		float m_x = 0;
+		Camera m_camera;
+		Timestep m_ts;
 	};
 
 }
