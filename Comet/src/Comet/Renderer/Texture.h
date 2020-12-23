@@ -31,6 +31,8 @@ namespace Comet
 		virtual bool getSRGB() const = 0;
 		virtual bool getHDR() const = 0;
 
+		bool operator==(const Texture& other) const { return getRendererID() == other.getRendererID(); }
+
 		static uint32_t calculateMipMapLevelsNeeded(const uint32_t width, const uint32_t height);
 		static uint32_t getBPP(const TextureFormat format);
 	};

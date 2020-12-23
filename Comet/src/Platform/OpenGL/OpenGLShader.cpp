@@ -107,7 +107,7 @@ namespace Comet
 	{	
 		std::array<std::vector<uint32_t>, 2> binaries;
 
-		//All shaders are written in vulkan so compile vulkan GLSL to spirv and get reflection info
+		//All shaders are written in vulkan so compile vulkan and get reflection info
 		SpirvShaderInformation vertexShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::VULKAN, optimisation);
 		m_shaderInformationVulkan.push_back(vertexShaderInfoVulkan);
 		SpirvShaderInformation fragmentShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::VULKAN, optimisation);

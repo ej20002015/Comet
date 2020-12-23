@@ -160,9 +160,9 @@ namespace Comet
 
 	void OpenGLTexture2D::setData(void* data, uint32_t size)
 	{
-		if (size > m_width * m_height * Texture::getBPP(m_textureFormat))
+		if (size != m_width * m_height * Texture::getBPP(m_textureFormat))
 		{
-			Log::cometError("Texture data overflow");
+			Log::cometError("Data does not fill the whole texture");
 			CMT_COMET_ASSERT(false);
 			return;
 		}

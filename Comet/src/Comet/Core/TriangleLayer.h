@@ -82,10 +82,6 @@ namespace Comet
 			m_x += 0.5f * ts;
 
 			glm::mat4 cameraTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, m_x * 0.1f, 0.0f));
-
-			Renderer2D::beginScene(m_camera, cameraTransform);
-			Renderer2D::drawQuad(glm::mat4(1.0f), m_color);
-			Renderer2D::endScene();
 		}
 
 		void onImGuiRender() override

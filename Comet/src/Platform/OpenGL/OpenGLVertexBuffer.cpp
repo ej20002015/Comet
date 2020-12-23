@@ -51,7 +51,6 @@ namespace Comet
 	void OpenGLVertexBuffer::setData(void* data, uint32_t size, uint32_t offset)
 	{
 		m_localData = Buffer::create(data, size);
-		m_size = size;
 
 		glNamedBufferSubData(m_rendererID, offset, size, m_localData->getData());
 	}

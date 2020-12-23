@@ -49,7 +49,6 @@ namespace Comet
 	void OpenGLIndexBuffer::setData(void* data, uint32_t count, uint32_t offset)
 	{
 		m_localData = Buffer::create(data, count * sizeof(uint32_t));
-		m_count = count;
 
 		glNamedBufferSubData(m_rendererID, offset, count * sizeof(uint32_t), m_localData->getData());
 	}

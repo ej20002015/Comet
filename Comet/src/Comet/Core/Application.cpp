@@ -23,7 +23,7 @@ namespace Comet
 		//Initialise window
 		m_window = Unique<Window>(Window::create());
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
-		//m_window->setVSync(false);
+		m_window->setVSync(false);
 
 		//Create ImGui Layer
 		m_ImGuiLayer = new ImGuiLayer;
