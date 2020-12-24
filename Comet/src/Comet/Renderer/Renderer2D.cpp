@@ -8,8 +8,9 @@
 
 namespace Comet
 {
-	Renderer2D::Renderer2DData Renderer2D::s_data = Renderer2DData();
-	Renderer2D::Renderer2DBatchData Renderer2D::s_batchData = Renderer2DBatchData();
+	Renderer2D::Statistics Renderer2D::s_stats;
+	Renderer2D::Renderer2DData Renderer2D::s_data;
+	Renderer2D::Renderer2DBatchData Renderer2D::s_batchData;
 
 	void Renderer2D::init()
 	{
@@ -77,6 +78,7 @@ namespace Comet
 		s_batchData.depthTest = depthTest;
 		s_batchData.viewProjectionMatrix = camera.getProjectionMatrix() * cameraTransform;
 		setInitialBatchData();
+		resetStats();
 	}
 
 	void Renderer2D::endScene()
@@ -170,6 +172,12 @@ namespace Comet
 		}
 
 		s_batchData.quadCount++;
+		s_stats.quads++;
+	}
+
+	void Renderer2D::resetStats()
+	{
+		memset(&s_stats, 0, sizeof(Statistics));
 	}
 
 	void Renderer2D::setInitialBatchData()
@@ -207,6 +215,8 @@ namespace Comet
 
 		//Draw call
 		RendererAPI::drawIndexed(s_batchData.quadCount * 6, PrimitiveType::TRIANGLES, s_batchData.depthTest);
+
+		s_stats.drawCalls++;
 	}
 
 }

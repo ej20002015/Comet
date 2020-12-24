@@ -14,6 +14,15 @@ namespace Comet
 	class Renderer2D
 	{
 	public:
+
+		struct Statistics
+		{
+			uint32_t quads = 0;
+			uint32_t drawCalls = 0;
+			uint32_t getVertices() const { return quads * 4; }
+			uint32_t getTriangles() const { return quads * 2; }
+		};
+
 		Renderer2D() = delete;
 
 		static void init();
@@ -34,12 +43,17 @@ namespace Comet
 
 		static void drawQuad(const glm::mat4& transform, const glm::vec4& color, Reference<Texture2D> texture, float tilingFactor = 1.0f);
 
+		static void resetStats();
+
+		static Statistics getRenderer2DStats() { return s_stats; }
 	private:
 		static void setInitialBatchData();
 		static void nextBatch();
 		static void flush();
 
 	private:
+
+		static Statistics s_stats;
 
 		struct QuadVertex
 		{
@@ -55,7 +69,7 @@ namespace Comet
 		struct Renderer2DData
 		{
 			//Maximum values per draw call
-			static const uint32_t maxQuads = 50000;
+			static const uint32_t maxQuads = 20000;
 			static const uint32_t maxQuadVertices = maxQuads * 4;
 			static const uint32_t maxQuadIndices = maxQuads * 6;
 			static const uint32_t maxTextureSlots = 32;

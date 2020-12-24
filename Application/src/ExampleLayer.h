@@ -18,11 +18,12 @@ public:
 		texture = Comet::Texture2D::create("assets/textures/container2.png");
 	}
 	void onDetach() override {}
-	void onUpdate(Comet::Timestep ts) override 
+	void onUpdate(Comet::Timestep ts) override
 	{
 		m_ts = ts;
 
-		const uint32_t quadCount = 10;
+		//TODO: FIX STATS
+		const uint32_t quadCount = 200;
 		const float stepSize = 2.0f / static_cast<float>(quadCount);
 
 		Comet::Renderer2D::beginScene(m_camera, glm::mat4(1.0f));
@@ -48,13 +49,7 @@ public:
 
 	void onImGuiRender() override
 	{
-		ImGui::Begin("Information");
-
-		ImGui::Text("Frametime");
-
-		ImGui::Separator();
-
-		ImGui::Text("%fms (%f.2 fps)", m_ts.getMilliseconds(), 1.0f / m_ts.getSeconds());
+		ImGui::Begin("Rendering Device Information");
 
 		ImGui::Separator();
 
@@ -71,6 +66,25 @@ public:
 		ImGui::Text("Max Samples: %d", Comet::RendererAPI::getCapabilities().maxSamples);
 		ImGui::Text("Max Anisotropy: %f", Comet::RendererAPI::getCapabilities().maxAnisotropy);
 		ImGui::Text("Max Texture Units: %d", Comet::RendererAPI::getCapabilities().maxTextureUnits);
+
+		ImGui::End();
+
+		ImGui::Begin("Renderer2D Statistics");
+
+		ImGui::Text("Frametime");
+
+		ImGui::Separator();
+
+		ImGui::Text("%fms (%f.2 fps)", m_ts.getMilliseconds(), 1.0f / m_ts.getSeconds());
+
+		ImGui::Separator();
+
+		auto stats = Comet::Renderer2D::getRenderer2DStats();
+
+		ImGui::Text("%u quads", stats.quads);
+		ImGui::Text("%u vertices", stats.getVertices());
+		ImGui::Text("%u triangles", stats.getTriangles());
+		ImGui::Text("%u draw calls", stats.drawCalls);
 
 		ImGui::End();
 	}
