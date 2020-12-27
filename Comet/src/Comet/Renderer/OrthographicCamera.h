@@ -34,7 +34,6 @@ namespace Comet
 		void recalculateViewMatrix();
 		void recalculateProjectionMatrix();
 		bool onMouseScrolledEvent(MouseScrolledEvent& e);
-		bool onKeyPressedEvent(KeyPressedEvent& e);
 		bool onWindowResizedEvent(WindowResizedEvent& e);
 		
 	private:
@@ -42,11 +41,9 @@ namespace Comet
 		float m_zoomLevel;
 		glm::mat4 m_viewMatrix = glm::mat4(1.0f);
 		glm::vec3 m_position = glm::vec3(0.0f);
-		//[0] = left, [1] = right, [2] = bottom, [3] = top
-		uint32_t m_movementSteps[4];
 		float m_zoomLevelStep = 0.0f;
-		float m_movementSpeed = 10.0f;
-		float m_zoomSpeed = 10.0f;
+		float m_movementSpeed = 2.0f;
+		float m_zoomSpeed = 50.0f;
 	};
 
 }

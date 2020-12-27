@@ -1,6 +1,8 @@
 #include "CometPCH.h"
 #include "OrthographicCamera.h"
 
+#include "Comet/Core/Input.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace Comet
@@ -9,7 +11,6 @@ namespace Comet
 	OrthographicCamera::OrthographicCamera(float aspectRatio, float zoomLevel)
 		: m_aspectRatio(aspectRatio), m_zoomLevel(zoomLevel), Camera(glm::ortho(-zoomLevel * aspectRatio, zoomLevel * aspectRatio, -zoomLevel, zoomLevel))
 	{
-		memset(m_movementSteps, 0, sizeof(m_movementSteps));
 	}
 
 
@@ -17,7 +18,7 @@ namespace Comet
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<MouseScrolledEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onMouseScrolledEvent));
-		dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onKeyPressedEvent));
+
 		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onWindowResizedEvent));
 	}
 
@@ -25,21 +26,21 @@ namespace Comet
 	{
 		//Set camera position
 
-		for (int i = 0; i < 4; i++)
-		{
-			if (m_movementSteps[i])
-				Log::cometTrace("Not 0");
-		}	
+		//Poll key presses
+		if (Input::isKeyPressed(KeyCode::KEY_A))
+			m_position.x -= m_movementSpeed * ts;
+		else if (Input::isKeyPressed(KeyCode::KEY_D))
+			m_position.x += m_movementSpeed * ts;
 
-		float xChange = (-(m_movementSpeed * m_movementSteps[0]) + (m_movementSpeed * m_movementSteps[1])) * ts;
-    	m_position.x += (-(m_movementSpeed * m_movementSteps[0]) + (m_movementSpeed * m_movementSteps[1])) * ts;
-		m_position.y += (-(m_movementSpeed * m_movementSteps[2]) + (m_movementSpeed * m_movementSteps[3])) * ts;
+		if (Input::isKeyPressed(KeyCode::KEY_S))
+			m_position.y -= m_movementSpeed * ts;
+		else if (Input::isKeyPressed(KeyCode::KEY_W))
+			m_position.y += m_movementSpeed * ts;
 
 		//Set camera zoom level
 		m_zoomLevel += (m_zoomSpeed * m_zoomLevelStep) * ts;
 
 		//Reset steps
-		memset(m_movementSteps, 0, sizeof(m_movementSteps));
 		m_zoomLevelStep = 0;
 
 		//update matrices
@@ -61,33 +62,6 @@ namespace Comet
 	{
 		m_zoomLevelStep -= e.getYOffset();
 		return true;
-	}
-
-	bool OrthographicCamera::onKeyPressedEvent(KeyPressedEvent& e)
-	{
-		switch (e.getKeyCode())
-		{
-		case KeyCode::KEY_A:
-			m_movementSteps[0]++;
-			return true;
-			break;
-		case KeyCode::KEY_D:
-			m_movementSteps[1]++;
-			return true;
-			break;
-		case KeyCode::KEY_S:
-			m_movementSteps[2]++;
-			return true;
-			break;
-		case KeyCode::KEY_W:
-			m_movementSteps[3]++;
-			return true;
-			break;
-		default:
-			break;
-		}
-
-		return false;
 	}
 
 	bool OrthographicCamera::onWindowResizedEvent(WindowResizedEvent& e)
