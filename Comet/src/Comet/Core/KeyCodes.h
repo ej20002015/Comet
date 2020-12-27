@@ -6,6 +6,8 @@ namespace Comet
 
 	enum class KeyCode : uint16_t
 	{
+		KEY_NONE           =     0,
+
 		//Taken from glfw3.h
 
 		//Printable Keys

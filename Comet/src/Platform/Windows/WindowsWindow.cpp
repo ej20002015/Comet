@@ -134,7 +134,7 @@ namespace Comet
 				}
 				case GLFW_REPEAT:
 				{
-					KeyPressedEvent e(static_cast<KeyCode>(keyCode), 1);
+					KeyPressedEvent e(static_cast<KeyCode>(keyCode), true);
 					windowData.callbackFunction(e);
 					break;
 				}

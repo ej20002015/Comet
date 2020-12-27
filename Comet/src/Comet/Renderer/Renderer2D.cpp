@@ -73,10 +73,10 @@ namespace Comet
 		delete[] s_data.quadVertexBufferBase;
 	}
 
-	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, bool depthTest)
+	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& viewMatrix, bool depthTest)
 	{
 		s_batchData.depthTest = depthTest;
-		s_batchData.viewProjectionMatrix = camera.getProjectionMatrix() * cameraTransform;
+		s_batchData.viewProjectionMatrix = camera.getProjectionMatrix() * viewMatrix;
 		setInitialBatchData();
 		resetStats();
 	}
@@ -212,6 +212,10 @@ namespace Comet
 
 		s_data.quadShader->bind();
 		s_data.quadShader->setUniformBuffer(0, &s_batchData.viewProjectionMatrix[0][0]);
+
+		glm::mat4 viewProj = s_batchData.viewProjectionMatrix;
+
+		glm::vec4 temp = viewProj * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 		//Draw call
 		RendererAPI::drawIndexed(s_batchData.quadCount * 6, PrimitiveType::TRIANGLES, s_batchData.depthTest);

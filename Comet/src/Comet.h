@@ -17,3 +17,5 @@
 //Renderer
 #include "Comet/Renderer/Renderer.h"
 #include "Comet/Renderer/Renderer2D.h"
+#include "Comet/Renderer/Camera.h"
+#include "Comet/Renderer/OrthographicCamera.h"

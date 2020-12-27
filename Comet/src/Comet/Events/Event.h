@@ -57,7 +57,8 @@ namespace Comet
 	public:
 		EventDispatcher(Event& e) : m_event(e) {}
 
-		//function is a lamda function that wraps the callback function to execute and F will be infered by the compiler
+		//Function is a lamda function that wraps the callback function to execute and F will be infered by the compiler
+		//Returns a bool indicating whether the current event matches the event belonging to the dispatcher
 		template<typename T, typename F>
 		bool dispatch(const F& function)
 		{

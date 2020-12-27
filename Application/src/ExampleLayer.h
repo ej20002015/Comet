@@ -10,23 +10,25 @@
 class ExampleLayer : public Comet::Layer
 {
 public:
-	ExampleLayer() : Layer("ExampleLayer") {}
+	ExampleLayer() : Layer("ExampleLayer"), m_orthographicCamera(1.0f) {}
 
 	void onAttach() override
 	{
 		Comet::Renderer::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		texture = Comet::Texture2D::create("assets/textures/container2.png");
+		m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()));
 	}
 	void onDetach() override {}
 	void onUpdate(Comet::Timestep ts) override
 	{
 		m_ts = ts;
 
-		//TODO: FIX STATS
-		const uint32_t quadCount = 200;
+		m_orthographicCamera.onUpdate(ts);
+
+		const uint32_t quadCount = 10;
 		const float stepSize = 2.0f / static_cast<float>(quadCount);
 
-		Comet::Renderer2D::beginScene(m_camera, glm::mat4(1.0f));
+		Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix());
 
 		for (uint32_t i = 0; i < quadCount; ++i)
 		{
@@ -89,8 +91,13 @@ public:
 		ImGui::End();
 	}
 
+	void onEvent(Comet::Event& e) override 
+	{
+		m_orthographicCamera.onEvent(e);
+	}
+
 private:
-	Comet::Camera m_camera;
 	Comet::Timestep m_ts;
+	Comet::OrthographicCamera m_orthographicCamera;
 	Comet::Reference<Comet::Texture2D> texture;
 };

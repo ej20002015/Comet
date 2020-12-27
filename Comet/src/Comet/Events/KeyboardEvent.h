@@ -24,21 +24,21 @@ namespace Comet
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(KeyCode keyCode, int repeatCount = 0) : KeyEvent(keyCode), m_repeatCount(repeatCount) {}
+		KeyPressedEvent(KeyCode keyCode, int repeat = false) : KeyEvent(keyCode), m_repeat(repeat) {}
 
 		CMT_EVENT_CLASS_TYPE(KeyPressedEvent)
 		
 		std::string toString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_keyCode << " (" << m_repeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << m_keyCode << " (repeat = " << m_repeat << ")";
 			return ss.str();
 		}
 		
-		int getRepeatCount() const { return m_repeatCount; }
+		bool getRepeat() const { return m_repeat; }
 
 	private:
-		int m_repeatCount;
+		int m_repeat;
 	};
 
 	class KeyReleasedEvent : public KeyEvent
