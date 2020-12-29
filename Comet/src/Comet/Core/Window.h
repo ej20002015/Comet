@@ -38,6 +38,8 @@ namespace Comet
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool getVSync() const = 0;
 
+		virtual bool getWindowFocused() const = 0;
+
 		virtual float getWindowTime() const = 0;
 
 		virtual void* getImplementationWindow() const = 0;

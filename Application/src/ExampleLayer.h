@@ -16,6 +16,31 @@ public:
 	{
 		Comet::Renderer::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		texture = Comet::Texture2D::create("assets/textures/container2.png");
+
+		
+		m_textureAtlas = Comet::Texture2DAtlas::create("assets/textures/RPGpack_sheet_2X.png", 128, false , Comet::TextureFilter::NEAREST, Comet::TextureFilter::NEAREST);
+
+		m_subTextures["Door"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 14.0f, 0.0f }, { 1.0f, 1.0f });
+		m_subTextures["BottomWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["LeftCornerWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["RightCornerWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 3.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["Wall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 5.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["SmallWindow"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 12.0f, 0.0f }, { 1.0f, 1.0f });
+		m_subTextures["LeftWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 4.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["RightWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 6.0f, 9.0f }, { 1.0f, 1.0f });
+		m_subTextures["Roof"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 2.0f, 4.0f }, { 2.0f, 3.0f });
+		m_subTextures["GrassDirtTop"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 12.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtBottom"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 10.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtLeft"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 11.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtRight"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 2.0f, 11.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtBottomLeft"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 10.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtBottomRight"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 2.0f, 10.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtTopRight"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 2.0f, 12.0f }, { 1.0f, 1.0f });
+		m_subTextures["GrassDirtTopLeft"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 12.0f }, { 1.0f, 1.0f });
+		m_subTextures["Grass"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 11.0f }, { 1.0f, 1.0f });
+		m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });
+
+
 		m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()));
 	}
 	void onDetach() override {}
@@ -25,10 +50,11 @@ public:
 
 		m_orthographicCamera.onUpdate(ts);
 
-		const uint32_t quadCount = 10;
+		Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), true);
+
+		/*const uint32_t quadCount = 10;
 		const float stepSize = 2.0f / static_cast<float>(quadCount);
 
-		Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix());
 
 		for (uint32_t i = 0; i < quadCount; ++i)
 		{
@@ -41,9 +67,57 @@ public:
 				color.g = (glm::sin((x * quadCount) + y + 0.9f) + 1.0f) / 2.0f;
 				color.b = (glm::sin((x * quadCount) + y + 1.3f) + 1.0f) / 2.0f;
 				color.a = 1.0f;
-				Comet::Renderer2D::drawTexturedQuad({ x, y }, texture, glm::vec2(stepSize * 0.95f), color);
+				Comet::Renderer2D::drawSubTexturedQuad({ x, y }, m_subTexture, glm::vec2(stepSize * 0.95f), color);
 			}
-		}
+		}*/
+
+		Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f, -0.1f }, m_subTextures.at("BottomWall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  0.0f }, m_subTextures.at("Door"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  0.0f }, m_subTextures.at("LeftCornerWall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,  0.0f }, m_subTextures.at("RightCornerWall"));
+		Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  1.0f, -0.1f }, m_subTextures.at("Wall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  1.0f }, m_subTextures.at("SmallWindow"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  1.0f }, m_subTextures.at("LeftWall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,  1.0f }, m_subTextures.at("RightWall"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  2.0f }, m_subTextures.at("Wall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  2.0f }, m_subTextures.at("Wall"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,  2.0f }, m_subTextures.at("Wall"));
+
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,  -1.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -1.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   1.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   1.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   2.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   2.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   3.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   3.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   4.0f }, m_subTextures.at("GrassDirtLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   4.0f }, m_subTextures.at("GrassDirtRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   4.0f }, m_subTextures.at("Grass"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,   4.0f }, m_subTextures.at("Grass"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,   4.0f }, m_subTextures.at("Grass"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   5.0f }, m_subTextures.at("GrassDirtTopLeft"));
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f,   5.0f }, m_subTextures.at("GrassDirtTopRight"));
+		Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+		Comet::Renderer2D::drawSubTexturedQuad({  1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+
+		Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  3.0f, 0.1f }, m_subTextures.at("Roof"), { 3.0f, 3.0f });
+
+		Comet::Renderer2D::drawSubTexturedQuad({ -2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });
+		Comet::Renderer2D::drawSubTexturedQuad({  2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });
 
 		Comet::Renderer2D::endScene();
 	}
@@ -100,4 +174,6 @@ private:
 	Comet::Timestep m_ts;
 	Comet::OrthographicCamera m_orthographicCamera;
 	Comet::Reference<Comet::Texture2D> texture;
+	Comet::Reference<Comet::Texture2DAtlas> m_textureAtlas;
+	std::unordered_map<std::string, Comet::Reference<Comet::Texture2DSubTexture>> m_subTextures;
 };

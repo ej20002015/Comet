@@ -18,7 +18,6 @@ namespace Comet
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<MouseScrolledEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onMouseScrolledEvent));
-
 		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onWindowResizedEvent));
 	}
 
@@ -26,19 +25,23 @@ namespace Comet
 	{
 		//Set camera position
 
-		//Poll key presses
+		//Poll key presses and move camera (scale speed by zoom level)
 		if (Input::isKeyPressed(KeyCode::KEY_A))
-			m_position.x -= m_movementSpeed * ts;
+			m_position.x -= m_movementSpeed * m_zoomLevel * ts;
 		else if (Input::isKeyPressed(KeyCode::KEY_D))
-			m_position.x += m_movementSpeed * ts;
+			m_position.x += m_movementSpeed * m_zoomLevel * ts;
 
 		if (Input::isKeyPressed(KeyCode::KEY_S))
-			m_position.y -= m_movementSpeed * ts;
+			m_position.y -= m_movementSpeed * m_zoomLevel * ts;
 		else if (Input::isKeyPressed(KeyCode::KEY_W))
-			m_position.y += m_movementSpeed * ts;
+			m_position.y += m_movementSpeed * m_zoomLevel * ts;
 
 		//Set camera zoom level
 		m_zoomLevel += (m_zoomSpeed * m_zoomLevelStep) * ts;
+
+		//Prevent camera going behind z-axis and all geometry appearing to flip
+		if (m_zoomLevel < 0.005f)
+			m_zoomLevel = 0.005f;
 
 		//Reset steps
 		m_zoomLevelStep = 0;

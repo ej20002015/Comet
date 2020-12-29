@@ -50,6 +50,11 @@ namespace Comet
 		m_windowData.VSync = enabled;
 	}
 
+	bool WindowsWindow::getWindowFocused() const
+	{
+		return glfwGetWindowAttrib(m_window, GLFW_FOCUSED);
+	}
+
 	void WindowsWindow::init()
 	{
 		Log::cometInfo("Creating window: {0} ({1}, {2})", m_windowData.title, m_windowData.width, m_windowData.height);

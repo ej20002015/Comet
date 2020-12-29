@@ -10,8 +10,8 @@ namespace Comet
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
-		OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap = TextureWrap::CLAMP_TO_EDGE);
-		OpenGLTexture2D(const std::string& filepath, const bool SRGB = false, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
+		OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, TextureWrap wrap = TextureWrap::CLAMP_TO_EDGE);
+		OpenGLTexture2D(const std::string& filepath, const bool SRGB = false, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
 		~OpenGLTexture2D() override;
 
 		void bind(const uint32_t slot = 0) const override;

@@ -26,6 +26,8 @@ namespace Comet
 		void setVSync(bool enabled) override;
 		bool getVSync() const override { return m_windowData.VSync; }
 
+		bool getWindowFocused() const override;
+
 		float getWindowTime() const override { return static_cast<float>(glfwGetTime()); }
 
 		void* getImplementationWindow() const override { return m_window; }

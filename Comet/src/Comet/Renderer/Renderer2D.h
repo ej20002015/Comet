@@ -41,7 +41,13 @@ namespace Comet
 		static void drawRotatedTexturedQuad(const glm::vec2& centerCoordinates, float radians, Reference<Texture2D> texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
 		static void drawRotatedTexturedQuad(const glm::vec3& centerCoordinates, float radians, Reference<Texture2D> texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
 
+		static void drawSubTexturedQuad(const glm::vec2& centerCoordinates, Reference<Texture2DSubTexture> texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
+		static void drawSubTexturedQuad(const glm::vec3& centerCoordinates, Reference<Texture2DSubTexture> subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
+		static void drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, float radians, Reference<Texture2DSubTexture> subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
+		static void drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, float radians, Reference<Texture2DSubTexture> subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
+
 		static void drawQuad(const glm::mat4& transform, const glm::vec4& color, Reference<Texture2D> texture, float tilingFactor = 1.0f);
+		static void drawSubQuad(const glm::mat4& transform, const glm::vec4& color, Reference<Texture2DSubTexture> subTexture, float tilingFactor = 1.0f);
 
 		static void resetStats();
 

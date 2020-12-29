@@ -38,6 +38,20 @@ namespace Comet
 		}
 	}
 
+	static GLenum getGLTextureFiltering(const TextureFilter textureFilter, int32_t mipMapLevels = 1)
+	{
+		switch (textureFilter)
+		{
+		case TextureFilter::NEAREST:  return GL_NEAREST; break;
+		case TextureFilter::LINEAR:   return (mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR; break;
+		default:
+			Log::cometError("Unknown texture filtering policy");
+			CMT_COMET_ASSERT(false);
+			return 0;
+			break;
+		}
+	}
+
 	static GLenum getGLTextureWrap(const TextureWrap textureWrap)
 	{
 		switch (textureWrap)
@@ -53,15 +67,15 @@ namespace Comet
 		}
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap)
+	OpenGLTexture2D::OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter, TextureFilter minFilter, TextureWrap wrap)
 		: m_textureFormat(format), m_textureWrap(wrap), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath("NONE"), m_localData(nullptr)
 	{
 		m_HDR = m_textureFormat == TextureFormat::FLOAT16;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
 
-		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, getGLTextureFiltering(minFilter, m_mipMapLevels));
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, getGLTextureFiltering(magFilter));
 		GLenum textureWrap = getGLTextureWrap(wrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, textureWrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, textureWrap);
@@ -71,7 +85,7 @@ namespace Comet
 		glTextureStorage2D(m_rendererID, m_mipMapLevels, getGLInternalTextureFormat(m_textureFormat), width, height);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, const bool SRGB, const TextureWrap wrap)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
 		: m_textureWrap(wrap), m_width(0), m_height(0), m_mipMapLevels(0), m_SRGB(SRGB), m_filepath(filepath)
 	{
 		int32_t width, height, BPP;
@@ -122,8 +136,8 @@ namespace Comet
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
 
-		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, (m_mipMapLevels > 1) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, getGLTextureFiltering(minFilter, m_mipMapLevels));
+		glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, getGLTextureFiltering(magFilter));
 		GLenum textureWrap = getGLTextureWrap(wrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_S, textureWrap);
 		glTextureParameteri(m_rendererID, GL_TEXTURE_WRAP_T, textureWrap);
@@ -133,13 +147,13 @@ namespace Comet
 		if (SRGB)
 		{
 			glTextureStorage2D(m_rendererID, m_mipMapLevels, GL_SRGB8, width, height);
-			glTextureSubImage2D(m_rendererID, 0, 0, 0, height, width, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+			glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 		}
 		else
 		{
 			GLenum dataType = (m_HDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 			glTextureStorage2D(m_rendererID, m_mipMapLevels, getGLInternalTextureFormat(m_textureFormat), width, height);
-			glTextureSubImage2D(m_rendererID, 0, 0, 0, height, width, getGLTextureFormat(m_textureFormat), dataType, imageData);
+			glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, getGLTextureFormat(m_textureFormat), dataType, imageData);
 		}
 
 		glGenerateTextureMipmap(m_rendererID);
@@ -170,7 +184,7 @@ namespace Comet
 		m_localData = Buffer::create(data, size);
 
 		GLenum dataType = (m_HDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
-		glTextureSubImage2D(m_rendererID, 0, 0, 0, m_height, m_width, getGLTextureFormat(m_textureFormat), dataType, data);
+		glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, getGLTextureFormat(m_textureFormat), dataType, data);
 	}
 
 	//NEEDS TO BE TESTED FULLY - SEEMS TO BE WORKING

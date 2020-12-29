@@ -31,12 +31,12 @@ namespace Comet
 		}
     }
 
-    Reference<Texture2D> Texture2D::create(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap)
+    Reference<Texture2D> Texture2D::create(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter, TextureFilter minFilter, TextureWrap wrap)
     {
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
         case RendererAPIType::OPENGL:
-            return createReference<OpenGLTexture2D>(format, width, height, wrap);
+            return createReference<OpenGLTexture2D>(format, width, height, magFilter, minFilter, wrap);
             break;
 
         default:
@@ -46,14 +46,14 @@ namespace Comet
         }
     }
 
-    Reference<Texture2D> Texture2D::create(const std::string& filepath, const bool SRGB, const TextureWrap wrap)
+    Reference<Texture2D> Texture2D::create(const std::string& filepath, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
     {
         CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
 
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
         case RendererAPIType::OPENGL:
-            return createReference<OpenGLTexture2D>(filepath, SRGB, wrap);
+            return createReference<OpenGLTexture2D>(filepath, SRGB, magFilter, minFilter, wrap);
             break;
 
         default:
@@ -93,6 +93,40 @@ namespace Comet
             return nullptr;
             break;
         }
+    }
+
+    Reference<Texture2DAtlas> Texture2DAtlas::create(Reference<Texture2D> texture, uint32_t cellSize)
+    {
+        return createReference<Texture2DAtlas>(texture, cellSize);
+    }
+
+    Reference<Texture2DAtlas> Texture2DAtlas::create(const std::string& filepath, const uint32_t cellSize, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
+    {
+        auto texture = Texture2D::create(filepath, SRGB, magFilter, minFilter, wrap);
+        return createReference<Texture2DAtlas>(texture, cellSize);
+    }
+
+    Texture2DSubTexture::Texture2DSubTexture(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale)
+        : m_textureAtlas(textureAtlas)
+    {
+        uint32_t cellSize = m_textureAtlas->m_cellSize;
+        float textureWidth = static_cast<float>(m_textureAtlas->m_texture->getWidth());
+        float textureHeight = static_cast<float>(m_textureAtlas->m_texture->getHeight());
+        //Needed to prevent flickering
+        float pixelCorrectionOffset = 0.5f;
+        //Bottom left
+        m_textureCoordinates[0] = { (((offset.x * cellSize)) + pixelCorrectionOffset) / textureWidth, (((offset.y * cellSize) + pixelCorrectionOffset) / textureHeight) };
+        //Bottom right
+        m_textureCoordinates[1] = { (((offset.x + scale.x) * cellSize) - pixelCorrectionOffset) / textureWidth, (((offset.y * cellSize)) + pixelCorrectionOffset) / textureHeight };
+        //Top right
+        m_textureCoordinates[2] = { (((offset.x + scale.x) * cellSize) - pixelCorrectionOffset) / textureWidth, (((offset.y + scale.y) * cellSize) - pixelCorrectionOffset) / textureHeight };
+        //Top left
+        m_textureCoordinates[3] = { (((offset.x * cellSize)) + pixelCorrectionOffset) / textureWidth, (((offset.y + scale.y) * cellSize) - pixelCorrectionOffset) / textureHeight };
+    }
+
+    Reference<Texture2DSubTexture> Texture2DSubTexture::create(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale)
+    {
+        return createReference<Texture2DSubTexture>(textureAtlas, offset, scale);
     }
 
 }
