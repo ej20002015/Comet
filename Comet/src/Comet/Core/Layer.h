@@ -21,7 +21,7 @@ namespace Comet
 
 		const std::string& getName() const { return m_name; }
 
-	protected:
+	private:
 		std::string m_name;
 	};
 

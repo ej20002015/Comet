@@ -89,7 +89,12 @@ namespace Comet
 	{
 		std::string source;
 		std::ifstream input(m_filepath, std::ios::in | std::ios::binary);
-		CMT_COMET_ASSERT_MESSAGE(input, "Cannot open shader file");
+		if (!input)
+		{
+			Log::cometError("Cannot open shader file");
+			CMT_COMET_ASSERT(false);
+			return nullptr;
+		}
 		
 		//Get size of file
 		input.seekg(0, input.end);

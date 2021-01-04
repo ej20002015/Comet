@@ -5,23 +5,23 @@
 #include "glad/glad.h"
 #include "Input.h"
 #include "Comet/Renderer/Renderer.h"
-
-//temp
-#include "TriangleLayer.h"
+#include "Comet/Renderer/Framebuffer.h"
 
 namespace Comet
 {
 
 	Application* Application::s_instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& windowTitle)
 		: m_running(true)
 	{
 		CMT_COMET_ASSERT_MESSAGE(!s_instance, "Application already exists");
 		s_instance = this;
 
 		//Initialise window
-		m_window = Unique<Window>(Window::create());
+		Window::WindowProperties windowProperties;
+		windowProperties.title = windowTitle;
+		m_window = Unique<Window>(Window::create(windowProperties));
 		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
 		m_window->setVSync(false);
 

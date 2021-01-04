@@ -8,6 +8,11 @@
 namespace Comet
 {
 
+	OrthographicCamera::OrthographicCamera()
+		: m_aspectRatio(16.0f / 9.0f), m_zoomLevel(1.0f), Camera(glm::ortho(-m_zoomLevel * m_aspectRatio, m_zoomLevel* m_aspectRatio, -m_zoomLevel, m_zoomLevel))
+	{
+	}
+
 	OrthographicCamera::OrthographicCamera(float aspectRatio, float zoomLevel)
 		: m_aspectRatio(aspectRatio), m_zoomLevel(zoomLevel), Camera(glm::ortho(-zoomLevel * aspectRatio, zoomLevel * aspectRatio, -zoomLevel, zoomLevel))
 	{

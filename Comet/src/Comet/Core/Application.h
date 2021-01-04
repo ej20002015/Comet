@@ -19,7 +19,7 @@ namespace Comet
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& windowTitle = "Comet Application");
 		virtual ~Application();
 
 		Application(const Application&) = delete;
@@ -32,6 +32,8 @@ namespace Comet
 		void popLayer(Layer* layer);
 		void pushOverlay(Layer* overlay);
 		void popOverlay(Layer* overlay);
+
+		void exit() { m_running = false; }
 
 		Window& getWindow() const { return *m_window; }
 

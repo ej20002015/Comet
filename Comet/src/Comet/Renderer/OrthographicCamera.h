@@ -16,6 +16,7 @@ namespace Comet
 	class OrthographicCamera : public Camera
 	{
 	public:
+		OrthographicCamera();
 		OrthographicCamera(float aspectRatio, float zoomLevel = 1.0f);
 
 		void onEvent(Event& e);

@@ -10,7 +10,7 @@
 class ExampleLayer : public Comet::Layer
 {
 public:
-	ExampleLayer() : Layer("ExampleLayer"), m_orthographicCamera(1.0f) {}
+	ExampleLayer() : Layer("ExampleLayer") {}
 
 	void onAttach() override
 	{
@@ -50,26 +50,26 @@ public:
 
 		m_orthographicCamera.onUpdate(ts);
 
-		Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), true);
+		Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), false);
 
-		/*const uint32_t quadCount = 10;
-		const float stepSize = 2.0f / static_cast<float>(quadCount);
+		const uint32_t quadCount = 200;
+		const float stepSize = 50.0f / static_cast<float>(quadCount);
 
 
 		for (uint32_t i = 0; i < quadCount; ++i)
 		{
-			float x = (static_cast<float>(i) * stepSize) - 1.0f + (stepSize / 2.0f);
+			float x = (static_cast<float>(i) * stepSize) - 5.0f + (stepSize / 2.0f);
 			for (uint32_t j = 0; j < quadCount; ++j)
 			{
-				float y = - ((static_cast<float>(j) * stepSize) - 1.0f + (stepSize / 2.0f));
+				float y = - (static_cast<float>(j) * stepSize) - 5.0f + (stepSize / 2.0f);
 				glm::vec4 color;
 				color.r = (glm::sin((x * quadCount) + y) + 1.0f) / 2.0f;
 				color.g = (glm::sin((x * quadCount) + y + 0.9f) + 1.0f) / 2.0f;
 				color.b = (glm::sin((x * quadCount) + y + 1.3f) + 1.0f) / 2.0f;
 				color.a = 1.0f;
-				Comet::Renderer2D::drawSubTexturedQuad({ x, y }, m_subTexture, glm::vec2(stepSize * 0.95f), color);
+				Comet::Renderer2D::drawTexturedQuad({ x, y, -1.0f}, texture, glm::vec2(stepSize * 0.95f), color);
 			}
-		}*/
+		}
 
 		Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f, -0.1f }, m_subTextures.at("BottomWall"));
 		Comet::Renderer2D::drawSubTexturedQuad({  0.0f,  0.0f }, m_subTextures.at("Door"));

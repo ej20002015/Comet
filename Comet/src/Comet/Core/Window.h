@@ -13,13 +13,9 @@ namespace Comet
 
 		struct WindowProperties
 		{
-			std::string title;
-			uint32_t width, height;
-
-			WindowProperties(std::string title = "Comet Application",
-							uint32_t width     = 1280,
-							uint32_t height    = 720)
-							: title(title), width(width), height(height) {}
+			std::string title = "Comet Application";
+			uint32_t width = 1280;
+			uint32_t height = 720;
 		};
 
 
