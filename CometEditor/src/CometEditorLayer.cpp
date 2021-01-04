@@ -36,7 +36,7 @@ namespace Comet
         m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });
 
 
-        m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()));
+        m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()), 3.0f);
 
 
         FramebufferSpecification framebufferSpecification;
@@ -58,6 +58,7 @@ namespace Comet
         m_orthographicCamera.onUpdate(ts);
 
         m_framebuffer->bind();
+        Renderer::clear();
 
         Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), false);
 
