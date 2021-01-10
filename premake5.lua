@@ -53,7 +53,15 @@ project "Comet"
     files
     {
         "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.cpp"
+    }
+
+    -- Remove files that are specific to target platform (will be included in the platform filters below)
+
+    removefiles
+    {
+        "%{prj.name}/src/Comet/Windows"
     }
 
     includedirs
@@ -87,6 +95,13 @@ project "Comet"
         defines
         {
             "CMT_PLATFORM_WINDOWS"
+        }
+
+        -- Re-include platform specific files that have been removed above
+
+        files
+        {
+            "%{prj.name}/src/Comet/Windows"
         }
     
     filter "configurations:Debug"
@@ -160,6 +175,7 @@ project "Application"
     files
     {
         "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.cpp"
     }
 
@@ -207,6 +223,7 @@ project "CometEditor"
     files
     {
         "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.cpp"
     }
 

@@ -29,9 +29,6 @@ namespace Comet
 		m_ImGuiLayer = new ImGuiLayer;
 		pushOverlay(m_ImGuiLayer);
 
-		//Initialise input
-		Input::init();
-
 		//Initialise renderer
 		Renderer::init();
 	}

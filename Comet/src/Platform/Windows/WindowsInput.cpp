@@ -1,5 +1,5 @@
 #include "CometPCH.h"
-#include "WindowsInput.h"
+#include "Comet/Core/Input.h"
 
 #include "Comet/Core/Application.h"
 
@@ -8,21 +8,21 @@
 namespace Comet
 {
 
-    bool WindowsInput::i_isKeyPressed(KeyCode keyCode) const
+    bool Input::isKeyPressed(KeyCode keyCode)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         int action = glfwGetKey(window, static_cast<int>(keyCode));
         return action == GLFW_PRESS;
     }
 
-    bool WindowsInput::i_isMouseButtonPressed(MouseCode mouseCode) const
+    bool Input::isMouseButtonPressed(MouseCode mouseCode)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         int action = glfwGetMouseButton(window, static_cast<int>(mouseCode));
         return action == GLFW_PRESS;
     }
 
-    std::pair<float, float> WindowsInput::i_getMousePosition() const
+    glm::vec2 Input::getMousePosition()
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         double xPos, yPos;

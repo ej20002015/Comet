@@ -3,7 +3,6 @@
 
 #include "Comet/Core/Window.h"
 #include "Comet/Renderer/RenderingContext.h"
-#include "WindowsInput.h"
 
 #include "GLFW/glfw3.h"
 
@@ -18,8 +17,7 @@ namespace Comet
 
 		void onUpdate(Timestep ts) override;
 
-		uint32_t getWidth() const override { return m_windowData.width;
-		};
+		uint32_t getWidth() const override { return m_windowData.width; };
 		uint32_t getHeight() const override { return m_windowData.height; };
 
 		void setEventCallback(const EventCallbackFunction& callbackFunction) override { m_windowData.callbackFunction = callbackFunction; }

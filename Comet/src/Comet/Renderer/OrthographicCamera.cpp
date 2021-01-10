@@ -59,7 +59,7 @@ namespace Comet
 	void OrthographicCamera::onResize(float aspectRatio)
 	{
 		m_aspectRatio = aspectRatio;
-		setProjectionMatrix(glm::ortho(-m_zoomLevel * m_aspectRatio, m_zoomLevel * m_aspectRatio, -m_zoomLevel, m_zoomLevel));
+		recalculateProjectionMatrix();
 	}
 
 	void OrthographicCamera::recalculateViewMatrix()
