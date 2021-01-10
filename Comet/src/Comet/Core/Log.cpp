@@ -31,4 +31,17 @@ namespace Comet
 		s_clientLogger->flush_on(spdlog::level::trace);
 	}
 
+	void Log::setLogLevel(LogLevel level)
+	{
+		switch (level)
+		{
+		case LogLevel::CMT_TRACE: s_cometLogger->set_level(spdlog::level::trace); s_clientLogger->set_level(spdlog::level::trace); break;
+		case LogLevel::CMT_INFO: s_cometLogger->set_level(spdlog::level::info); s_clientLogger->set_level(spdlog::level::info); break;
+		case LogLevel::CMT_WARN: s_cometLogger->set_level(spdlog::level::warn); s_clientLogger->set_level(spdlog::level::warn); break;
+		case LogLevel::CMT_ERROR: s_cometLogger->set_level(spdlog::level::err); s_clientLogger->set_level(spdlog::level::err); break;
+		case LogLevel::CMT_CRITICAL: s_cometLogger->set_level(spdlog::level::critical); s_clientLogger->set_level(spdlog::level::critical); break;
+		default: Log::cometError("Unknown LogLevel"); break;
+		}
+	}
+
 }

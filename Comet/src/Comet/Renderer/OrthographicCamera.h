@@ -21,6 +21,7 @@ namespace Comet
 
 		void onEvent(Event& e);
 		void onUpdate(Timestep ts);
+		void onResize(float aspectRatio);
 
 		void setViewMatrix(const glm::mat4& viewMatrix) { m_viewMatrix = viewMatrix; }
 		const glm::mat4& getViewMatrix() const { return m_viewMatrix; }

@@ -17,7 +17,10 @@ namespace Comet
 		void bind() const override;
 		void unbind() const override;
 
+		void onWindowResize(uint32_t width, uint32_t height) override;
 		void resize(uint32_t width, uint32_t height, bool forceRecreate = false) override;
+
+		void clear() const override;
 
 		void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const override;
 		void bindDepthTexture(uint32_t slot = 0) const override;

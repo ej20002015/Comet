@@ -47,7 +47,8 @@ namespace Comet
 		uint32_t samples = 1;
 
 		//TODO: Change to ratio
-		bool resize = true;
+		//Indicates whether the framebuffer should be resized whenever the main window is resized
+		bool resizeOnWindowResize = true;
 	};
 
 	class Framebuffer
@@ -60,7 +61,14 @@ namespace Comet
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 
+		//Called specifically when wanting to resize framebuffers on window resize events
+		//Has no affect when m_specification.resizeOnWindowResize = false
+		virtual void onWindowResize(uint32_t width, uint32_t height) = 0;
+		//Directly resize framebuffer - does not care what the value of m_specification.resizeOnWindowResize is
 		virtual void resize(uint32_t width, uint32_t height, bool forceRecreate = false) = 0;
+
+		//Clear depth buffer and any color attachments to the value specified by m_specification.clearColor
+		virtual void clear() const = 0;
 
 		virtual void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const = 0;
 		virtual void bindDepthTexture(uint32_t slot = 0) const = 0;

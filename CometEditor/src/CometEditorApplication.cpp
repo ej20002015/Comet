@@ -13,6 +13,7 @@ namespace Comet
 			: Application("Comet Editor")
 		{
 			pushLayer(new CometEditorLayer());
+			Log::setLogLevel(Log::LogLevel::CMT_INFO);
 		}
 
 		~CometEditorApplication() = default;

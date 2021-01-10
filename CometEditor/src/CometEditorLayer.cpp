@@ -1,7 +1,5 @@
 #include "CometEditorLayer.h"
 
-#include "ImGui.h"
-
 namespace Comet
 {
 
@@ -12,6 +10,8 @@ namespace Comet
 	void CometEditorLayer::onAttach()
 	{
         Comet::Renderer::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+
+        m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
 
         m_textureAtlas = Comet::Texture2DAtlas::create("assets/textures/RPGpack_sheet_2X.png", 128, false, Comet::TextureFilter::NEAREST, Comet::TextureFilter::NEAREST);
 
@@ -36,15 +36,17 @@ namespace Comet
         m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });
 
 
-        m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()), 3.0f);
+        m_orthographicCamera = Comet::OrthographicCamera(m_initialFramebufferSize.x / m_initialFramebufferSize.y, 3.0f);
 
 
         FramebufferSpecification framebufferSpecification;
-        framebufferSpecification.width = Comet::Application::get().getWindow().getWidth();
-        framebufferSpecification.height = Comet::Application::get().getWindow().getHeight();
+        framebufferSpecification.width = static_cast<uint32_t>(m_initialFramebufferSize.x);
+        framebufferSpecification.height = static_cast<uint32_t>(m_initialFramebufferSize.y);
         framebufferSpecification.clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-        
-        m_framebuffer = Framebuffer::create();
+        //Since this will be the scene viewport, it should be resized in accordance with the ImGui image's size - not the whole window
+        framebufferSpecification.resizeOnWindowResize = false;
+       
+        m_framebuffer = Framebuffer::create(framebufferSpecification);
 	}
 
 	void CometEditorLayer::onDetach()
@@ -57,8 +59,16 @@ namespace Comet
 
         m_orthographicCamera.onUpdate(ts);
 
+        //Resize framebuffer and set camera projection if viewport size has changed
+        if (!(m_viewportSize.x == 0 || m_viewportSize.y == 0) &&
+           (static_cast<float>(m_framebuffer->getSpecification().width) != m_viewportSize.x || static_cast<float>(m_framebuffer->getSpecification().height) != m_viewportSize.y))
+        {
+            m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
+            m_orthographicCamera.onResize(m_viewportSize.x / m_viewportSize.y);
+        }
+
         m_framebuffer->bind();
-        Renderer::clear();
+        m_framebuffer->clear();
 
         Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), false);
 
@@ -196,9 +206,16 @@ namespace Comet
 
         ImGui::End();
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Scene Viewport");
-        ImGui::Image(reinterpret_cast<void*>(m_framebuffer->getColorAttachmentRendererID()), { 1280.0f, 720.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+
+        //Get size available for viewport
+        m_viewportSize = ImGui::GetContentRegionAvail();
+
+        ImGui::Image(reinterpret_cast<void*>(m_framebuffer->getColorAttachmentRendererID()), { m_viewportSize.x, m_viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+
         ImGui::End();
+        ImGui::PopStyleVar();
 
         ImGui::End();
 	}

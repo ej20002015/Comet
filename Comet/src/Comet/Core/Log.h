@@ -13,6 +13,13 @@ namespace Comet
 	public:
 		static void init();
 
+		enum class LogLevel
+		{
+			CMT_TRACE, CMT_INFO, CMT_WARN, CMT_ERROR, CMT_CRITICAL
+		};
+
+		static void setLogLevel(LogLevel level);
+
 #ifdef CMT_LOG_MACROS
 		inline static Reference<spdlog::logger>& getCometLogger() { return s_cometLogger; }
 		inline static Reference<spdlog::logger>& getClientLogger() { return s_clientLogger; }

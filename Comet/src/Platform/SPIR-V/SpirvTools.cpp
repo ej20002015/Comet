@@ -242,7 +242,7 @@ namespace Comet
 			shaderInfo.uniformBuffers.emplace_back(bufferName, bufferSize, bufferBindingPoint);
 			UniformBufferDescriptor& uniformBuffer = shaderInfo.uniformBuffers.back();
 
-			Log::cometTrace("Created uniform buffer declaration with name '{0}', size {1} bytes, bindingPoint {2}", bufferName, bufferSize, bufferBindingPoint);
+			Log::cometInfo("Created uniform buffer declaration with name '{0}', size {1} bytes, bindingPoint {2}", bufferName, bufferSize, bufferBindingPoint);
 			
 			//Populate uniform buffer with uniforms
 			uint32_t elementCount = static_cast<uint32_t>(bufferType.member_types.size());
@@ -258,7 +258,7 @@ namespace Comet
 				UniformBufferElementDescriptor element(uniformName, shaderUniformType, uniformSize, uniformOffset);
 				uniformBuffer.push(element);
 
-				Log::cometTrace("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
+				Log::cometInfo("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
 			}
 		}
 
@@ -271,7 +271,7 @@ namespace Comet
 			shaderInfo.uniformStructs.emplace_back(structName, structSize);
 			UniformStructDescriptor& uniformStruct = shaderInfo.uniformStructs.back();
 
-			Log::cometTrace("Created uniform struct declaration with name '{0}', size {1} bytes", structName, structSize);
+			Log::cometInfo("Created uniform struct declaration with name '{0}', size {1} bytes", structName, structSize);
 
 			//Populate uniform struct with uniforms
 			uint32_t elementCount = static_cast<uint32_t>(structType.member_types.size());
@@ -287,7 +287,7 @@ namespace Comet
 				UniformDescriptor element(uniformName, shaderUniformType, uniformSize);
 				uniformStruct.push(element);
 
-				Log::cometTrace("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
+				Log::cometInfo("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
 			}
 		}
 

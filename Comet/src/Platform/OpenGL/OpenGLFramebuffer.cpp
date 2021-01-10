@@ -71,11 +71,24 @@ namespace Comet
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void OpenGLFramebuffer::onWindowResize(uint32_t width, uint32_t height)
+	{
+		if (m_specification.resizeOnWindowResize)
+			resize(width, height);
+	}
+
 	void OpenGLFramebuffer::resize(uint32_t width, uint32_t height, bool forceRecreate)
 	{
-		if ((m_specification.width = width && m_specification.height == height && !forceRecreate) || (!m_specification.resize && !forceRecreate))
+		if (m_specification.width == width && m_specification.height == height && !forceRecreate)
 		{
-			Log::cometInfo("Either no need to resize/recreate or resize = false for framebuffer {0}", m_rendererID);
+			Log::cometWarn("No need to resize/recreate framebuffer {0}", m_rendererID);
+			return;
+		}
+
+		if (width == 0 || height == 0)
+		{
+			Log::cometError("Cannot set framebuffer {0}'s width or height to 0", m_rendererID);
+			CMT_COMET_ASSERT(false);
 			return;
 		}
 
@@ -129,6 +142,15 @@ namespace Comet
 		glNamedFramebufferTexture(m_rendererID, getGLDepthAttachmentType(m_specification.depthAttachment.attachment), m_depthAttachmentRendererID, 0);
 
 		CMT_COMET_ASSERT_MESSAGE(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is not complete");
+	}
+
+	void OpenGLFramebuffer::clear() const
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
+		glViewport(0, 0, m_specification.width, m_specification.height);
+
+		glClearColor(m_specification.clearColor.r, m_specification.clearColor.g, m_specification.clearColor.b, m_specification.clearColor.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	void OpenGLFramebuffer::bindColorTexture(uint32_t attachmentIndex, uint32_t slot) const

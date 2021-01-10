@@ -60,7 +60,7 @@ namespace Comet
 		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
 		{
 			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
-			Log::cometInfo("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
+			Log::cometTrace("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
 			uniformBuffer.setData(data, uniformBuffer.getDescriptor().getSize());
 		}
 		else
@@ -75,7 +75,7 @@ namespace Comet
 		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
 		{
 			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
-			Log::cometInfo("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
+			Log::cometTrace("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
 			uniformBuffer.setData(data, size, offset);
 		}
 		else
@@ -93,7 +93,7 @@ namespace Comet
 		{
 			Log::cometError("Cannot open shader file");
 			CMT_COMET_ASSERT(false);
-			return nullptr;
+			return "";
 		}
 		
 		//Get size of file

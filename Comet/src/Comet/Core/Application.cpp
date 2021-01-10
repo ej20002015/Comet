@@ -114,7 +114,9 @@ namespace Comet
 		
 		//Resize framebuffers
 		for (Reference<Framebuffer> framebuffer : FramebufferPool::getGlobalPool())
-			framebuffer->resize(e.getWidth(), e.getHeight());	
+		{
+			framebuffer->onWindowResize(e.getWidth(), e.getHeight());
+		}
 
 		return false;
 	}
