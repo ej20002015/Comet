@@ -47,6 +47,13 @@ namespace Comet
         framebufferSpecification.resizeOnWindowResize = false;
        
         m_framebuffer = Framebuffer::create(framebufferSpecification);
+
+        //SCENE STUFF
+        m_scene = Scene::create();
+
+        Entity testEntity = m_scene->createEntity();
+        testEntity.addComponent<TransformComponent>(glm::mat4(1.0f));
+        Log::clientInfo(static_cast<std::string>(testEntity.getComponent<UUIDComponent>()));
 	}
 
 	void CometEditorLayer::onDetach()
@@ -57,10 +64,12 @@ namespace Comet
 	{
         m_ts = ts;
 
-        m_orthographicCamera.onUpdate(ts);
+        //Only allow inputs to work and change camera position when on the viewport
+        if (m_viewportFocused && m_viewportHovered)
+            m_orthographicCamera.onUpdate(ts);
 
         //Resize framebuffer and set camera projection if viewport size has changed
-        if (!(m_viewportSize.x == 0 || m_viewportSize.y == 0) &&
+        if (!(m_viewportSize.x < 1.0f || m_viewportSize.y < 1.0f) &&
            (static_cast<float>(m_framebuffer->getSpecification().width) != m_viewportSize.x || static_cast<float>(m_framebuffer->getSpecification().height) != m_viewportSize.y))
         {
             m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
@@ -72,6 +81,7 @@ namespace Comet
 
         Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), false);
 
+        //Draw basic map
         Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f, -0.1f }, m_subTextures.at("BottomWall"));
         Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f }, m_subTextures.at("Door"));
         Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  0.0f }, m_subTextures.at("LeftCornerWall"));
@@ -206,8 +216,15 @@ namespace Comet
 
         ImGui::End();
 
+        //Scene Viewport
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Scene Viewport");
+
+        //Work out whether ImGui events should not be blocked
+        m_viewportFocused = ImGui::IsWindowFocused();
+        m_viewportHovered = ImGui::IsWindowHovered();
+        Application::get().getImGuiLayer().setBlocking(!(m_viewportFocused && m_viewportHovered));
 
         //Get size available for viewport
         m_viewportSize = ImGui::GetContentRegionAvail();

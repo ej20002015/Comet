@@ -41,8 +41,8 @@ namespace Comet
 		else if (Input::isKeyPressed(KeyCode::KEY_W))
 			m_position.y += m_movementSpeed * m_zoomLevel * ts;
 
-		//Set camera zoom level
-		m_zoomLevel += (m_zoomSpeed * m_zoomLevelStep) * ts;
+		//Set camera zoom level and scale with current zoom level
+		m_zoomLevel += (m_zoomSpeed * m_zoomLevelStep * m_zoomLevel) * ts;
 
 		//Prevent camera going behind z-axis and all geometry appearing to flip
 		if (m_zoomLevel < 0.005f)

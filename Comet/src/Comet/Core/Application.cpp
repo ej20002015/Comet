@@ -73,6 +73,9 @@ namespace Comet
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++)
 		{
 			(*it)->onEvent(e);
+			//If the layer is set to not block events, then set the event handled boolean to false regardless
+			if (!(*it)->getBlocking())
+				e.handled = false;
 			//If event has been handled then do not pass it to the other layers
 			if (e.handled)
 				break;

@@ -27,13 +27,8 @@ namespace Comet
 		//Called to render ImGui
 		void end();
 
-		void setBlockEvents(bool blockEvents) { m_blockEvents = blockEvents; }
-		bool getBlockEvents() const { return m_blockEvents; }
-
 	private:
 		float m_time = 0.0f;
-		//Determines whether ImGui Events are blocked or passed down to other layers in the stack
-		bool m_blockEvents = true;
 	};
 
 }

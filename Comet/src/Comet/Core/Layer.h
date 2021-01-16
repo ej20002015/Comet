@@ -21,8 +21,12 @@ namespace Comet
 
 		const std::string& getName() const { return m_name; }
 
+		bool getBlocking() const { return m_blockEvents; }
+		void setBlocking(bool block) { m_blockEvents = block; }
+
 	private:
 		std::string m_name;
+		bool m_blockEvents = true;
 	};
 
 }

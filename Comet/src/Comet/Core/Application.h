@@ -35,7 +35,9 @@ namespace Comet
 
 		void exit() { m_running = false; }
 
-		Window& getWindow() const { return *m_window; }
+		const Window& getWindow() const { return *m_window; }
+
+		ImGuiLayer& getImGuiLayer() { return *m_ImGuiLayer; }
 
 	private:
 		void run();

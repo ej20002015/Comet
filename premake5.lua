@@ -21,6 +21,8 @@ includeDirectories["shaderc"] = "Comet/Vendor/shaderc/include"
 includeDirectories["SPIRVCross"] = "Comet/Vendor/SPIRV-Cross/include"
 includeDirectories["stb"] = "Comet/Vendor/stb/include"
 
+includeDirectories["EnTT"] = "Comet/Vendor/EnTT/include"
+
 libDirectories = {}
 libDirectories["shaderc"] = "Vendor/shaderc/bin"
 libDirectories["SPIRVCross"] = "Vendor/SPIRV-Cross/bin"
@@ -74,7 +76,8 @@ project "Comet"
         "%{includeDirectories.shaderc}",
         "%{includeDirectories.SPIRVCross}",
         "%{includeDirectories.GLM}",
-        "%{includeDirectories.stb}"
+        "%{includeDirectories.stb}",
+        "%{includeDirectories.EnTT}"
     }
 
     links
@@ -184,7 +187,8 @@ project "Application"
         "Comet/src",
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.ImGui}",
-        "%{includeDirectories.GLM}"
+        "%{includeDirectories.GLM}",
+        "%{includeDirectories.EnTT}"
     }
 
     filter "system:windows"
@@ -232,7 +236,8 @@ project "CometEditor"
         "Comet/src",
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.ImGui}",
-        "%{includeDirectories.GLM}"
+        "%{includeDirectories.GLM}",
+        "%{includeDirectories.EnTT}"
     }
 
     filter "system:windows"

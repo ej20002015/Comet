@@ -85,9 +85,9 @@ namespace Comet
 			return;
 		}
 
-		if (width == 0 || height == 0)
+		if (width < 1 || height < 1)
 		{
-			Log::cometError("Cannot set framebuffer {0}'s width or height to 0", m_rendererID);
+			Log::cometError("Cannot set framebuffer {0}'s width or height to 0 or below", m_rendererID);
 			CMT_COMET_ASSERT(false);
 			return;
 		}

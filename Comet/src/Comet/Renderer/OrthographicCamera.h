@@ -45,7 +45,7 @@ namespace Comet
 		glm::vec3 m_position = glm::vec3(0.0f);
 		float m_zoomLevelStep = 0.0f;
 		float m_movementSpeed = 2.0f;
-		float m_zoomSpeed = 50.0f;
+		float m_zoomSpeed = 100.0f;
 	};
 
 }

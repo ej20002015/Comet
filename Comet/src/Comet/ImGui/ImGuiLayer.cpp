@@ -66,12 +66,9 @@ namespace Comet
 
     void ImGuiLayer::onEvent(Event& e)
     {
-        if (m_blockEvents)
-        {
-            ImGuiIO& io = ImGui::GetIO();
-            e.handled |= e.isInEventCategory(EventCategory::EVENT_CATEGORY_MOUSE) & io.WantCaptureMouse;
-            e.handled |= e.isInEventCategory(EventCategory::EVENT_CATEGORY_KEYBOARD) & io.WantCaptureKeyboard;
-        }
+        ImGuiIO& io = ImGui::GetIO();
+        e.handled |= e.isInEventCategory(EventCategory::EVENT_CATEGORY_MOUSE) & io.WantCaptureMouse;
+        e.handled |= e.isInEventCategory(EventCategory::EVENT_CATEGORY_KEYBOARD) & io.WantCaptureKeyboard;
     }
 
     void ImGuiLayer::onImGuiRender()
