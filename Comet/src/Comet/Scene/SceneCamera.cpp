@@ -23,6 +23,17 @@ namespace Comet
 		recalculateProjection();
 	}
 
+	void SceneCamera::setAspectRatio(float aspectRatio)
+	{
+		if (!m_fixedAspectRatio)
+		{
+			Log::cometWarn("Cannot set aspect ratio of camera whose ratio is not fixed");
+			return;
+		}
+
+		m_aspectRatio = aspectRatio;
+	}
+
 	void SceneCamera::setPerspective(float FOV, float nearPlane, float farPlane)
 	{
 		m_perspectiveFOV = FOV;

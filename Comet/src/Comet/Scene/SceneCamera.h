@@ -19,8 +19,11 @@ namespace Comet
 
 		ProjectionType getProjectionType() const { return m_projectionType; }
 
-		void setFixedAspectRatio(float fixedAspectRatio = 1.0f) { m_aspectRatio = fixedAspectRatio; m_fixedAspectRatio = true; }
+		float getAspectRatio() const { return m_aspectRatio; }
+		void setAspectRatio(float aspectRatio);
+
 		bool getFixedAspectRatio() const { return m_fixedAspectRatio; }
+		void setFixedAspectRatio(bool fixedAspectRatio) { m_fixedAspectRatio = fixedAspectRatio; }
 		
 		//Perspective
 		void setPerspective(float FOV = 5.0f, float nearPlane = 0.001f, float farPlane = 1000.0f);
