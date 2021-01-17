@@ -28,6 +28,7 @@ namespace Comet
 		Reference<Framebuffer> m_framebuffer;
 		ImVec2 m_viewportSize;
 		bool m_viewportFocused = false, m_viewportHovered = false;
+		Entity m_cameraEntity;
 
 		const glm::vec2 m_initialFramebufferSize = { 1280.0f, 720.0f };
 	};

@@ -22,7 +22,9 @@ namespace Comet
 		T& addComponent(Args&&... args)
 		{
 			CMT_CLIENT_ASSERT_MESSAGE(!hasComponent<T>(), "Cannot add component - entity already has component");
-			return m_scene->m_registry.emplace<T>(m_entityHandle, std::forward<Args>(args)...);
+			auto& component = m_scene->m_registry.emplace<T>(m_entityHandle, std::forward<Args>(args)...);
+			m_scene->onComponentConstruction<T>(*this, component);
+			return component;
 		}
 
 		template<typename T>

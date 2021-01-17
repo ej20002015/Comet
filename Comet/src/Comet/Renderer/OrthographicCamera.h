@@ -9,6 +9,8 @@
 
 #include "glm/glm.hpp"
 
+//TODO: DELETE CLASS
+
 namespace Comet
 {
 

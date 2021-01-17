@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "Comet/Core/UUID.h"
+#include "SceneCamera.h"
 
 #include <iomanip>
 
@@ -52,6 +53,16 @@ namespace Comet
 
 		operator glm::mat4&() { return transform; }
 		operator const glm::mat4&() const { return transform; }
+	};
+
+	struct CameraComponent
+	{
+		SceneCamera camera;
+
+		CameraComponent() = default;
+
+		CameraComponent(const CameraComponent& other) = default;
+		~CameraComponent() = default;
 	};
 
 }

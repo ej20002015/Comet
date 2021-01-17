@@ -52,14 +52,15 @@ namespace Comet
         m_scene = Scene::create();
 
         Entity testEntity = m_scene->createEntity();
-        testEntity.addComponent<TransformComponent>(glm::mat4(1.0f));
         Log::clientInfo(static_cast<std::string>(testEntity.getComponent<UUIDComponent>()));
+        m_cameraEntity = m_scene->createEntity("camera");
+        m_cameraEntity.addComponent<CameraComponent>();
 	}
 
 	void CometEditorLayer::onDetach()
 	{
 	}
-
+    
 	void CometEditorLayer::onUpdate(Timestep ts)
 	{
         m_ts = ts;
@@ -74,12 +75,17 @@ namespace Comet
         {
             m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
             m_orthographicCamera.onResize(m_viewportSize.x / m_viewportSize.y);
+            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
         }
 
         m_framebuffer->bind();
         m_framebuffer->clear();
 
-        Comet::Renderer2D::beginScene(m_orthographicCamera, m_orthographicCamera.getViewMatrix(), false);
+        SceneCamera& sceneCamera = m_cameraEntity.getComponent<CameraComponent>().camera;
+        TransformComponent cameraTransform = m_cameraEntity.getComponent<TransformComponent>();
+
+        //Comet::Renderer2D::beginScene(m_orthographicCamera, glm::inverse(m_orthographicCamera.getViewMatrix()), false);
+        Comet::Renderer2D::beginScene(sceneCamera, cameraTransform, false);
 
         //Draw basic map
         Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f, -0.1f }, m_subTextures.at("BottomWall"));

@@ -6,7 +6,7 @@
 namespace Comet
 {
 
-	//Base Camera just encapsulates a projection matrix - does not include the View matrix (camera transform)
+	//Camera class just encapsulates a projection matrix - does not include the View matrix (camera transform)
 	class Camera
 	{
 	public:

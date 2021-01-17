@@ -28,7 +28,7 @@ namespace Comet
 			unformattedHexString.insert({ 9 }, "-");
 			unformattedHexString.insert({ 14 }, "-");
 			return unformattedHexString;
-		}
+		}	
 
 	private:
 		uint64_t m_ID;

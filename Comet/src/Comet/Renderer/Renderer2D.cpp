@@ -73,10 +73,10 @@ namespace Comet
 		delete[] s_data.quadVertexBufferBase;
 	}
 
-	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& viewMatrix, bool depthTest)
+	void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, bool depthTest)
 	{
 		s_batchData.depthTest = depthTest;
-		s_batchData.viewProjectionMatrix = camera.getProjectionMatrix() * viewMatrix;
+		s_batchData.viewProjectionMatrix = camera.getProjectionMatrix() * glm::inverse(cameraTransform);
 		setInitialBatchData();
 		resetStats();
 	}

@@ -28,7 +28,8 @@ namespace Comet
 		static void init();
 		static void shutdown();
 
-		static void beginScene(const Camera& camera, const glm::mat4& viewMatrix, bool depthTest = true);
+		static void beginScene(const Camera& camera, const glm::mat4& cameraTransform, bool depthTest = true);
+
 		static void endScene();
 
 		static void drawColoredQuad(const glm::vec2& centerCoordinates, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f);
