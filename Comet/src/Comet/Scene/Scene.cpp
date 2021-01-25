@@ -7,6 +7,13 @@
 namespace Comet
 {
 
+	std::unordered_map<std::type_index, Scene::ComponentCallbackFunction> Scene::s_constructCallbacks;
+
+	Scene::Scene()
+	{
+		bindOnComponentConstructionFunction<CameraComponent>(CMT_BIND_FUNCTION(Scene::onCameraComponentConstruction));
+	}
+
 	Entity Scene::createEntity(const std::string& tag)
 	{
 		Entity newEntity(this, m_registry.create());
@@ -38,14 +45,9 @@ namespace Comet
 		}
 	}
 
-	template<typename T>
-	void Scene::onComponentConstruction(Entity entity, T& component)
+	void Scene::onCameraComponentConstruction(Entity entity)
 	{
-	}
-
-	template<>
-	void Scene::onComponentConstruction(Entity entity, CameraComponent& cameraComponent)
-	{
+		CameraComponent cameraComponent = entity.getComponent<CameraComponent>();
 		if (m_viewportWidth != 0 && m_viewportHeight != 0)
 			cameraComponent.camera.setViewportSize(m_viewportWidth, m_viewportHeight);
 	}

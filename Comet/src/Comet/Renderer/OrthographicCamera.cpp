@@ -22,8 +22,8 @@ namespace Comet
 	void OrthographicCamera::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.dispatch<MouseScrolledEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onMouseScrolledEvent));
-		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_EVENT_FUNCTION(OrthographicCamera::onWindowResizedEvent));
+		dispatcher.dispatch<MouseScrolledEvent>(CMT_BIND_FUNCTION(OrthographicCamera::onMouseScrolledEvent));
+		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_FUNCTION(OrthographicCamera::onWindowResizedEvent));
 	}
 
 	void OrthographicCamera::onUpdate(Timestep ts)

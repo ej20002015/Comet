@@ -12,6 +12,7 @@ namespace Comet
 	{
 	public:
 		Entity() = default;
+
 		Entity(Scene* scene, entt::entity entityHandle)
 			: m_scene(scene), m_entityHandle(entityHandle) {}
 
@@ -23,7 +24,7 @@ namespace Comet
 		{
 			CMT_CLIENT_ASSERT_MESSAGE(!hasComponent<T>(), "Cannot add component - entity already has component");
 			auto& component = m_scene->m_registry.emplace<T>(m_entityHandle, std::forward<Args>(args)...);
-			m_scene->onComponentConstruction<T>(*this, component);
+			m_scene->onComponentConstruction<T>(*this);
 			return component;
 		}
 
@@ -56,6 +57,8 @@ namespace Comet
 	private:
 		Scene* m_scene = nullptr;
 		entt::entity m_entityHandle = entt::null;
+
+		friend class Scene;
 	};
 
 }

@@ -23,6 +23,7 @@
 #include "Comet/Scene/Scene.h"
 #include "Comet/Scene/Entity.h"
 #include "Comet/Scene/Components.h"
+#include "Comet/Scene/EntityNativeScript.h"
 
 //maybe temp?
 #include "Comet/Renderer/Framebuffer.h"

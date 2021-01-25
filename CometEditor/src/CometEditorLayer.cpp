@@ -55,6 +55,13 @@ namespace Comet
         Log::clientInfo(static_cast<std::string>(testEntity.getComponent<UUIDComponent>()));
         m_cameraEntity = m_scene->createEntity("camera");
         m_cameraEntity.addComponent<CameraComponent>();
+
+        class CameraControllerScript : public EntityNativeScript
+        {
+            //TODO: IMPLEMENT TEST SCRIPT!!!!!!
+        };
+
+        m_cameraEntity.addComponent<NativeScriptComponent>().bind<CameraControllerScript>();
 	}
 
 	void CometEditorLayer::onDetach()

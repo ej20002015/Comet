@@ -22,7 +22,7 @@ namespace Comet
 		Window::WindowProperties windowProperties;
 		windowProperties.title = windowTitle;
 		m_window = Unique<Window>(Window::create(windowProperties));
-		m_window->setEventCallback(CMT_BIND_EVENT_FUNCTION(Application::onEvent));
+		m_window->setEventCallback(CMT_BIND_FUNCTION(Application::onEvent));
 		m_window->setVSync(false);
 
 		//Create ImGui Layer
@@ -66,8 +66,8 @@ namespace Comet
 	{
 		EventDispatcher dispatcher(e);
 
-		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_EVENT_FUNCTION(Application::onWindowClosedEvent));
-		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_EVENT_FUNCTION(Application::onWindowResizedEvent));
+		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_FUNCTION(Application::onWindowClosedEvent));
+		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_FUNCTION(Application::onWindowResizedEvent));
 
 		//Propagate events down the layer stack in reverse order (from the top item on the stack downwards - overlays to layers)
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++)
