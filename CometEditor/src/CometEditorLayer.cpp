@@ -1,5 +1,8 @@
 #include "CometEditorLayer.h"
 
+//TEMP
+#include "glm/gtc/matrix_transform.hpp"
+
 namespace Comet
 {
 
@@ -52,13 +55,32 @@ namespace Comet
         m_scene = Scene::create();
 
         Entity testEntity = m_scene->createEntity();
-        Log::clientInfo(static_cast<std::string>(testEntity.getComponent<UUIDComponent>()));
         m_cameraEntity = m_scene->createEntity("camera");
         m_cameraEntity.addComponent<CameraComponent>();
 
         class CameraControllerScript : public EntityNativeScript
         {
-            //TODO: IMPLEMENT TEST SCRIPT!!!!!!
+        protected:
+            void onUpdate(Timestep ts) override
+            {
+                TransformComponent& transform = getComponent<TransformComponent>();
+                glm::vec3 translation(0.0f);
+
+                if (Input::isKeyPressed(KeyCode::KEY_D))
+                    translation.x += m_cameraSpeed * ts;
+                else if (Input::isKeyPressed(KeyCode::KEY_A))
+                    translation.x -= m_cameraSpeed * ts;
+
+                if (Input::isKeyPressed(KeyCode::KEY_W))
+                    translation.y += m_cameraSpeed * ts;
+                else if (Input::isKeyPressed(KeyCode::KEY_S))
+                    translation.y -= m_cameraSpeed * ts;
+
+                transform.transform = glm::translate(static_cast<glm::mat4>(transform), translation);
+            }   
+
+        private:
+            const float m_cameraSpeed = 4.0f;
         };
 
         m_cameraEntity.addComponent<NativeScriptComponent>().bind<CameraControllerScript>();
@@ -87,6 +109,8 @@ namespace Comet
 
         m_framebuffer->bind();
         m_framebuffer->clear();
+
+        m_scene->onUpdate(ts);
 
         SceneCamera& sceneCamera = m_cameraEntity.getComponent<CameraComponent>().camera;
         TransformComponent cameraTransform = m_cameraEntity.getComponent<TransformComponent>();
@@ -242,7 +266,7 @@ namespace Comet
         //Get size available for viewport
         m_viewportSize = ImGui::GetContentRegionAvail();
 
-        ImGui::Image(reinterpret_cast<void*>(m_framebuffer->getColorAttachmentRendererID()), { m_viewportSize.x, m_viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+        ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), { m_viewportSize.x, m_viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
         ImGui::End();
         ImGui::PopStyleVar();

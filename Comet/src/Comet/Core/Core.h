@@ -16,7 +16,8 @@ to a function, the lamda is sent as a compiler generated struct type. Therefore 
 The ellipsis after the auto&& argument type declaration indicates that args is a pack of arguments. decltype(args) explicitly gets the types of the arguments. The elipsis
 after (args) unpacks the arguments and passes them to the function.
 */
-#define CMT_BIND_FUNCTION(function) [this](auto&&... args) -> decltype(auto) { return this->function(std::forward<decltype(args)>(args)...); }
+#define CMT_BIND_METHOD(method) [this](auto&&... args) -> decltype(auto) { return this->method(std::forward<decltype(args)>(args)...); }
+#define CMT_BIND_FUNCTION(function) [](auto&&... args) -> decltype(auto) { return function(std::forward<decltype(args)>(args)...); }
 
 #ifdef CMT_DEBUG
 	#ifdef CMT_PLATFORM_WINDOWS

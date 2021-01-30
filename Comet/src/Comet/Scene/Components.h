@@ -7,8 +7,6 @@
 #include "SceneCamera.h"
 #include "EntityNativeScript.h"
 
-#include <iomanip>
-
 namespace Comet
 {
 
@@ -28,9 +26,10 @@ namespace Comet
 
 	struct TagComponent
 	{
-		std::string tag;
+		std::string tag = "Unnamed Entity";
 
 		TagComponent() = default;
+
 		TagComponent(const std::string& tag)
 			: tag(tag) {}
 
