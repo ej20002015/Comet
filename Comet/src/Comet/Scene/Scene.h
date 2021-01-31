@@ -50,7 +50,7 @@ namespace Comet
 
 	private:
 		template<typename T>
-		void onComponentConstruction(Entity entity, T& component)
+		void onComponentConstruction(Entity entity)
 		{
 			if (auto it = s_constructCallbacks.find(typeid(T)); it != s_constructCallbacks.end())
 			{

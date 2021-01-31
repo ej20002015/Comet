@@ -7,6 +7,8 @@
 #include "SceneCamera.h"
 #include "EntityNativeScript.h"
 
+#include "Comet/Renderer/Texture.h"
+
 namespace Comet
 {
 
@@ -58,8 +60,11 @@ namespace Comet
 	struct CameraComponent
 	{
 		SceneCamera camera;
+		bool primary = false;
 
 		CameraComponent() = default;
+		CameraComponent(bool primary)
+			: primary(primary) {}
 
 		CameraComponent(const CameraComponent& other) = default;
 		~CameraComponent() = default;
@@ -94,6 +99,21 @@ namespace Comet
 				nativeScriptComponent.script = nullptr;
 			};
 		}
+	};
+
+	struct SpriteSubComponent
+	{
+		Reference<Texture2DSubTexture> subTexture = nullptr;
+		glm::vec4 colorTint = glm::vec4(1.0f);
+		float tilingFactor = 1.0f;
+
+		SpriteSubComponent() = default;
+
+		SpriteSubComponent(Reference<Texture2DSubTexture> subTexture, const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f)
+			: subTexture(subTexture), colorTint(colorTint), tilingFactor(tilingFactor) {}
+
+		SpriteSubComponent(const SpriteSubComponent& other) = default;
+		~SpriteSubComponent() = default;
 	};
 
 }

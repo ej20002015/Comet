@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "Components.h"
 
+#include "Comet/Renderer/Renderer2D.h"
+
 namespace Comet
 {
 
@@ -54,6 +56,52 @@ namespace Comet
 		}
 
 		//TODO: render commands in here
+
+		Entity primaryCameraEntity;
+
+		//Get primary camera
+		{
+			auto view = m_registry.view<CameraComponent>();
+			for (auto entity : view)
+			{
+				CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
+				if (cameraComponent.primary)
+				{
+					primaryCameraEntity = { this, entity };
+					break;
+				}
+			}
+		}
+
+		if (!primaryCameraEntity)
+		{
+			Log::cometError("Cannot render scene - no primary camera set");
+			//Only works if rendering commands are the last ones in update
+			return;
+		}
+
+		//Begin scene
+		const Camera& camera = primaryCameraEntity.getComponent<CameraComponent>().camera;
+		const glm::mat4& cameraTransform = primaryCameraEntity.getComponent<TransformComponent>().transform;
+		Renderer2D::beginScene(camera, cameraTransform, false);
+
+		//Render 2DSubTexturesSprites
+		{
+			auto group = m_registry.view<SpriteSubComponent, TransformComponent>();
+			for (auto entity : group)
+			{
+				const SpriteSubComponent& spriteSubComponent = group.get<SpriteSubComponent>(entity);
+				const glm::mat4& transform = group.get<TransformComponent>(entity).transform;
+				if (!spriteSubComponent.subTexture)
+				{
+					Log::cometError("Cannot render entity - no sub texture set");
+					continue;
+				}
+				Renderer2D::drawSubQuad(transform, spriteSubComponent.colorTint, spriteSubComponent.subTexture, spriteSubComponent.tilingFactor);
+			}
+		}
+
+		Renderer2D::endScene();
 	}
 
 	void Scene::onViewportResized(uint32_t width, uint32_t height)

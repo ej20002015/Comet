@@ -2,6 +2,7 @@
 
 //TEMP
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Comet
 {
@@ -56,7 +57,7 @@ namespace Comet
 
         Entity testEntity = m_scene->createEntity();
         m_cameraEntity = m_scene->createEntity("camera");
-        m_cameraEntity.addComponent<CameraComponent>();
+        m_cameraEntity.addComponent<CameraComponent>(true);
 
         class CameraControllerScript : public EntityNativeScript
         {
@@ -84,6 +85,131 @@ namespace Comet
         };
 
         m_cameraEntity.addComponent<NativeScriptComponent>().bind<CameraControllerScript>();
+
+
+        //Create entities for tilemap
+        
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity1");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Door"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity2");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 0.0f, -0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("BottomWall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity3");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { -1.0f, 0.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("LeftCornerWall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity4");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 1.0f, 0.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("RightCornerWall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity5");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 1.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("SmallWindow"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity6");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 1.0f, -0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity7");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { -1.0f, 1.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("LeftWall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity8");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 1.0f, 1.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("RightWall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity12");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 3.0f, 0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            transform = glm::scale(transform, { 3.0f, 3.0f, 1.0f });
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Roof"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity9");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { -1.0f, 2.0f, -0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity10");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 0.0f, 2.0f, -0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+        }
+        {
+            Entity tilemapEntity = m_scene->createEntity("tilemapEntity11");
+            glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { 1.0f, 2.0f, -0.1f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+        }
+        /*
+
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,  -1.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -1.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   1.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   1.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   2.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   2.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   3.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   3.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   4.0f }, m_subTextures.at("GrassDirtLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   4.0f }, m_subTextures.at("GrassDirtRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   4.0f }, m_subTextures.at("Grass"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,   4.0f }, m_subTextures.at("Grass"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,   4.0f }, m_subTextures.at("Grass"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   5.0f }, m_subTextures.at("GrassDirtTopLeft"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   5.0f }, m_subTextures.at("GrassDirtTopRight"));
+       Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+       Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
+
+       Comet::Renderer2D::drawSubTexturedQuad({ -2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });
+       Comet::Renderer2D::drawSubTexturedQuad({ 2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });*/
+
 	}
 
 	void CometEditorLayer::onDetach()
@@ -111,63 +237,6 @@ namespace Comet
         m_framebuffer->clear();
 
         m_scene->onUpdate(ts);
-
-        SceneCamera& sceneCamera = m_cameraEntity.getComponent<CameraComponent>().camera;
-        TransformComponent cameraTransform = m_cameraEntity.getComponent<TransformComponent>();
-
-        //Comet::Renderer2D::beginScene(m_orthographicCamera, glm::inverse(m_orthographicCamera.getViewMatrix()), false);
-        Comet::Renderer2D::beginScene(sceneCamera, cameraTransform, false);
-
-        //Draw basic map
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f, -0.1f }, m_subTextures.at("BottomWall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  0.0f }, m_subTextures.at("Door"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  0.0f }, m_subTextures.at("LeftCornerWall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  0.0f }, m_subTextures.at("RightCornerWall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  1.0f, -0.1f }, m_subTextures.at("Wall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  1.0f }, m_subTextures.at("SmallWindow"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  1.0f }, m_subTextures.at("LeftWall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  1.0f }, m_subTextures.at("RightWall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  2.0f }, m_subTextures.at("Wall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  2.0f }, m_subTextures.at("Wall"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  2.0f }, m_subTextures.at("Wall"));
-
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  -2.0f }, m_subTextures.at("GrassDirtBottom"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,  -1.0f }, m_subTextures.at("GrassDirtTop"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,  -1.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -1.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   0.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   0.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   1.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   1.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   2.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   2.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   3.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   3.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   4.0f }, m_subTextures.at("GrassDirtLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   4.0f }, m_subTextures.at("GrassDirtRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   4.0f }, m_subTextures.at("Grass"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,   4.0f }, m_subTextures.at("Grass"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,   4.0f }, m_subTextures.at("Grass"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,   5.0f }, m_subTextures.at("GrassDirtTopLeft"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f,   5.0f }, m_subTextures.at("GrassDirtTopRight"));
-        Comet::Renderer2D::drawSubTexturedQuad({ -1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
-        Comet::Renderer2D::drawSubTexturedQuad({ 1.0f,   5.0f }, m_subTextures.at("GrassDirtTop"));
-
-        Comet::Renderer2D::drawSubTexturedQuad({ 0.0f,  3.0f, 0.1f }, m_subTextures.at("Roof"), { 3.0f, 3.0f });
-
-        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });
-        Comet::Renderer2D::drawSubTexturedQuad({ 2.0f, -1.0f, 0.1f }, m_subTextures.at("Tree"), { 1.0f, 2.0f });
-
-        Comet::Renderer2D::endScene();
 
         m_framebuffer->unbind();
 	}

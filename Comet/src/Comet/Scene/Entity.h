@@ -24,7 +24,7 @@ namespace Comet
 		{
 			CMT_CLIENT_ASSERT_MESSAGE(!hasComponent<T>(), "Cannot add component - entity already has component");
 			auto& component = m_scene->m_registry.emplace<T>(m_entityHandle, std::forward<Args>(args)...);
-			m_scene->onComponentConstruction<T>(*this, component);
+			m_scene->onComponentConstruction<T>(*this);
 			return component;
 		}
 
