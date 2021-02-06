@@ -22,7 +22,8 @@ namespace Comet
 	private:
 		Timestep m_ts;
 		Reference<Scene> m_scene;
-		OrthographicCamera m_orthographicCamera;
+		//OrthographicCamera m_orthographicCamera;
+		Reference<Texture2D> m_testTexture;
 		Reference<Texture2DAtlas> m_textureAtlas;
 		std::unordered_map<std::string, Reference<Texture2DSubTexture>> m_subTextures;
 		Reference<Framebuffer> m_framebuffer;

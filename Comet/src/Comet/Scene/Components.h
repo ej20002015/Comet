@@ -101,6 +101,22 @@ namespace Comet
 		}
 	};
 
+	struct SpriteComponent
+	{
+		Reference<Texture2D> texture = nullptr;
+		glm::vec4 color = glm::vec4(1.0f);
+		float tilingFactor = 1.0f;
+
+		SpriteComponent() = default;
+
+		SpriteComponent(const Reference<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f)
+			: texture(texture), color(color), tilingFactor(tilingFactor) {}
+
+		SpriteComponent(const SpriteComponent& other) = default;
+		~SpriteComponent() = default;
+	};
+
+	//TODO: Look to move this component into the main SpriteComponent
 	struct SpriteSubComponent
 	{
 		Reference<Texture2DSubTexture> subTexture = nullptr;

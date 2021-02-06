@@ -83,11 +83,36 @@ namespace Comet
 		//Begin scene
 		const Camera& camera = primaryCameraEntity.getComponent<CameraComponent>().camera;
 		const glm::mat4& cameraTransform = primaryCameraEntity.getComponent<TransformComponent>().transform;
+		//Render with no depth testing for 2D scene
 		Renderer2D::beginScene(camera, cameraTransform, false);
 
+		//Render Sprites
+		{
+			auto group = m_registry.group<SpriteComponent>(entt::get<TransformComponent>);
+			//Sort by transform z coordinate translation so sprites are drawn in the correct order
+			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
+			{
+				return lhs.transform[3][2] < rhs.transform[3][2];
+			});
+
+			for (auto entity : group)
+			{
+				const SpriteComponent& spriteComponent = group.get<SpriteComponent>(entity);
+				const glm::mat4& transform = group.get<TransformComponent>(entity).transform;
+				Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
+			}
+		}
+
+		//TODO: MERGE INTO CODE ABOVE
 		//Render 2DSubTexturesSprites
 		{
-			auto group = m_registry.view<SpriteSubComponent, TransformComponent>();
+			auto group = m_registry.group<SpriteSubComponent>(entt::get<TransformComponent>);
+			//Sort by transform z coordinate translation so sprites are drawn in the correct order
+			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
+			{
+				return lhs.transform[3][2] < rhs.transform[3][2];
+			});
+
 			for (auto entity : group)
 			{
 				const SpriteSubComponent& spriteSubComponent = group.get<SpriteSubComponent>(entity);

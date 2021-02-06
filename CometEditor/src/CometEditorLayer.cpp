@@ -17,6 +17,8 @@ namespace Comet
 
         m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
 
+        m_testTexture = Texture2D::create("assets/textures/container2.png");
+
         m_textureAtlas = Comet::Texture2DAtlas::create("assets/textures/RPGpack_sheet_2X.png", 128, false, Comet::TextureFilter::NEAREST, Comet::TextureFilter::NEAREST);
 
         m_subTextures["Door"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 14.0f, 0.0f }, { 1.0f, 1.0f });
@@ -40,7 +42,7 @@ namespace Comet
         m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });
 
 
-        m_orthographicCamera = Comet::OrthographicCamera(m_initialFramebufferSize.x / m_initialFramebufferSize.y, 3.0f);
+        //m_orthographicCamera = Comet::OrthographicCamera(m_initialFramebufferSize.x / m_initialFramebufferSize.y, 3.0f);
 
 
         FramebufferSpecification framebufferSpecification;
@@ -174,6 +176,19 @@ namespace Comet
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
             tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
         }
+
+
+
+        //Create test sprite
+        {
+            Entity spriteEntity = m_scene->createEntity("spriteEntity1");
+            glm::mat4& transform = spriteEntity.getComponent<TransformComponent>().transform;
+            glm::vec3 position = { -5.0f, 1.0f, 0.0f };
+            memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
+            spriteEntity.addComponent<SpriteComponent>(m_testTexture);
+        }
+
+
         /*
 
        Comet::Renderer2D::drawSubTexturedQuad({ -2.0f,  -2.0f }, m_subTextures.at("GrassDirtBottomLeft"));
@@ -221,15 +236,15 @@ namespace Comet
         m_ts = ts;
 
         //Only allow inputs to work and change camera position when on the viewport
-        if (m_viewportFocused && m_viewportHovered)
-            m_orthographicCamera.onUpdate(ts);
+        /*if (m_viewportFocused && m_viewportHovered)
+            m_orthographicCamera.onUpdate(ts);*/
 
         //Resize framebuffer and set camera projection if viewport size has changed
         if (!(m_viewportSize.x < 1.0f || m_viewportSize.y < 1.0f) &&
            (static_cast<float>(m_framebuffer->getSpecification().width) != m_viewportSize.x || static_cast<float>(m_framebuffer->getSpecification().height) != m_viewportSize.y))
         {
             m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-            m_orthographicCamera.onResize(m_viewportSize.x / m_viewportSize.y);
+            //m_orthographicCamera.onResize(m_viewportSize.x / m_viewportSize.y);
             m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
         }
 
@@ -345,7 +360,7 @@ namespace Comet
 
 	void CometEditorLayer::onEvent(Event& e)
 	{
-        m_orthographicCamera.onEvent(e);
+        //m_orthographicCamera.onEvent(e);
 	}
 
 }
