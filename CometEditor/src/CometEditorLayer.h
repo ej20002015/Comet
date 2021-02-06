@@ -24,8 +24,7 @@ namespace Comet
 		Reference<Scene> m_scene;
 		//OrthographicCamera m_orthographicCamera;
 		Reference<Texture2D> m_testTexture;
-		Reference<Texture2DAtlas> m_textureAtlas;
-		std::unordered_map<std::string, Reference<Texture2DSubTexture>> m_subTextures;
+		Reference<Texture2D> m_textureAtlas;
 		Reference<Framebuffer> m_framebuffer;
 		ImVec2 m_viewportSize;
 		bool m_viewportFocused = false, m_viewportHovered = false;

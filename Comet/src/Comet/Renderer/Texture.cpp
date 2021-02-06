@@ -95,38 +95,21 @@ namespace Comet
         }
     }
 
-    Reference<Texture2DAtlas> Texture2DAtlas::create(Reference<Texture2D> texture, uint32_t cellSize)
+    Texture2DSubTexture::Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& scale)
+        : m_textureAtlas(textureAtlas), m_textureAtlasCellSize(textureAtlasCellSize)
     {
-        return createReference<Texture2DAtlas>(texture, cellSize);
-    }
-
-    Reference<Texture2DAtlas> Texture2DAtlas::create(const std::string& filepath, const uint32_t cellSize, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
-    {
-        auto texture = Texture2D::create(filepath, SRGB, magFilter, minFilter, wrap);
-        return createReference<Texture2DAtlas>(texture, cellSize);
-    }
-
-    Texture2DSubTexture::Texture2DSubTexture(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale)
-        : m_textureAtlas(textureAtlas)
-    {
-        uint32_t cellSize = m_textureAtlas->m_cellSize;
-        float textureWidth = static_cast<float>(m_textureAtlas->m_texture->getWidth());
-        float textureHeight = static_cast<float>(m_textureAtlas->m_texture->getHeight());
+        float textureWidth = static_cast<float>(m_textureAtlas->getWidth());
+        float textureHeight = static_cast<float>(m_textureAtlas->getHeight());
         //Needed to prevent flickering
         float pixelCorrectionOffset = 0.5f;
         //Bottom left
-        m_textureCoordinates[0] = { (((offset.x * cellSize)) + pixelCorrectionOffset) / textureWidth, (((offset.y * cellSize) + pixelCorrectionOffset) / textureHeight) };
+        m_textureAtlasCoordinates[0] = { (((textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y * m_textureAtlasCellSize) + pixelCorrectionOffset) / textureHeight) };
         //Bottom right
-        m_textureCoordinates[1] = { (((offset.x + scale.x) * cellSize) - pixelCorrectionOffset) / textureWidth, (((offset.y * cellSize)) + pixelCorrectionOffset) / textureHeight };
+        m_textureAtlasCoordinates[1] = { (((textureAtlasIndex.x + scale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureHeight };
         //Top right
-        m_textureCoordinates[2] = { (((offset.x + scale.x) * cellSize) - pixelCorrectionOffset) / textureWidth, (((offset.y + scale.y) * cellSize) - pixelCorrectionOffset) / textureHeight };
+        m_textureAtlasCoordinates[2] = { (((textureAtlasIndex.x + scale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y + scale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
         //Top left
-        m_textureCoordinates[3] = { (((offset.x * cellSize)) + pixelCorrectionOffset) / textureWidth, (((offset.y + scale.y) * cellSize) - pixelCorrectionOffset) / textureHeight };
-    }
-
-    Reference<Texture2DSubTexture> Texture2DSubTexture::create(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale)
-    {
-        return createReference<Texture2DSubTexture>(textureAtlas, offset, scale);
+        m_textureAtlasCoordinates[3] = { (((textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y + scale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
     }
 
 }

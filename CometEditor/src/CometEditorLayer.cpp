@@ -19,9 +19,9 @@ namespace Comet
 
         m_testTexture = Texture2D::create("assets/textures/container2.png");
 
-        m_textureAtlas = Comet::Texture2DAtlas::create("assets/textures/RPGpack_sheet_2X.png", 128, false, Comet::TextureFilter::NEAREST, Comet::TextureFilter::NEAREST);
+        m_textureAtlas = Comet::Texture2D::create("assets/textures/RPGpack_sheet_2X.png", false, Comet::TextureFilter::NEAREST, Comet::TextureFilter::NEAREST);
 
-        m_subTextures["Door"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 14.0f, 0.0f }, { 1.0f, 1.0f });
+        /*m_subTextures["Door"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 14.0f, 0.0f }, { 1.0f, 1.0f });
         m_subTextures["BottomWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 9.0f }, { 1.0f, 1.0f });
         m_subTextures["LeftCornerWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 9.0f }, { 1.0f, 1.0f });
         m_subTextures["RightCornerWall"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 3.0f, 9.0f }, { 1.0f, 1.0f });
@@ -39,7 +39,7 @@ namespace Comet
         m_subTextures["GrassDirtTopRight"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 2.0f, 12.0f }, { 1.0f, 1.0f });
         m_subTextures["GrassDirtTopLeft"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 12.0f }, { 1.0f, 1.0f });
         m_subTextures["Grass"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 1.0f, 11.0f }, { 1.0f, 1.0f });
-        m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });
+        m_subTextures["Tree"] = Comet::Texture2DSubTexture::create(m_textureAtlas, { 0.0f, 1.0f }, { 1.0f, 2.0f });*/
 
 
         //m_orthographicCamera = Comet::OrthographicCamera(m_initialFramebufferSize.x / m_initialFramebufferSize.y, 3.0f);
@@ -96,56 +96,56 @@ namespace Comet
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 0.0f, 0.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Door"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(14.0f, 0.0f ), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity2");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 0.0f, 0.0f, -0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("BottomWall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(0.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity3");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { -1.0f, 0.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("LeftCornerWall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(1.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity4");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 1.0f, 0.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("RightCornerWall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(3.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity5");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 0.0f, 1.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("SmallWindow"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(12.0f, 0.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity6");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 0.0f, 1.0f, -0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(5.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity7");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { -1.0f, 1.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("LeftWall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(4.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity8");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 1.0f, 1.0f, 0.0f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("RightWall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(6.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity12");
@@ -153,28 +153,28 @@ namespace Comet
             glm::vec3 position = { 0.0f, 3.0f, 0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
             transform = glm::scale(transform, { 3.0f, 3.0f, 1.0f });
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Roof"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(2.0f, 4.0f), glm::vec2(2.0f, 3.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity9");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { -1.0f, 2.0f, -0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(5.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity10");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 0.0f, 2.0f, -0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(5.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
         {
             Entity tilemapEntity = m_scene->createEntity("tilemapEntity11");
             glm::mat4& transform = tilemapEntity.getComponent<TransformComponent>().transform;
             glm::vec3 position = { 1.0f, 2.0f, -0.1f };
             memcpy(&transform[3], glm::value_ptr(position), sizeof(float) * 3);
-            tilemapEntity.addComponent<SpriteSubComponent>(m_subTextures.at("Wall"));
+            tilemapEntity.addComponent<SpriteComponent>(m_textureAtlas, glm::vec4(1.0f), 1.0f, SpriteComponent::SpriteTextureType::SUB_TEXTURE, 128, glm::vec2(5.0f, 9.0f), glm::vec2(1.0f, 1.0f));
         }
 
 

@@ -88,6 +88,7 @@ namespace Comet
 
 		//Render Sprites
 		{
+			//Partial owning group as transform will be used in other views/groups
 			auto group = m_registry.group<SpriteComponent>(entt::get<TransformComponent>);
 			//Sort by transform z coordinate translation so sprites are drawn in the correct order
 			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
@@ -99,30 +100,15 @@ namespace Comet
 			{
 				const SpriteComponent& spriteComponent = group.get<SpriteComponent>(entity);
 				const glm::mat4& transform = group.get<TransformComponent>(entity).transform;
-				Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
-			}
-		}
 
-		//TODO: MERGE INTO CODE ABOVE
-		//Render 2DSubTexturesSprites
-		{
-			auto group = m_registry.group<SpriteSubComponent>(entt::get<TransformComponent>);
-			//Sort by transform z coordinate translation so sprites are drawn in the correct order
-			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
-			{
-				return lhs.transform[3][2] < rhs.transform[3][2];
-			});
-
-			for (auto entity : group)
-			{
-				const SpriteSubComponent& spriteSubComponent = group.get<SpriteSubComponent>(entity);
-				const glm::mat4& transform = group.get<TransformComponent>(entity).transform;
-				if (!spriteSubComponent.subTexture)
+				//Depending on spriteTextureType make the correct draw command to the renderer
+				if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::NORMAL)
+					Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
+				else
 				{
-					Log::cometError("Cannot render entity - no sub texture set");
-					continue;
+					Texture2DSubTexture subTexture(spriteComponent.texture, spriteComponent.textureAtlasCellSize, spriteComponent.textureAtlasIndex, spriteComponent.subTextureScale);
+					Renderer2D::drawSubQuad(transform, spriteComponent.color, subTexture, spriteComponent.tilingFactor);
 				}
-				Renderer2D::drawSubQuad(transform, spriteSubComponent.colorTint, spriteSubComponent.subTexture, spriteSubComponent.tilingFactor);
 			}
 		}
 

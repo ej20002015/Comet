@@ -67,42 +67,20 @@ namespace Comet
 		virtual const std::string& getFilepath() const = 0;
 	};
 
-	class Texture2DAtlas
-	{
-	public:
-		Texture2DAtlas(Reference<Texture2D> texture, uint32_t cellSize) : m_texture(texture), m_cellSize(cellSize) {}
-		~Texture2DAtlas() = default;
-
-		static Reference<Texture2DAtlas> create(Reference<Texture2D> texture, uint32_t cellSize);
-		static Reference<Texture2DAtlas> create(const std::string& filepath, uint32_t cellSize, const bool SRGB = false, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
-
-		Reference<Texture2D> getTexture() const { return m_texture; }
-
-		uint32_t getCellSize() const { return m_cellSize; }
-
-	private:
-		Reference<Texture2D> m_texture;
-		uint32_t m_cellSize;
-
-		friend class Texture2DSubTexture;
-	};
-
 	class Texture2DSubTexture
 	{
 	public:
-		Texture2DSubTexture(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale = glm::vec2(1.0f));
+		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& scale = glm::vec2(1.0f));
 		~Texture2DSubTexture() = default;
 
-		static Reference<Texture2DSubTexture> create(Reference<Texture2DAtlas> textureAtlas, const glm::vec2& offset, const glm::vec2& scale = glm::vec2(1.0f));
-
-		Reference<Texture2D> getTexture() const { return m_textureAtlas->m_texture; }
-		const glm::mat4x2& getTextureCoordinates() const { return m_textureCoordinates; }
-
-		Reference<Texture2DAtlas> getTextureAtlas() const { return m_textureAtlas; }
+		Reference<Texture2D> getTextureAtlas() const { return m_textureAtlas; }
+		uint32_t getCellSize() const { return m_textureAtlasCellSize; }
+		const glm::mat4x2& getTextureAtlasIndex() const { return m_textureAtlasCoordinates; }
 
 	private:
-		Reference<Texture2DAtlas> m_textureAtlas;
-		glm::mat4x2 m_textureCoordinates;
+		Reference<Texture2D> m_textureAtlas;
+		uint32_t m_textureAtlasCellSize;
+		glm::mat4x2 m_textureAtlasCoordinates;
 	};
 
 }

@@ -132,23 +132,23 @@ namespace Comet
 		drawQuad(transform, colorTint, texture, tilingFactor);
 	}
 
-	void Renderer2D::drawSubTexturedQuad(const glm::vec2& centerCoordinates, const Reference<Texture2DSubTexture>& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
+	void Renderer2D::drawSubTexturedQuad(const glm::vec2& centerCoordinates, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
 	{
 		drawSubTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, subTexture, scale, colorTint, tilingFactor);
 	}
 
-	void Renderer2D::drawSubTexturedQuad(const glm::vec3& centerCoordinates, const Reference<Texture2DSubTexture>& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
+	void Renderer2D::drawSubTexturedQuad(const glm::vec3& centerCoordinates, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
 		drawSubQuad(transform, colorTint, subTexture, tilingFactor);
 	}
 
-	void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, float radians, const Reference<Texture2DSubTexture>& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
+	void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
 	{
 		drawRotatedSubTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, radians, subTexture, scale, colorTint, tilingFactor);
 	}
 
-	void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, float radians, const Reference<Texture2DSubTexture>& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
+	void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, float tilingFactor)
 	{
 		glm::quat rotation = glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
@@ -198,7 +198,7 @@ namespace Comet
 		s_stats.quads++;
 	}
 
-	void Renderer2D::drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2DSubTexture>& subTexture, float tilingFactor)
+	void Renderer2D::drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, float tilingFactor)
 	{
 		//Check to see if max quads per batch has been exceeded
 		if (s_batchData.quadCount >= s_data.maxQuads)
@@ -210,7 +210,7 @@ namespace Comet
 
 		for (uint32_t i = 0; i < s_batchData.textureSlotIndex; ++i)
 		{
-			if (*(subTexture->getTexture()) == *(s_data.textureSlots[i]))
+			if (*(subTexture.getTextureAtlas()) == *(s_data.textureSlots[i]))
 				textureIndex = static_cast<float>(i);
 		}
 
@@ -220,7 +220,7 @@ namespace Comet
 				nextBatch();
 
 			textureIndex = static_cast<float>(s_batchData.textureSlotIndex);
-			s_data.textureSlots[s_batchData.textureSlotIndex] = subTexture->getTexture();
+			s_data.textureSlots[s_batchData.textureSlotIndex] = subTexture.getTextureAtlas();
 			s_batchData.textureSlotIndex++;
 		}
 
@@ -228,7 +228,7 @@ namespace Comet
 		{
 			s_batchData.quadVertexBufferPointer->position = vertexPositions[i];
 			s_batchData.quadVertexBufferPointer->color = color;
-			s_batchData.quadVertexBufferPointer->textureCoordinates = subTexture->getTextureCoordinates()[i];
+			s_batchData.quadVertexBufferPointer->textureCoordinates = subTexture.getTextureAtlasIndex()[i];
 			s_batchData.quadVertexBufferPointer->textureIndex = textureIndex;
 			s_batchData.quadVertexBufferPointer->tilingFactor = tilingFactor;
 			s_batchData.quadVertexBufferPointer++;

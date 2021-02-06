@@ -107,29 +107,25 @@ namespace Comet
 		glm::vec4 color = glm::vec4(1.0f);
 		float tilingFactor = 1.0f;
 
+		enum class SpriteTextureType
+		{
+			NORMAL, SUB_TEXTURE
+		};
+
+		SpriteTextureType spriteTextureType = SpriteTextureType::NORMAL;
+
+		//Data used if sprite texture is a sub-texture of a texture atlas
+		uint32_t textureAtlasCellSize = 0;
+		glm::vec2 textureAtlasIndex = glm::vec2(0.0f);
+		glm::vec2 subTextureScale = glm::vec2(0.0f);
+
 		SpriteComponent() = default;
 
-		SpriteComponent(const Reference<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f)
-			: texture(texture), color(color), tilingFactor(tilingFactor) {}
+		SpriteComponent(const Reference<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f, SpriteTextureType spriteTextureType = SpriteTextureType::NORMAL, uint32_t textureAtlasCellSize = 0, const glm::vec2& textureAtlasIndex = glm::vec2(0.0f), const glm::vec2& subTextureScale = glm::vec2(0.0f))
+			: texture(texture), color(color), tilingFactor(tilingFactor), spriteTextureType(spriteTextureType), textureAtlasCellSize(textureAtlasCellSize), textureAtlasIndex(textureAtlasIndex), subTextureScale(subTextureScale) {}
 
 		SpriteComponent(const SpriteComponent& other) = default;
 		~SpriteComponent() = default;
-	};
-
-	//TODO: Look to move this component into the main SpriteComponent
-	struct SpriteSubComponent
-	{
-		Reference<Texture2DSubTexture> subTexture = nullptr;
-		glm::vec4 colorTint = glm::vec4(1.0f);
-		float tilingFactor = 1.0f;
-
-		SpriteSubComponent() = default;
-
-		SpriteSubComponent(Reference<Texture2DSubTexture> subTexture, const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f)
-			: subTexture(subTexture), colorTint(colorTint), tilingFactor(tilingFactor) {}
-
-		SpriteSubComponent(const SpriteSubComponent& other) = default;
-		~SpriteSubComponent() = default;
 	};
 
 }
