@@ -95,21 +95,26 @@ namespace Comet
         }
     }
 
-    Texture2DSubTexture::Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& scale)
-        : m_textureAtlas(textureAtlas), m_textureAtlasCellSize(textureAtlasCellSize)
+    Texture2DSubTexture::Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& textureScale)
+        : m_textureAtlas(textureAtlas), m_textureAtlasCellSize(textureAtlasCellSize), m_textureAtlasIndex(textureAtlasIndex), m_textureScale(textureScale)
+    {
+        calculateTextureAtlasCoordinates();
+    }
+
+    void Texture2DSubTexture::calculateTextureAtlasCoordinates()
     {
         float textureWidth = static_cast<float>(m_textureAtlas->getWidth());
         float textureHeight = static_cast<float>(m_textureAtlas->getHeight());
         //Needed to prevent flickering
         float pixelCorrectionOffset = 0.5f;
         //Bottom left
-        m_textureAtlasCoordinates[0] = { (((textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y * m_textureAtlasCellSize) + pixelCorrectionOffset) / textureHeight) };
+        m_textureAtlasCoordinates[0] = { (((m_textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((m_textureAtlasIndex.y * m_textureAtlasCellSize) + pixelCorrectionOffset) / textureHeight) };
         //Bottom right
-        m_textureAtlasCoordinates[1] = { (((textureAtlasIndex.x + scale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureHeight };
+        m_textureAtlasCoordinates[1] = { (((m_textureAtlasIndex.x + m_textureScale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((m_textureAtlasIndex.y * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureHeight };
         //Top right
-        m_textureAtlasCoordinates[2] = { (((textureAtlasIndex.x + scale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y + scale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
+        m_textureAtlasCoordinates[2] = { (((m_textureAtlasIndex.x + m_textureScale.x) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureWidth, (((m_textureAtlasIndex.y + m_textureScale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
         //Top left
-        m_textureAtlasCoordinates[3] = { (((textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((textureAtlasIndex.y + scale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
+        m_textureAtlasCoordinates[3] = { (((m_textureAtlasIndex.x * m_textureAtlasCellSize)) + pixelCorrectionOffset) / textureWidth, (((m_textureAtlasIndex.y + m_textureScale.y) * m_textureAtlasCellSize) - pixelCorrectionOffset) / textureHeight };
     }
 
 }

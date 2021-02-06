@@ -106,8 +106,7 @@ namespace Comet
 					Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
 				else
 				{
-					Texture2DSubTexture subTexture(spriteComponent.texture, spriteComponent.textureAtlasCellSize, spriteComponent.textureAtlasIndex, spriteComponent.subTextureScale);
-					Renderer2D::drawSubQuad(transform, spriteComponent.color, subTexture, spriteComponent.tilingFactor);
+					Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor);
 				}
 			}
 		}

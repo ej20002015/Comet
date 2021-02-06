@@ -115,14 +115,12 @@ namespace Comet
 		SpriteTextureType spriteTextureType = SpriteTextureType::NORMAL;
 
 		//Data used if sprite texture is a sub-texture of a texture atlas
-		uint32_t textureAtlasCellSize = 0;
-		glm::vec2 textureAtlasIndex = glm::vec2(0.0f);
-		glm::vec2 subTextureScale = glm::vec2(0.0f);
+		Texture2DSubTexture subTexture;
 
 		SpriteComponent() = default;
 
 		SpriteComponent(const Reference<Texture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), float tilingFactor = 1.0f, SpriteTextureType spriteTextureType = SpriteTextureType::NORMAL, uint32_t textureAtlasCellSize = 0, const glm::vec2& textureAtlasIndex = glm::vec2(0.0f), const glm::vec2& subTextureScale = glm::vec2(0.0f))
-			: texture(texture), color(color), tilingFactor(tilingFactor), spriteTextureType(spriteTextureType), textureAtlasCellSize(textureAtlasCellSize), textureAtlasIndex(textureAtlasIndex), subTextureScale(subTextureScale) {}
+			: texture(texture), color(color), tilingFactor(tilingFactor), spriteTextureType(spriteTextureType), subTexture(texture, textureAtlasCellSize, textureAtlasIndex, subTextureScale) {}
 
 		SpriteComponent(const SpriteComponent& other) = default;
 		~SpriteComponent() = default;

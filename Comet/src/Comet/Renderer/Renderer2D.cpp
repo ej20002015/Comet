@@ -228,7 +228,7 @@ namespace Comet
 		{
 			s_batchData.quadVertexBufferPointer->position = vertexPositions[i];
 			s_batchData.quadVertexBufferPointer->color = color;
-			s_batchData.quadVertexBufferPointer->textureCoordinates = subTexture.getTextureAtlasIndex()[i];
+			s_batchData.quadVertexBufferPointer->textureCoordinates = subTexture.getTextureAtlasCoordinates()[i];
 			s_batchData.quadVertexBufferPointer->textureIndex = textureIndex;
 			s_batchData.quadVertexBufferPointer->tilingFactor = tilingFactor;
 			s_batchData.quadVertexBufferPointer++;

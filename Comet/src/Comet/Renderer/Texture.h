@@ -70,17 +70,35 @@ namespace Comet
 	class Texture2DSubTexture
 	{
 	public:
-		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& scale = glm::vec2(1.0f));
+		Texture2DSubTexture() = default;
+		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas)
+			: m_textureAtlas(textureAtlas) {}
+		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& textureScale = glm::vec2(1.0f));
 		~Texture2DSubTexture() = default;
 
 		Reference<Texture2D> getTextureAtlas() const { return m_textureAtlas; }
+		void setTextureAtlas(const Reference<Texture2D> textureAtlas) { m_textureAtlas = textureAtlas; }
+
 		uint32_t getCellSize() const { return m_textureAtlasCellSize; }
-		const glm::mat4x2& getTextureAtlasIndex() const { return m_textureAtlasCoordinates; }
+		void setCellSize(uint32_t textureAtlasCellSize) { m_textureAtlasCellSize = textureAtlasCellSize; calculateTextureAtlasCoordinates(); }
+
+		const glm::vec2& getTextureAtlasIndex() const { return m_textureAtlasIndex; }
+		void setTextureAtlasIndex(const glm::vec2& textureAtlasIndex) { m_textureAtlasIndex = m_textureAtlasIndex; calculateTextureAtlasCoordinates(); }
+
+		const glm::vec2& getTextureScale() const { return m_textureScale; }
+		void setTextureScale(const glm::vec2 textureScale) { m_textureScale = textureScale; calculateTextureAtlasCoordinates(); }
+
+		const glm::mat4x2& getTextureAtlasCoordinates() const { return m_textureAtlasCoordinates; }
 
 	private:
-		Reference<Texture2D> m_textureAtlas;
-		uint32_t m_textureAtlasCellSize;
-		glm::mat4x2 m_textureAtlasCoordinates;
+		void calculateTextureAtlasCoordinates();
+
+	private:
+		Reference<Texture2D> m_textureAtlas = nullptr;
+		uint32_t m_textureAtlasCellSize = 0;
+		glm::vec2 m_textureAtlasIndex = { 0.0f, 0.0f };
+		glm::vec2 m_textureScale = { 0.0f, 0.0f };
+		glm::mat4x2 m_textureAtlasCoordinates = glm::mat2x4(0.0f);
 	};
 
 }
