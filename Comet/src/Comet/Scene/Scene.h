@@ -8,6 +8,7 @@
 namespace Comet
 {
 	class Entity;
+	class SceneHierarchyPanel;
 	struct CameraComponent;
 	struct TagComponent;
 
@@ -74,6 +75,7 @@ namespace Comet
 		static std::unordered_map<std::type_index, std::vector<Unique<Dispatcher>>> s_constructCallbacks;
 
 		friend class Entity;
+		friend class SceneHierarchyPanel;
 	};
 
 }

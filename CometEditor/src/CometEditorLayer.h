@@ -2,6 +2,9 @@
 
 #include <Comet.h>
 
+#include "panels/SceneHierarchyPanel.h"
+#include "panels/EntityPropertiesPanel.h"
+
 #include "imgui.h"
 
 namespace Comet
@@ -22,6 +25,11 @@ namespace Comet
 	private:
 		Timestep m_ts;
 		Reference<Scene> m_scene;
+
+		//Panels
+		SceneHierarchyPanel m_sceneHierarchyPanel;
+		EntityPropertiesPanel m_entityPropertiesPanel;
+
 		//OrthographicCamera m_orthographicCamera;
 		Reference<Texture2D> m_testTexture;
 		Reference<Texture2D> m_textureAtlas;

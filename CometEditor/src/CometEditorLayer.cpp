@@ -57,6 +57,8 @@ namespace Comet
         //SCENE STUFF
         m_scene = Scene::create();
 
+        m_sceneHierarchyPanel.setScene(m_scene);
+
         Entity testEntity = m_scene->createEntity();
         m_cameraEntity = m_scene->createEntity("camera");
         m_cameraEntity.addComponent<CameraComponent>(true);
@@ -354,6 +356,14 @@ namespace Comet
 
         ImGui::End();
         ImGui::PopStyleVar();
+
+        //Scene Hierarchy Panel
+        m_sceneHierarchyPanel.onImGuiRender();
+
+        //Entity Properties Panel
+        Entity selectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
+        m_entityPropertiesPanel.setEntity(selectedEntity);
+        m_entityPropertiesPanel.onImGuiRender();
 
         ImGui::End();
 	}
