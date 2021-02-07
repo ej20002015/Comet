@@ -18,36 +18,37 @@ namespace Comet
 		void setViewportSize(uint32_t width, uint32_t height);
 
 		ProjectionType getProjectionType() const { return m_projectionType; }
+		void setProjectionType(ProjectionType projectionType) { m_projectionType = projectionType; recalculateProjection(); }
 
 		float getAspectRatio() const { return m_aspectRatio; }
 		void setAspectRatio(float aspectRatio);
 
 		bool getFixedAspectRatio() const { return m_fixedAspectRatio; }
-		void setFixedAspectRatio(bool fixedAspectRatio) { m_fixedAspectRatio = fixedAspectRatio; }
+		void setFixedAspectRatio(bool fixedAspectRatio) { m_fixedAspectRatio = fixedAspectRatio; recalculateProjection(); }
 		
 		//Perspective
 		void setPerspective(float FOV = 5.0f, float nearPlane = 0.001f, float farPlane = 1000.0f);
 
 		float getPerspectiveFOV() const { return m_perspectiveFOV; }
-		void setPerspectiveFOV(float FOV) { m_perspectiveFOV = FOV; }
+		void setPerspectiveFOV(float FOV) { m_perspectiveFOV = FOV; recalculateProjection(); }
 
 		float getPerspectiveNearPlane() const { return m_perspectiveNearPlane; }
-		void setPerspectiveNearPlane(float nearPlane) { m_perspectiveNearPlane = nearPlane; }
+		void setPerspectiveNearPlane(float nearPlane) { m_perspectiveNearPlane = nearPlane; recalculateProjection(); }
 
 		float getPerspectiveFarPlane() const { return m_perspectiveFarPlane; }
-		void setPerspectiveFarPlane(float farPlane) { m_perspectiveFarPlane = farPlane; }
+		void setPerspectiveFarPlane(float farPlane) { m_perspectiveFarPlane = farPlane; recalculateProjection(); }
 
 		//Orthographic
 		void setOrthographic(float size = 5.0f, float nearPlane = -1.0f, float farPlane = 1.0f);
 
 		float getOrthographicSize() const { return m_orthographicSize; }
-		void setOrthographicSize(float size) { m_orthographicSize = size; }
+		void setOrthographicSize(float size) { m_orthographicSize = size; recalculateProjection(); }
 
 		float getOrthographicNearPlane() const { return m_orthographicNearPlane; }
-		void setOrthographicNearPlane(float nearPlane) { m_orthographicNearPlane = nearPlane; }
+		void setOrthographicNearPlane(float nearPlane) { m_orthographicNearPlane = nearPlane; recalculateProjection(); }
 
 		float getOrthographicFarPlane() const { return m_orthographicFarPlane; }
-		void setOrthographicFarPlane(float farPlane) { m_orthographicFarPlane = farPlane; }
+		void setOrthographicFarPlane(float farPlane) { m_orthographicFarPlane = farPlane; recalculateProjection(); }
 
 	private:
 		void recalculateProjection();

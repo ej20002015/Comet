@@ -32,6 +32,7 @@ namespace Comet
 		}
 
 		m_aspectRatio = aspectRatio;
+		recalculateProjection();
 	}
 
 	void SceneCamera::setPerspective(float FOV, float nearPlane, float farPlane)
@@ -40,6 +41,7 @@ namespace Comet
 		m_perspectiveNearPlane = nearPlane;
 		m_perspectiveFarPlane = farPlane;
 		m_projectionType = ProjectionType::PERSPECTIVE;
+		recalculateProjection();
 	}
 
 	void SceneCamera::setOrthographic(float size, float nearPlane, float farPlane)
@@ -48,6 +50,7 @@ namespace Comet
 		m_orthographicNearPlane = nearPlane;
 		m_orthographicFarPlane = farPlane;
 		m_projectionType = ProjectionType::ORTHOGRAPHIC;
+		recalculateProjection();
 	}
 
 	void SceneCamera::recalculateProjection()
