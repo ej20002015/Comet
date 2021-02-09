@@ -2,6 +2,7 @@
 #include "CometPCH.h"
 
 #include "glm/glm.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 #include "Comet/Core/UUID.h"
 #include "SceneCamera.h"
@@ -44,17 +45,23 @@ namespace Comet
 
 	struct TransformComponent
 	{
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat rotation;
+		glm::vec3 scale = glm::vec3(1.0f);
 
 		TransformComponent() = default;
-		TransformComponent(const glm::mat4& transform)
-			: transform(transform) {}
+		TransformComponent(const glm::vec3& translation)
+			: translation(translation) {}
 
 		TransformComponent(const TransformComponent& other) = default;
 		~TransformComponent() = default;
 
-		operator glm::mat4&() { return transform; }
-		operator const glm::mat4&() const { return transform; }
+		glm::mat4 getTransform() const
+		{
+			return glm::translate(glm::mat4(1.0f), translation) * glm::toMat4(rotation)* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, scale.z });
+		}
+
+		operator glm::mat4() const { return getTransform(); }
 	};
 
 	struct CameraComponent

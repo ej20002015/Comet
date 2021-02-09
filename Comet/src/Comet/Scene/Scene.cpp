@@ -82,7 +82,7 @@ namespace Comet
 
 		//Begin scene
 		const Camera& camera = primaryCameraEntity.getComponent<CameraComponent>().camera;
-		const glm::mat4& cameraTransform = primaryCameraEntity.getComponent<TransformComponent>().transform;
+		const glm::mat4& cameraTransform = primaryCameraEntity.getComponent<TransformComponent>().getTransform();
 		//Render with no depth testing for 2D scene
 		Renderer2D::beginScene(camera, cameraTransform, false);
 
@@ -93,13 +93,13 @@ namespace Comet
 			//Sort by transform z coordinate translation so sprites are drawn in the correct order
 			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
 			{
-				return lhs.transform[3][2] < rhs.transform[3][2];
+					return lhs.translation.z < rhs.translation.z;
 			});
 
 			for (auto entity : group)
 			{
 				const SpriteComponent& spriteComponent = group.get<SpriteComponent>(entity);
-				const glm::mat4& transform = group.get<TransformComponent>(entity).transform;
+				const glm::mat4& transform = group.get<TransformComponent>(entity).getTransform();
 
 				//Depending on spriteTextureType make the correct draw command to the renderer
 				if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::NORMAL)

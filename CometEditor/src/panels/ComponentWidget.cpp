@@ -25,36 +25,20 @@ namespace Comet
 
 	void ComponentWidget::ImGuiRenderTransformComponentWidget(TransformComponent& transformComponent)
 	{
-		bool recalculateTransform = false;
+		glm::vec3 rotationEuler = glm::degrees(glm::eulerAngles(transformComponent.rotation));
 
-		glm::mat4& transform = transformComponent;
-		glm::vec3 scale;
-		glm::quat rotationQuaternion;
-		glm::vec3 translation;
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::decompose(transform, scale, rotationQuaternion, translation, skew, perspective);
-		glm::vec3 rotationEuler = glm::degrees(glm::eulerAngles(rotationQuaternion));
+		ImGui::DragFloat3("Translation", glm::value_ptr(transformComponent.translation), 0.5f);
 
-		if (ImGui::DragFloat3("Translation", glm::value_ptr(translation), 0.5f))
-			recalculateTransform = true;
 		if (ImGui::SliderFloat3("Rotation", glm::value_ptr(rotationEuler), 0.0f, 360.0f))
-			recalculateTransform = true;
-		if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f, 0.001f, 10000.0f))
-			recalculateTransform = true;
-
-		if (recalculateTransform)
 		{
-			//Convert the euler angles rotation back to Quaternions
+			//Change euler angles back to quaternions
 			glm::quat rotationX = glm::angleAxis(glm::radians(rotationEuler.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			glm::quat rotationY = glm::angleAxis(glm::radians(rotationEuler.y), glm::vec3(0.0f, 1.0f, 0.0f));
 			glm::quat rotationZ = glm::angleAxis(glm::radians(rotationEuler.z), glm::vec3(0.0f, 0.0f, 1.0f));
-			rotationQuaternion = rotationX * rotationY * rotationZ;
-
-			transform = glm::translate(glm::mat4(1.0f), translation) * glm::toMat4(rotationQuaternion) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, scale.z });
+			transformComponent.rotation = rotationX * rotationY * rotationZ;
 		}
 
-		ImGui::ShowDemoWindow();
+		ImGui::DragFloat3("Scale", glm::value_ptr(transformComponent.scale), 1.0f, 0.001f, 10000.0f);
 	}
 
 	void ComponentWidget::ImGuiRenderCameraComponentWidget(CameraComponent& cameraComponent)
