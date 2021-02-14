@@ -52,6 +52,15 @@ namespace Comet
 			}
 		}
 
+		if (m_entity.hasComponent<SpriteComponent>())
+		{
+			if (ImGui::CollapsingHeader("Sprite Component", ImGuiTreeNodeFlags_None))
+			{
+				SpriteComponent& spriteComponent = m_entity.getComponent<SpriteComponent>();
+				ComponentWidget::ImGuiRenderSpriteComponentWidget(spriteComponent);
+			}
+		}
+
 
 		ImGui::End();
 	}

@@ -35,8 +35,11 @@ namespace Comet
 		virtual RendererID getRendererID() const = 0;
 		virtual bool getSRGB() const = 0;
 		virtual bool getHDR() const = 0;
+		virtual const std::string& getFilepath() const = 0;
 
 		bool operator==(const Texture& other) const { return getRendererID() == other.getRendererID(); }
+
+		static const std::string s_noFilepathName;
 
 		static uint32_t calculateMipMapLevelsNeeded(const uint32_t width, const uint32_t height);
 		static uint32_t getBPP(const TextureFormat format);
@@ -52,7 +55,6 @@ namespace Comet
 
 		virtual void setData(void* data, uint32_t size) = 0;
 
-		virtual const std::string& getFilepath() const = 0;
 		virtual TextureWrap getTextureWrap() const = 0;
 	};
 
@@ -63,8 +65,6 @@ namespace Comet
 
 		static Reference<TextureCube> create(const TextureFormat textureFormat, const uint32_t width, const uint32_t height);
 		static Reference<TextureCube> create(const std::string& filepath, const bool SRGB = false);
-
-		virtual const std::string& getFilepath() const = 0;
 	};
 
 	class Texture2DSubTexture
@@ -99,6 +99,17 @@ namespace Comet
 		glm::vec2 m_textureAtlasIndex = { 0.0f, 0.0f };
 		glm::vec2 m_textureScale = { 0.0f, 0.0f };
 		glm::mat4x2 m_textureAtlasCoordinates = glm::mat2x4(0.0f);
+	};
+
+	class TextureManager
+	{
+	public:
+		static void addTexture(const Reference<Texture>& texture);
+
+		static Reference<Texture> getTexture(const std::string& filepath);
+
+	private:
+		static std::unordered_map<std::string, Reference<Texture>> s_texturePool;
 	};
 
 }

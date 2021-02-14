@@ -12,7 +12,7 @@
 
 namespace Comet
 {
-
+	//TODO: Create an entity with a given UUID
 	struct UUIDComponent
 	{
 		UUID ID;
@@ -46,7 +46,7 @@ namespace Comet
 	struct TransformComponent
 	{
 		glm::vec3 translation = glm::vec3(0.0f);
-		glm::quat rotation;
+		glm::quat rotation = glm::quat();
 		glm::vec3 scale = glm::vec3(1.0f);
 
 		TransformComponent() = default;

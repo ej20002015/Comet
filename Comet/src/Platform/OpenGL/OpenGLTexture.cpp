@@ -68,7 +68,7 @@ namespace Comet
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter, TextureFilter minFilter, TextureWrap wrap)
-		: m_textureFormat(format), m_textureWrap(wrap), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath("NONE"), m_localData(nullptr)
+		: m_textureFormat(format), m_textureWrap(wrap), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath(Texture::s_noFilepathName), m_localData(nullptr)
 	{
 		m_HDR = m_textureFormat == TextureFormat::FLOAT16;
 
@@ -190,7 +190,7 @@ namespace Comet
 	//NEEDS TO BE TESTED FULLY - SEEMS TO BE WORKING
 
 	OpenGLTextureCube::OpenGLTextureCube(const TextureFormat textureFormat, const uint32_t width, const uint32_t height)
-		: m_textureFormat(textureFormat), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath("NONE")
+		: m_textureFormat(textureFormat), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath(Texture::s_noFilepathName)
 	{
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_rendererID);
 

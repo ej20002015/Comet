@@ -16,6 +16,7 @@ namespace Comet
 		static void ImGuiRenderTagComponentWidget(TagComponent& tagComponent);
 		static void ImGuiRenderTransformComponentWidget(TransformComponent& transformComponent);
 		static void ImGuiRenderCameraComponentWidget(CameraComponent& cameraComponent);
+		static void ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent);
 	};
 
 }
