@@ -59,7 +59,6 @@ namespace Comet
 
         m_sceneHierarchyPanel.setScene(m_scene);
 
-        Entity testEntity = m_scene->createEntity();
         m_cameraEntity = m_scene->createEntity("camera");
         m_cameraEntity.addComponent<CameraComponent>(true);
 

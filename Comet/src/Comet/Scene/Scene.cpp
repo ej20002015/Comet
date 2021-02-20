@@ -33,6 +33,11 @@ namespace Comet
 		return newEntity;
 	}
 
+	void Scene::deleteEntity(Entity entity)
+	{
+		m_registry.destroy(entity.m_entityHandle);
+	}
+
 	void Scene::onUpdate(Timestep ts)
 	{
 		//Update scripts

@@ -207,21 +207,24 @@ namespace Comet
 		glm::mat4 vertexPositions = transform * s_data.quadVertexPositions;
 
 		float textureIndex = 0.0f;
-
-		for (uint32_t i = 0; i < s_batchData.textureSlotIndex; ++i)
+		if (subTexture.getTextureAtlas())
 		{
-			if (*(subTexture.getTextureAtlas()) == *(s_data.textureSlots[i]))
-				textureIndex = static_cast<float>(i);
-		}
+			for (uint32_t i = 0; i < s_batchData.textureSlotIndex; ++i)
+			{
+				if (*(subTexture.getTextureAtlas()) == *(s_data.textureSlots[i]))
+					textureIndex = static_cast<float>(i);
+			}
 
-		if (textureIndex == 0.0f)
-		{
-			if (s_batchData.textureSlotIndex == s_data.maxTextureSlots - 1)
-				nextBatch();
 
-			textureIndex = static_cast<float>(s_batchData.textureSlotIndex);
-			s_data.textureSlots[s_batchData.textureSlotIndex] = subTexture.getTextureAtlas();
-			s_batchData.textureSlotIndex++;
+			if (textureIndex == 0.0f)
+			{
+				if (s_batchData.textureSlotIndex == s_data.maxTextureSlots - 1)
+					nextBatch();
+
+				textureIndex = static_cast<float>(s_batchData.textureSlotIndex);
+				s_data.textureSlots[s_batchData.textureSlotIndex] = subTexture.getTextureAtlas();
+				s_batchData.textureSlotIndex++;
+			}
 		}
 
 		for (uint32_t i = 0; i < 4; ++i)

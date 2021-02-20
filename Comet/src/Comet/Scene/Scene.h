@@ -38,6 +38,7 @@ namespace Comet
 		static Reference<Scene> create() { return createReference<Scene>(); }
 
 		Entity createEntity(const std::string& tag = "");
+		void deleteEntity(Entity entity);
 
 		void onUpdate(Timestep ts);
 

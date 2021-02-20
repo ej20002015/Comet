@@ -13,9 +13,20 @@ namespace Comet
 			drawEntityNode(entity);
 		});
 
-		//Deselect an enitity
+		//Deselect an entity
 		if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
 			m_selectedEntity = {};
+
+		//Open menu to create new entity
+		if (ImGui::BeginPopupContextWindow(0, ImGuiMouseButton_Right, false))
+		{
+			if (ImGui::MenuItem("Create Entity"))
+			{
+				m_scene->createEntity();
+			}
+
+			ImGui::EndPopup();
+		}
 
 		ImGui::End();
 	}
@@ -28,8 +39,10 @@ namespace Comet
 
 		const std::string& tag = entity.getComponent<TagComponent>();
 		
+		ImGui::PushID(reinterpret_cast<void*>(UUIDNum));
+
 		ImGuiTreeNodeFlags flags = ((entity == m_selectedEntity) ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
-		bool nodeOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>(UUIDNum), flags, tag.c_str());
+		bool nodeOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>("TreeNode"), flags, tag.c_str());
 
 		if (ImGui::IsItemHovered())
 		{
@@ -38,11 +51,32 @@ namespace Comet
 			ImGui::EndTooltip();
 		}
 
-		if (ImGui::IsItemClicked())
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_selectedEntity = entity;
+
+		//if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+		//	ImGui::OpenPopup("DeleteEntity");
+
+		bool deleteEntity = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+				deleteEntity = true;
+
+			ImGui::EndPopup();
+		}
 
 		if (nodeOpened)
 			ImGui::TreePop();
+
+		if (deleteEntity)
+		{
+			m_scene->deleteEntity(entity);
+			if (m_selectedEntity == entity)
+				m_selectedEntity = {};
+		}
+
+		ImGui::PopID();
 	}
 
 }

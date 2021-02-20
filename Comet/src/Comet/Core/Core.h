@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#define CMT_BIT(x) (x << 1)
+#define CMT_BIT(x) (1 << x)
 
 
 /* 

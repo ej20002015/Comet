@@ -128,10 +128,6 @@ namespace Comet
 		if (ImGui::ColorEdit4("Color", glm::value_ptr(color)))
 			spriteComponent.color = color;
 
-		float tilingFactor = spriteComponent.tilingFactor;
-		if (ImGui::DragFloat("Tiling Factor", &tilingFactor, 1.0f, 1.0f, 1000.0f))
-			spriteComponent.tilingFactor = tilingFactor;
-
 		std::string textureFilepath = (spriteComponent.texture) ? spriteComponent.texture->getFilepath() : "";
 		char textBuffer[512];
 		strcpy_s(textBuffer, sizeof(textBuffer), textureFilepath.c_str());
@@ -163,43 +159,52 @@ namespace Comet
 			}
 		}
 
-		const char* textureTypes[] = { "Normal", "Sub-texture" };
-		const char* currentTextureType = textureTypes[static_cast<uint32_t>(spriteComponent.spriteTextureType)];
-
-		if (ImGui::BeginCombo("Sprite Texture Type", currentTextureType))
+		//Only show texture options if texture is set
+		if (spriteComponent.texture)
 		{
-			for (uint32_t i = 0; i < 2; i++)
+			float tilingFactor = spriteComponent.tilingFactor;
+			if (ImGui::DragFloat("Tiling Factor", &tilingFactor, 1.0f, 1.0f, 1000.0f))
+				spriteComponent.tilingFactor = tilingFactor;
+
+			const char* textureTypes[] = { "Normal", "Sub-texture" };
+			const char* currentTextureType = textureTypes[static_cast<uint32_t>(spriteComponent.spriteTextureType)];
+
+			if (ImGui::BeginCombo("Sprite Texture Type", currentTextureType))
 			{
-				bool isSelected = textureTypes[i] == currentTextureType;
-				if (ImGui::Selectable(textureTypes[i], isSelected))
+				for (uint32_t i = 0; i < 2; i++)
 				{
-					currentTextureType = textureTypes[i];
-					spriteComponent.spriteTextureType = static_cast<SpriteComponent::SpriteTextureType>(i);
+					bool isSelected = textureTypes[i] == currentTextureType;
+					if (ImGui::Selectable(textureTypes[i], isSelected))
+					{
+						currentTextureType = textureTypes[i];
+						spriteComponent.spriteTextureType = static_cast<SpriteComponent::SpriteTextureType>(i);
+					}
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
 				}
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
+				ImGui::EndCombo();
 			}
-			ImGui::EndCombo();
+
+			if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::SUB_TEXTURE)
+			{
+				Texture2DSubTexture& subTexture = spriteComponent.subTexture;
+
+				int32_t cellSize = static_cast<int32_t>(subTexture.getCellSize());
+				if (ImGui::DragInt("Cell Size", &cellSize, 1.0f, 0, 1024))
+					subTexture.setCellSize(static_cast<uint32_t>(cellSize));
+
+				glm::vec2 textureAtlasIndex = subTexture.getTextureAtlasIndex();
+				if (ImGui::DragFloat2("Texture Atlas Index", glm::value_ptr(textureAtlasIndex), 1.0f, 0.0f, 1024))
+					subTexture.setTextureAtlasIndex(textureAtlasIndex);
+
+				glm::vec2 textureScale = subTexture.getTextureScale();
+				if (ImGui::DragFloat2("texture Scale", glm::value_ptr(textureScale), 0.2f, 0.001f, 1024))
+					subTexture.setTextureScale(textureScale);
+			}
 		}
 
-		if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::SUB_TEXTURE)
-		{
-			Texture2DSubTexture& subTexture = spriteComponent.subTexture;
-
-			int32_t cellSize = static_cast<int32_t>(subTexture.getCellSize());
-			if (ImGui::DragInt("Cell Size", &cellSize, 1.0f, 0, 1024))
-				subTexture.setCellSize(static_cast<uint32_t>(cellSize));
-
-			glm::vec2 textureAtlasIndex = subTexture.getTextureAtlasIndex();
-			if (ImGui::DragFloat2("Texture Atlas Index", glm::value_ptr(textureAtlasIndex), 1.0f, 0.0f, 1024))
-				subTexture.setTextureAtlasIndex(textureAtlasIndex);
-
-			glm::vec2 textureScale = subTexture.getTextureScale();
-			if (ImGui::DragFloat2("texture Scale", glm::value_ptr(textureScale), 0.2f, 0.001f, 1024))
-				subTexture.setTextureScale(textureScale);
-		}
 	}
 
 }
