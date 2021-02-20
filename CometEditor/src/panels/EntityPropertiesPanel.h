@@ -17,6 +17,10 @@ namespace Comet
 		void onImGuiRender();
 
 	private:
+		template<typename T, typename ComponentUIFunction>
+		void componentImGuiRender(const std::string& headerName, ComponentUIFunction componentUIFunction);
+
+	private:
 		Entity m_entity;
 	};
 
