@@ -44,18 +44,15 @@ namespace Comet
 		ImGuiTreeNodeFlags flags = ((entity == m_selectedEntity) ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
 		bool nodeOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>("TreeNode"), flags, tag.c_str());
 
-		if (ImGui::IsItemHovered())
+		/*if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
 			ImGui::Text(UUIDString.c_str());
 			ImGui::EndTooltip();
-		}
+		}*/
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_selectedEntity = entity;
-
-		//if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-		//	ImGui::OpenPopup("DeleteEntity");
 
 		bool deleteEntity = false;
 		if (ImGui::BeginPopupContextItem())

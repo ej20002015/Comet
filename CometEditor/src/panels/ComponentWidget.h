@@ -17,6 +17,8 @@ namespace Comet
 		static void ImGuiRenderTransformComponentWidget(TransformComponent& transformComponent);
 		static void ImGuiRenderCameraComponentWidget(CameraComponent& cameraComponent);
 		static void ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent);
+
+		static const float s_labelColumnWidth;
 	};
 
 }

@@ -9,29 +9,72 @@
 namespace Comet
 {
 
+	const float ComponentWidget::s_labelColumnWidth = 160.0f;
+
 	void ComponentWidget::ImGuiRenderUUIDComponentWidget(const UUIDComponent& UUID)
 	{
-		ImGui::Text("UUID: %s", static_cast<std::string>(UUID).c_str());
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
+		ImGui::Columns(2, "UUIDColumns", false);
+		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
+		ImGui::SetColumnWidth(1, contentColumnWidth);
+
+		ImGui::Text("UUID");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
+		ImGui::Text(static_cast<std::string>(UUID).c_str());
+		ImGui::PopItemWidth();
+
+		ImGui::Columns(1);
 	}
 
 	void ComponentWidget::ImGuiRenderTagComponentWidget(TagComponent& tagComponent)
 	{
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
+		ImGui::Columns(2, "TagColumns", false);
+		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
+		ImGui::SetColumnWidth(1, contentColumnWidth);
+
+		ImGui::Text("Tag");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
 		std::string& tagString = tagComponent;
 		char textBuffer[256];
 		strcpy_s(textBuffer, sizeof(textBuffer), tagString.c_str());
-		if (ImGui::InputText("Tag", textBuffer, sizeof(textBuffer)))
+		if (ImGui::InputText("##Tag", textBuffer, sizeof(textBuffer)))
 		{
 			tagString = std::string(textBuffer);
 		}
+		ImGui::PopItemWidth();
+
+		ImGui::Columns(1);
 	}
 
 	void ComponentWidget::ImGuiRenderTransformComponentWidget(TransformComponent& transformComponent)
 	{
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
+		ImGui::Columns(2, "TransformColumns", false);
+		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
+		ImGui::SetColumnWidth(1, contentColumnWidth);
+
+		ImGui::Text("Translation");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
+		ImGui::DragFloat3("##Translation", glm::value_ptr(transformComponent.translation), 0.5f);
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
+
+		ImGui::Text("Rotation");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
 		glm::vec3 rotationEuler = glm::degrees(glm::eulerAngles(transformComponent.rotation));
-
-		ImGui::DragFloat3("Translation", glm::value_ptr(transformComponent.translation), 0.5f);
-
-		if (ImGui::SliderFloat3("Rotation", glm::value_ptr(rotationEuler), 0.0f, 360.0f))
+		if (ImGui::SliderFloat3("##Rotation", glm::value_ptr(rotationEuler), 0.0f, 360.0f))
 		{
 			//Change euler angles back to quaternions
 			glm::quat rotationX = glm::angleAxis(glm::radians(rotationEuler.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -39,25 +82,48 @@ namespace Comet
 			glm::quat rotationZ = glm::angleAxis(glm::radians(rotationEuler.z), glm::vec3(0.0f, 0.0f, 1.0f));
 			transformComponent.rotation = rotationX * rotationY * rotationZ;
 		}
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
 
-		ImGui::DragFloat3("Scale", glm::value_ptr(transformComponent.scale), 1.0f, 0.001f, 10000.0f);
+		ImGui::Text("Scale");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
+		ImGui::DragFloat3("##Scale", glm::value_ptr(transformComponent.scale), 1.0f, 0.001f, 10000.0f);
+		ImGui::PopItemWidth();
+
+		ImGui::Columns(1);
 	}
 
 	void ComponentWidget::ImGuiRenderCameraComponentWidget(CameraComponent& cameraComponent)
 	{
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
+		ImGui::Columns(2, "CameraColumns", false);
+		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
+		ImGui::SetColumnWidth(1, contentColumnWidth);
+
 		SceneCamera& sceneCamera = cameraComponent.camera;
+
+		//Primary Camera
+		ImGui::Text("Primary Camera");
+		ImGui::NextColumn();
+
+		bool primaryCamera = cameraComponent.primary;
+		if (ImGui::Checkbox("##Primary Camera", &primaryCamera))
+			cameraComponent.primary = primaryCamera;
+		ImGui::NextColumn();
+
+		ImGui::Separator();
 
 		const char* projectionTypes[] = { "Perspective", "Orthographic" };
 		const char* currentProjectionType = projectionTypes[static_cast<uint32_t>(sceneCamera.getProjectionType())];
 
-		//Primary Camera
-		bool primaryCamera = cameraComponent.primary;
-		if (ImGui::Checkbox("Primary Camera", &primaryCamera))
-			cameraComponent.primary = primaryCamera;
+		ImGui::Text("Projection Type");
+		ImGui::NextColumn();
 
-		ImGui::Separator();
-
-		if (ImGui::BeginCombo("Projection Type", currentProjectionType))
+		ImGui::PushItemWidth(contentColumnWidth);
+		if (ImGui::BeginCombo("##Projection Type", currentProjectionType, ImGuiComboFlags_NoArrowButton))
 		{
 			for (uint32_t i = 0; i < 2; i++)
 			{
@@ -74,64 +140,133 @@ namespace Comet
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
 
 		ImGui::Separator();
 
 		//Only display the relevant fields for the current projection type
 		if (sceneCamera.getProjectionType() == SceneCamera::ProjectionType::PERSPECTIVE)
 		{
+			ImGui::Text("Perspective Verticle FOV");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveFOV = sceneCamera.getPerspectiveFOV();
-			if (ImGui::DragFloat("Perspective Verticle FOV", &perspectiveFOV, 2.0f, 0.1f, 100.0f))
+			if (ImGui::DragFloat("##Perspective Verticle FOV", &perspectiveFOV, 2.0f, 0.1f, 100.0f))
 				sceneCamera.setPerspectiveFOV(perspectiveFOV);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 
+			ImGui::Text("Perspective Near Plane");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveNearPlane = sceneCamera.getPerspectiveNearPlane();
-			if (ImGui::DragFloat("Perspective Near Plane", &perspectiveNearPlane, 0.01f, 0.001f, 1000.0f))
+			if (ImGui::DragFloat("##Perspective Near Plane", &perspectiveNearPlane, 0.01f, 0.001f, 1000.0f))
 				sceneCamera.setPerspectiveNearPlane(perspectiveNearPlane);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 
+			ImGui::Text("Perspective Far Plane");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveFarPlane = sceneCamera.getPerspectiveFarPlane();
 			if (ImGui::DragFloat("Perspective Far Plane", &perspectiveFarPlane, 50.0f, 0.001f, 10000.0f))
 				sceneCamera.setPerspectiveFarPlane(perspectiveFarPlane);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 		}
 		else
 		{
+			ImGui::Text("Orthographic Size");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicSize = sceneCamera.getOrthographicSize();
-			if (ImGui::DragFloat("Orthographic Size", &orthographicSize, 5.0f, 0.1f, 1000.0f))
+			if (ImGui::DragFloat("##Orthographic Size", &orthographicSize, 5.0f, 0.1f, 1000.0f))
 				sceneCamera.setOrthographicSize(orthographicSize);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 
+			ImGui::Text("Orthographic Near Plane");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicNearPlane = sceneCamera.getOrthographicNearPlane();
-			if (ImGui::DragFloat("Orthographic Near Plane", &orthographicNearPlane, 1.0f, -100.0f, 100.0f))
+			if (ImGui::DragFloat("##Orthographic Near Plane", &orthographicNearPlane, 1.0f, -100.0f, 100.0f))
 				sceneCamera.setOrthographicNearPlane(orthographicNearPlane);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 
+			ImGui::Text("Orthographic Far Plane");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicFarPlane = sceneCamera.getOrthographicFarPlane();
-			if (ImGui::DragFloat("Orthographic Far Plane", &orthographicFarPlane, 1.0f, -100.0f, 100.0f))
+			if (ImGui::DragFloat("##Orthographic Far Plane", &orthographicFarPlane, 1.0f, -100.0f, 100.0f))
 				sceneCamera.setOrthographicFarPlane(orthographicFarPlane);
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 		}
 
 		ImGui::Separator();
 
+		ImGui::Text("Fixed Aspect Ratio");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
 		bool fixedAspectRatio = sceneCamera.getFixedAspectRatio();
-		if (ImGui::Checkbox("Fixed Aspect Ratio", &fixedAspectRatio))
+		if (ImGui::Checkbox("##Fixed Aspect Ratio", &fixedAspectRatio))
 			sceneCamera.setFixedAspectRatio(fixedAspectRatio);
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
 
 		//Only allow the user to manually adjust the aspect ratio if the camera has a fixed aspect ratio
 		if (fixedAspectRatio)
 		{
+			ImGui::Text("Aspect Ratio");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float aspectRatio = sceneCamera.getAspectRatio();
-			if (ImGui::DragFloat("Aspect Ratio", &aspectRatio, 0.1f, 0.1f, 10.0f))
+			if (ImGui::DragFloat("##Aspect Ratio", &aspectRatio, 0.1f, 0.1f, 10.0f))
 				sceneCamera.setAspectRatio(aspectRatio);
+			ImGui::PopItemWidth();
 		}
+
+		ImGui::Columns(1);
 	}
 
 	void ComponentWidget::ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent)
 	{
-		glm::vec4 color = spriteComponent.color;
-		if (ImGui::ColorEdit4("Color", glm::value_ptr(color)))
-			spriteComponent.color = color;
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
+		ImGui::Columns(2, "SpriteColumns", false);
+		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
+		ImGui::SetColumnWidth(1, contentColumnWidth);
 
+		ImGui::Text("Color");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
+		glm::vec4 color = spriteComponent.color;
+		if (ImGui::ColorEdit4("##Color", glm::value_ptr(color)))
+			spriteComponent.color = color;
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
+
+		ImGui::Separator();
+
+		ImGui::Text("Texture Filepath");
+		ImGui::NextColumn();
+
+		ImGui::PushItemWidth(contentColumnWidth);
 		std::string textureFilepath = (spriteComponent.texture) ? spriteComponent.texture->getFilepath() : "";
 		char textBuffer[512];
 		strcpy_s(textBuffer, sizeof(textBuffer), textureFilepath.c_str());
-		if (ImGui::InputText("Texture Filepath", textBuffer, sizeof(textBuffer)))
+		if (ImGui::InputText("##Texture Filepath", textBuffer, sizeof(textBuffer)))
 		{
 			textureFilepath = std::string(textBuffer);
 			if (!textureFilepath.size())
@@ -158,18 +293,30 @@ namespace Comet
 				}
 			}
 		}
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
 
 		//Only show texture options if texture is set
 		if (spriteComponent.texture)
 		{
+			ImGui::Text("Tiling Factor");
+			ImGui::NextColumn();
+
+			ImGui::PushItemWidth(contentColumnWidth);
 			float tilingFactor = spriteComponent.tilingFactor;
-			if (ImGui::DragFloat("Tiling Factor", &tilingFactor, 1.0f, 1.0f, 1000.0f))
+			if (ImGui::DragFloat("##Tiling Factor", &tilingFactor, 1.0f, 1.0f, 1000.0f))
 				spriteComponent.tilingFactor = tilingFactor;
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
+
+			ImGui::Text("Sprite Texture Type");
+			ImGui::NextColumn();
 
 			const char* textureTypes[] = { "Normal", "Sub-texture" };
 			const char* currentTextureType = textureTypes[static_cast<uint32_t>(spriteComponent.spriteTextureType)];
 
-			if (ImGui::BeginCombo("Sprite Texture Type", currentTextureType))
+			ImGui::PushItemWidth(contentColumnWidth);
+			if (ImGui::BeginCombo("##Sprite Texture Type", currentTextureType, ImGuiComboFlags_NoArrowButton))
 			{
 				for (uint32_t i = 0; i < 2; i++)
 				{
@@ -186,24 +333,47 @@ namespace Comet
 				}
 				ImGui::EndCombo();
 			}
+			ImGui::PopItemWidth();
+			ImGui::NextColumn();
 
 			if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::SUB_TEXTURE)
 			{
+				ImGui::Separator();
+
 				Texture2DSubTexture& subTexture = spriteComponent.subTexture;
 
+				ImGui::Text("Cell Size");
+				ImGui::NextColumn();
+
+				ImGui::PushItemWidth(contentColumnWidth);
 				int32_t cellSize = static_cast<int32_t>(subTexture.getCellSize());
-				if (ImGui::DragInt("Cell Size", &cellSize, 1.0f, 0, 1024))
+				if (ImGui::DragInt("##Cell Size", &cellSize, 1.0f, 0, 1024))
 					subTexture.setCellSize(static_cast<uint32_t>(cellSize));
+				ImGui::PopItemWidth();
+				ImGui::NextColumn();
 
+				ImGui::Text("Texture Atlas Index");
+				ImGui::NextColumn();
+
+				ImGui::PushItemWidth(contentColumnWidth);
 				glm::vec2 textureAtlasIndex = subTexture.getTextureAtlasIndex();
-				if (ImGui::DragFloat2("Texture Atlas Index", glm::value_ptr(textureAtlasIndex), 1.0f, 0.0f, 1024))
+				if (ImGui::DragFloat2("##Texture Atlas Index", glm::value_ptr(textureAtlasIndex), 1.0f, 0.0f, 1024))
 					subTexture.setTextureAtlasIndex(textureAtlasIndex);
+				ImGui::PopItemWidth();
+				ImGui::NextColumn();
 
+				ImGui::Text("Texture Scale");
+				ImGui::NextColumn();
+
+				ImGui::PushItemWidth(contentColumnWidth);
 				glm::vec2 textureScale = subTexture.getTextureScale();
-				if (ImGui::DragFloat2("texture Scale", glm::value_ptr(textureScale), 0.2f, 0.001f, 1024))
+				if (ImGui::DragFloat2("##Texture Scale", glm::value_ptr(textureScale), 0.2f, 0.001f, 1024))
 					subTexture.setTextureScale(textureScale);
+				ImGui::PopItemWidth();
 			}
 		}
+
+		ImGui::Columns(1);
 
 	}
 
