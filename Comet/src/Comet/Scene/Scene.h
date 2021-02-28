@@ -29,7 +29,7 @@ namespace Comet
 
 			void invoke() override 
 			{ 
-				T component = entity.getComponent<T>();
+				T& component = entity.getComponent<T>();
 				function(entity, component); 
 			}
 		};

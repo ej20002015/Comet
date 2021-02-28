@@ -60,8 +60,6 @@ namespace Comet
 			}
 		}
 
-		//TODO: render commands in here
-
 		Entity primaryCameraEntity;
 
 		//Get primary camera

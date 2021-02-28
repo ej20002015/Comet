@@ -19,8 +19,10 @@ namespace Comet
 		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
 		ImGui::SetColumnWidth(1, contentColumnWidth);
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("UUID");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		ImGui::Text(static_cast<std::string>(UUID).c_str());
@@ -37,8 +39,10 @@ namespace Comet
 		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
 		ImGui::SetColumnWidth(1, contentColumnWidth);
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Tag");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		std::string& tagString = tagComponent;
@@ -61,16 +65,20 @@ namespace Comet
 		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
 		ImGui::SetColumnWidth(1, contentColumnWidth);
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Translation");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		ImGui::DragFloat3("##Translation", glm::value_ptr(transformComponent.translation), 0.5f);
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Rotation");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		glm::vec3 rotationEuler = glm::degrees(glm::eulerAngles(transformComponent.rotation));
@@ -85,8 +93,10 @@ namespace Comet
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Scale");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		ImGui::DragFloat3("##Scale", glm::value_ptr(transformComponent.scale), 1.0f, 0.001f, 10000.0f);
@@ -106,8 +116,10 @@ namespace Comet
 		SceneCamera& sceneCamera = cameraComponent.camera;
 
 		//Primary Camera
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Primary Camera");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		bool primaryCamera = cameraComponent.primary;
 		if (ImGui::Checkbox("##Primary Camera", &primaryCamera))
@@ -119,8 +131,10 @@ namespace Comet
 		const char* projectionTypes[] = { "Perspective", "Orthographic" };
 		const char* currentProjectionType = projectionTypes[static_cast<uint32_t>(sceneCamera.getProjectionType())];
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Projection Type");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		if (ImGui::BeginCombo("##Projection Type", currentProjectionType, ImGuiComboFlags_NoArrowButton))
@@ -148,8 +162,10 @@ namespace Comet
 		//Only display the relevant fields for the current projection type
 		if (sceneCamera.getProjectionType() == SceneCamera::ProjectionType::PERSPECTIVE)
 		{
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Perspective Verticle FOV");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveFOV = sceneCamera.getPerspectiveFOV();
@@ -158,8 +174,10 @@ namespace Comet
 			ImGui::PopItemWidth();
 			ImGui::NextColumn();
 
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Perspective Near Plane");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveNearPlane = sceneCamera.getPerspectiveNearPlane();
@@ -168,8 +186,10 @@ namespace Comet
 			ImGui::PopItemWidth();
 			ImGui::NextColumn();
 
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Perspective Far Plane");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float perspectiveFarPlane = sceneCamera.getPerspectiveFarPlane();
@@ -180,8 +200,10 @@ namespace Comet
 		}
 		else
 		{
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Orthographic Size");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicSize = sceneCamera.getOrthographicSize();
@@ -190,8 +212,10 @@ namespace Comet
 			ImGui::PopItemWidth();
 			ImGui::NextColumn();
 
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Orthographic Near Plane");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicNearPlane = sceneCamera.getOrthographicNearPlane();
@@ -200,8 +224,10 @@ namespace Comet
 			ImGui::PopItemWidth();
 			ImGui::NextColumn();
 
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Orthographic Far Plane");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float orthographicFarPlane = sceneCamera.getOrthographicFarPlane();
@@ -213,8 +239,10 @@ namespace Comet
 
 		ImGui::Separator();
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Fixed Aspect Ratio");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		bool fixedAspectRatio = sceneCamera.getFixedAspectRatio();
@@ -226,8 +254,10 @@ namespace Comet
 		//Only allow the user to manually adjust the aspect ratio if the camera has a fixed aspect ratio
 		if (fixedAspectRatio)
 		{
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Aspect Ratio");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float aspectRatio = sceneCamera.getAspectRatio();
@@ -247,8 +277,10 @@ namespace Comet
 		ImGui::SetColumnWidth(-1, s_labelColumnWidth);
 		ImGui::SetColumnWidth(1, contentColumnWidth);
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Color");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		glm::vec4 color = spriteComponent.color;
@@ -259,8 +291,10 @@ namespace Comet
 
 		ImGui::Separator();
 
+		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 		ImGui::Text("Texture Filepath");
 		ImGui::NextColumn();
+		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		std::string textureFilepath = (spriteComponent.texture) ? spriteComponent.texture->getFilepath() : "";
@@ -299,8 +333,10 @@ namespace Comet
 		//Only show texture options if texture is set
 		if (spriteComponent.texture)
 		{
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Tiling Factor");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			ImGui::PushItemWidth(contentColumnWidth);
 			float tilingFactor = spriteComponent.tilingFactor;
@@ -309,8 +345,10 @@ namespace Comet
 			ImGui::PopItemWidth();
 			ImGui::NextColumn();
 
+			ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 			ImGui::Text("Sprite Texture Type");
 			ImGui::NextColumn();
+			ImGuiUtilities::popFont();
 
 			const char* textureTypes[] = { "Normal", "Sub-texture" };
 			const char* currentTextureType = textureTypes[static_cast<uint32_t>(spriteComponent.spriteTextureType)];
@@ -342,8 +380,10 @@ namespace Comet
 
 				Texture2DSubTexture& subTexture = spriteComponent.subTexture;
 
+				ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 				ImGui::Text("Cell Size");
 				ImGui::NextColumn();
+				ImGuiUtilities::popFont();
 
 				ImGui::PushItemWidth(contentColumnWidth);
 				int32_t cellSize = static_cast<int32_t>(subTexture.getCellSize());
@@ -352,8 +392,10 @@ namespace Comet
 				ImGui::PopItemWidth();
 				ImGui::NextColumn();
 
+				ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 				ImGui::Text("Texture Atlas Index");
 				ImGui::NextColumn();
+				ImGuiUtilities::popFont();
 
 				ImGui::PushItemWidth(contentColumnWidth);
 				glm::vec2 textureAtlasIndex = subTexture.getTextureAtlasIndex();
@@ -362,8 +404,10 @@ namespace Comet
 				ImGui::PopItemWidth();
 				ImGui::NextColumn();
 
+				ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
 				ImGui::Text("Texture Scale");
 				ImGui::NextColumn();
+				ImGuiUtilities::popFont();
 
 				ImGui::PushItemWidth(contentColumnWidth);
 				glm::vec2 textureScale = subTexture.getTextureScale();

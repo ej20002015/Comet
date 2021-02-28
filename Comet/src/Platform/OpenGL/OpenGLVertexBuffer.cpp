@@ -22,7 +22,6 @@ namespace Comet
 	OpenGLVertexBuffer::OpenGLVertexBuffer(void* data, uint32_t size, VertexBufferUsage usage)
 		: m_size(size), m_usage(usage)
 	{
-		//TODO: IMPLEMENT OWN BUFFER CLASS TO HAVE SECURE OWNERSHIP AND MOVEMENT
 		m_localData = Buffer::create(data, size);
 
 		glCreateBuffers(1, &m_rendererID);

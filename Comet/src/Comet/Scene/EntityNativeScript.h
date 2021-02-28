@@ -35,4 +35,6 @@ namespace Comet
 		friend class Scene;
 	};
 
+	//TODO: static library that keeps track of these types of scripts? Then the user can select one from the Editor Component Panel?
+
 }

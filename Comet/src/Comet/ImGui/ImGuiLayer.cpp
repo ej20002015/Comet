@@ -6,10 +6,9 @@
 #include "examples/imgui_impl_glfw.h"
 
 #include "Comet/Core/Application.h"
+#include "Comet/ImGui/ImGuiUtilities.h"
 
-//TODO: TEMPORARY
 #include "GLFW/glfw3.h"
-#include "glad/glad.h"
 
 namespace Comet
 {
@@ -30,10 +29,6 @@ namespace Comet
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
         //io.ConfigViewportsNoAutoMerge = true;
         //io.ConfigViewportsNoTaskBarIcon = true;
-
-        //Switch to a more appealing font
-        ImFont* pFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-        io.FontDefault = io.Fonts->Fonts.back();
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();

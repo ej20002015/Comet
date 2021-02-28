@@ -126,8 +126,6 @@ namespace Comet
 		binaries[0] = SpirvTools::compile(vertexShaderSourceOpenGL, m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, optimisation);
 		binaries[1] = SpirvTools::compile(fragmentShaderSourceOpenGL, m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, optimisation);
 
-		//TODO: update
-
 		if (m_rendererID)
 			glDeleteProgram(m_rendererID);
 
