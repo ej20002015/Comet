@@ -10,3 +10,6 @@
 [submodule "Comet/Vendor/GLM"]
 	path = Comet/Vendor/GLM
 	url = https://github.com/g-truc/glm
+[submodule "Comet/Vendor/ImGuizmo"]
+	path = Comet/Vendor/ImGuizmo
+	url = https://github.com/ej20002015/ImGuizmo

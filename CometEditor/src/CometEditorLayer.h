@@ -22,10 +22,6 @@ namespace Comet
 		void onImGuiRender() override;
 		void onEvent(Event& e) override;
 
-	//TODO: Temp
-	private:
-		void setDarkThemeColours();
-
 	private:
 		Timestep m_ts;
 		Reference<Scene> m_scene;

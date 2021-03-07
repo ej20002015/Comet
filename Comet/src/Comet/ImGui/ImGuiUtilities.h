@@ -35,6 +35,9 @@ namespace Comet
 		static void pushFont(ImGuiFontType fontType);
 		static void popFont();
 
+		//Window Colours
+		static void setDarkModeColors();
+
 	private:
 		static std::unordered_map<ImGuiFontType, uint32_t> s_ImGuiFontsIndexMap;
 	};
