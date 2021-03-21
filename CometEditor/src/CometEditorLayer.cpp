@@ -4,6 +4,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "ImGuizmo.h"
+
 namespace Comet
 {
 
@@ -336,6 +338,7 @@ namespace Comet
 
         ImGui::End();
 
+        //TODO: MOVE VIEWPORT CODE INTO SEPARATE FILE
         //Scene Viewport
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -350,6 +353,38 @@ namespace Comet
         m_viewportSize = ImGui::GetContentRegionAvail();
 
         ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), { m_viewportSize.x, m_viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+
+        //ImGuizmo
+        Entity currentlySelectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
+
+        if (currentlySelectedEntity)
+        {
+            //TODO: Editor Camera that is always perspective
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            
+            //Set the viewport
+            float windowWidth = static_cast<float>(ImGui::GetWindowWidth());
+            float windowHeight = static_cast<float>(ImGui::GetWindowHeight());
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+            Entity primaryCameraEntity = m_scene->getPrimaryCameraEntity();
+            if (primaryCameraEntity)
+            {
+                //Get Model and View matrices
+                const CameraComponent& cameraComponent = primaryCameraEntity.getComponent<CameraComponent>();
+                const TransformComponent& cameraTransformComponent = primaryCameraEntity.getComponent<TransformComponent>();
+                const glm::mat4 viewMatrix = glm::inverse(cameraTransformComponent.getTransform());
+                const glm::mat4& projectionMatrix = cameraComponent.camera.getProjectionMatrix();
+
+                //Get selected entity transform
+                const TransformComponent currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
+                glm::mat4 currentlySelectedEntityTransform = currentlySelectedEntityTransformComponent.getTransform();
+
+                ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform));
+            }
+        }
+
 
         ImGui::End();
         ImGui::PopStyleVar();

@@ -58,7 +58,7 @@ namespace Comet
 
 		glm::mat4 getTransform() const
 		{
-			return glm::translate(glm::mat4(1.0f), translation) * glm::toMat4(rotation)* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, scale.z });
+			return glm::translate(glm::mat4(1.0f), translation) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, scale.z });
 		}
 
 		operator glm::mat4() const { return getTransform(); }

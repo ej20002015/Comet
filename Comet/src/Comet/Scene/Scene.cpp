@@ -60,21 +60,7 @@ namespace Comet
 			}
 		}
 
-		Entity primaryCameraEntity;
-
-		//Get primary camera
-		{
-			auto view = m_registry.view<CameraComponent>();
-			for (auto entity : view)
-			{
-				CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
-				if (cameraComponent.primary)
-				{
-					primaryCameraEntity = { this, entity };
-					break;
-				}
-			}
-		}
+		Entity primaryCameraEntity = getPrimaryCameraEntity();
 
 		if (!primaryCameraEntity)
 		{
@@ -132,6 +118,24 @@ namespace Comet
 				camera.setViewportSize(width, height);
 			}
 		}
+	}
+
+	Entity Scene::getPrimaryCameraEntity()
+	{
+		Entity primaryCameraEntity;
+
+		auto view = m_registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
+			if (cameraComponent.primary)
+			{
+				primaryCameraEntity = { this, entity };
+				break;
+			}
+		}
+
+		return primaryCameraEntity;
 	}
 
 	void Scene::onCameraComponentConstruction(Entity entity, CameraComponent& cameraComponent)

@@ -50,6 +50,8 @@ namespace Comet
 			s_constructCallbacks[typeid(T)].push_back(createUnique<ComponentCallbackDispatcher<T>>(function));
 		}
 
+		Entity getPrimaryCameraEntity();
+
 	private:
 		template<typename T>
 		void onComponentConstruction(Entity entity)
