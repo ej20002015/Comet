@@ -3,6 +3,10 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/matrix_decompose.hpp"
 
 #include "Comet/Core/UUID.h"
 #include "SceneCamera.h"
@@ -59,6 +63,13 @@ namespace Comet
 		glm::mat4 getTransform() const
 		{
 			return glm::translate(glm::mat4(1.0f), translation) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, scale.z });
+		}
+
+		void setTransform(const glm::mat4& transformMatrix)
+		{
+			glm::vec3 skew;
+			glm::vec4 perspective;
+			glm::decompose(transformMatrix, scale, rotation, translation, skew, perspective);
 		}
 
 		operator glm::mat4() const { return getTransform(); }

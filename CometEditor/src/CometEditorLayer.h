@@ -23,6 +23,9 @@ namespace Comet
 		void onEvent(Event& e) override;
 
 	private:
+		bool onKeyPressedEvent(KeyPressedEvent& e);
+
+	private:
 		Timestep m_ts;
 		Reference<Scene> m_scene;
 
@@ -39,6 +42,13 @@ namespace Comet
 		Entity m_cameraEntity;
 
 		const glm::vec2 m_initialFramebufferSize = { 1280.0f, 720.0f };
+
+		//Guizmo
+		int32_t m_guizmoOperation = -1;
+		bool m_guizmoOperationChangeLocked = false;
+
+		//TODO: To be configurable through the UI
+		float m_translateScaleSnapValue = 0.5f, m_rotationSnapValue = 45.0f;
 	};
 
 }

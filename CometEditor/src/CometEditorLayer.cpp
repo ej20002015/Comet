@@ -347,7 +347,7 @@ namespace Comet
         //Work out whether ImGui events should not be blocked
         m_viewportFocused = ImGui::IsWindowFocused();
         m_viewportHovered = ImGui::IsWindowHovered();
-        Application::get().getImGuiLayer().setBlocking(!(m_viewportFocused && m_viewportHovered));
+        Application::get().getImGuiLayer().setBlocking(!(m_viewportFocused || m_viewportHovered));
 
         //Get size available for viewport
         m_viewportSize = ImGui::GetContentRegionAvail();
@@ -357,7 +357,9 @@ namespace Comet
         //ImGuizmo
         Entity currentlySelectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
 
-        if (currentlySelectedEntity)
+        m_guizmoOperationChangeLocked = false;
+
+        if (currentlySelectedEntity && m_guizmoOperation > -1)
         {
             //TODO: Editor Camera that is always perspective
             ImGuizmo::SetOrthographic(false);
@@ -378,13 +380,27 @@ namespace Comet
                 const glm::mat4& projectionMatrix = cameraComponent.camera.getProjectionMatrix();
 
                 //Get selected entity transform
-                const TransformComponent currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
+                TransformComponent& currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
                 glm::mat4 currentlySelectedEntityTransform = currentlySelectedEntityTransformComponent.getTransform();
 
-                ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform));
+                //Determine snap value
+                float snap = 0.0f;
+                if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
+                    snap = (m_guizmoOperation == static_cast<int32_t>(ImGuizmo::OPERATION::ROTATE)) ? m_rotationSnapValue : m_translateScaleSnapValue;
+
+                float snapValues[3] = { snap, snap, snap };
+
+                ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(m_guizmoOperation), ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform), nullptr, (snap) ? snapValues : nullptr);
+
+                //Apply changes if gizmo has been used
+                if (ImGuizmo::IsUsing())
+                {
+                    //Lock changing of operation during use
+                    m_guizmoOperationChangeLocked = true;
+                    currentlySelectedEntityTransformComponent.setTransform(currentlySelectedEntityTransform);
+                }
             }
         }
-
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -402,7 +418,37 @@ namespace Comet
 
 	void CometEditorLayer::onEvent(Event& e)
 	{
-        //m_orthographicCamera.onEvent(e);
+        EventDispatcher dispatcher(e);
+        dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onKeyPressedEvent));
 	}
+
+    bool CometEditorLayer::onKeyPressedEvent(KeyPressedEvent& e)
+    {
+        KeyCode keyCode = e.getKeyCode();
+
+        switch (keyCode)
+        {
+        case KeyCode::KEY_Q:
+            if (!m_guizmoOperationChangeLocked)
+                m_guizmoOperation = -1;
+            break;
+        case KeyCode::KEY_W:
+            if (!m_guizmoOperationChangeLocked)
+                m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        case KeyCode::KEY_E:
+            if (!m_guizmoOperationChangeLocked)
+                m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+            break;
+        case KeyCode::KEY_R:
+            if (!m_guizmoOperationChangeLocked)
+                m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
+            break;
+        default:
+            break;
+        }
+
+        return true;
+    }
 
 }
