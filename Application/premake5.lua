@@ -20,7 +20,6 @@ project "Application"
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.ImGui}",
         "%{includeDirectories.GLM}",
-        "%{includeDirectories.ImGuizmo}",
         "%{includeDirectories.EnTT}"
     }
 
