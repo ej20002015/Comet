@@ -17,11 +17,11 @@ namespace Comet
 		PipelineSpecification quadPipelineSpecification;
 		quadPipelineSpecification.layout =
 		{
-			{ "a_position",          ShaderDataType::FLOAT3 },
-			{ "a_color",             ShaderDataType::FLOAT4 },
+			{ "a_position",           ShaderDataType::FLOAT3 },
+			{ "a_color",              ShaderDataType::FLOAT4 },
 			{ "a_textureCoordinates", ShaderDataType::FLOAT2 },
-			{ "a_textureIndex",      ShaderDataType::FLOAT },
-			{ "a_tilingFactor",      ShaderDataType::FLOAT }
+			{ "a_textureIndex",       ShaderDataType::UINT },
+			{ "a_tilingFactor",       ShaderDataType::FLOAT }
 		};
 
 		s_data.quadPipeline = Pipeline::create(quadPipelineSpecification);
@@ -171,22 +171,22 @@ namespace Comet
 
 		glm::mat4 vertexPositions = transform * s_data.quadVertexPositions;
 
-		float textureIndex = 0.0f;
+		uint32_t textureIndex = 0;
 		
 		if (texture)
 		{
 			for (uint32_t i = 0; i < s_batchData.textureSlotIndex; ++i)
 			{
 				if (*texture == *(s_data.textureSlots[i]))
-					textureIndex = static_cast<float>(i);
+					textureIndex = i;
 			}
 
-			if (textureIndex == 0.0f)
+			if (!textureIndex)
 			{
 				if (s_batchData.textureSlotIndex == s_data.maxTextureSlots - 1)
 					nextBatch();
 
-				textureIndex = static_cast<float>(s_batchData.textureSlotIndex);
+				textureIndex = s_batchData.textureSlotIndex;
 				s_data.textureSlots[s_batchData.textureSlotIndex] = texture;
 				s_batchData.textureSlotIndex++;
 			}
@@ -214,22 +214,23 @@ namespace Comet
 
 		glm::mat4 vertexPositions = transform * s_data.quadVertexPositions;
 
-		float textureIndex = 0.0f;
+		uint32_t textureIndex = 0;
+
 		if (subTexture.getTextureAtlas())
 		{
 			for (uint32_t i = 0; i < s_batchData.textureSlotIndex; ++i)
 			{
 				if (*(subTexture.getTextureAtlas()) == *(s_data.textureSlots[i]))
-					textureIndex = static_cast<float>(i);
+					textureIndex = i;
 			}
 
 
-			if (textureIndex == 0.0f)
+			if (!textureIndex)
 			{
 				if (s_batchData.textureSlotIndex == s_data.maxTextureSlots - 1)
 					nextBatch();
 
-				textureIndex = static_cast<float>(s_batchData.textureSlotIndex);
+				textureIndex = s_batchData.textureSlotIndex;
 				s_data.textureSlots[s_batchData.textureSlotIndex] = subTexture.getTextureAtlas();
 				s_batchData.textureSlotIndex++;
 			}

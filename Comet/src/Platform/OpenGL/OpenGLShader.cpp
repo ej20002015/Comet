@@ -165,6 +165,8 @@ namespace Comet
 		glDetachShader(m_rendererID, vertexShaderID);
 		glDetachShader(m_rendererID, fragmentShaderID);
 
+		//TODO: DO ALL WRITING OF CACHED SHADERS HERE, WHERE WE KNOW THEY ARE CORRECT (NO LINKING OR COMPILING ERRORS)
+
 		setUpShaderUniformsAndResources();
 	}
 

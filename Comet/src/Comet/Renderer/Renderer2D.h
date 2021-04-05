@@ -69,8 +69,7 @@ namespace Comet
 			glm::vec3 position;
 			glm::vec4 color;
 			glm::vec2 textureCoordinates;
-			//try an int
-			float textureIndex;
+			uint32_t textureIndex;
 			float tilingFactor;
 		};
 

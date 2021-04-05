@@ -22,6 +22,7 @@ namespace Comet
 
 		bool onMouseScrolledEvent(MouseScrolledEvent& e);
 
+
 		float getFOV() const { return m_FOV; }
 		void setFOV(float FOV) { m_FOV = FOV; recalculateProjectionMatrix(); }
 

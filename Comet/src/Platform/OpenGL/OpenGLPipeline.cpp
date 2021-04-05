@@ -16,6 +16,7 @@ namespace Comet
 			case ShaderDataType::FLOAT4:   return GL_FLOAT;
 			case ShaderDataType::MAT3:     return GL_FLOAT;
 			case ShaderDataType::MAT4:     return GL_FLOAT;
+			case ShaderDataType::UINT:	   return GL_UNSIGNED_INT;
 			case ShaderDataType::INT:      return GL_INT;
 			case ShaderDataType::INT2:     return GL_INT;
 			case ShaderDataType::INT3:     return GL_INT;
@@ -49,7 +50,7 @@ namespace Comet
 		for (const auto& element : m_spec.layout)
 		{
 			GLenum openGLType = shaderDataTypeToOpenGLBaseType(element.type);
-			if (openGLType == GL_INT)
+			if (openGLType == GL_INT || openGLType == GL_UNSIGNED_INT)
 			{
 				glVertexAttribIPointer(attributeIndex, 
 					element.componentCount,

@@ -14,6 +14,7 @@ namespace Comet
 		case ShaderDataType::FLOAT4:    return 4 * 4;
 		case ShaderDataType::MAT3:      return 3 * 3 * 4;
 		case ShaderDataType::MAT4:      return 4 * 4 * 4;
+		case ShaderDataType::UINT:		return 4;
 		case ShaderDataType::INT:       return 4;
 		case ShaderDataType::INT2:      return 2 * 4;
 		case ShaderDataType::INT3:      return 3 * 4;
@@ -36,6 +37,7 @@ namespace Comet
 		case ShaderDataType::FLOAT4:    return 4;
 		case ShaderDataType::MAT3:      return 3 * 3;
 		case ShaderDataType::MAT4:      return 4 * 4;
+		case ShaderDataType::UINT:		return 1;
 		case ShaderDataType::INT:       return 1;
 		case ShaderDataType::INT2:      return 2;
 		case ShaderDataType::INT3:      return 3;
@@ -58,6 +60,7 @@ namespace Comet
 		case ShaderDataType::FLOAT4:    return "FLOAT4";
 		case ShaderDataType::MAT3:      return "MAT3";
 		case ShaderDataType::MAT4:      return "MAT4";
+		case ShaderDataType::UINT:		return "UINT";
 		case ShaderDataType::INT:       return "INT";
 		case ShaderDataType::INT2:      return "INT2";
 		case ShaderDataType::INT3:      return "INT3";
