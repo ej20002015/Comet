@@ -4,6 +4,7 @@
 #include "entt.hpp"
 
 #include "Comet/Core/Dispatcher.h"
+#include "Comet/Renderer/EditorCamera.h"
 
 namespace Comet
 {
@@ -40,7 +41,8 @@ namespace Comet
 		Entity createEntity(const std::string& tag = "");
 		void deleteEntity(Entity entity);
 
-		void onUpdate(Timestep ts);
+		void onEditorUpdate(Timestep ts, const EditorCamera& editorCamera);
+		void onRuntimeUpdate(Timestep ts);
 
 		void onViewportResized(uint32_t width, uint32_t height);
 

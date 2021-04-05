@@ -73,7 +73,7 @@ namespace Comet
 
     void ImGuiLayer::begin()
     {
-        // Start the Dear ImGui frame
+        // Start the ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();

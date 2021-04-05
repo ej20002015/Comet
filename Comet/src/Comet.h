@@ -18,6 +18,7 @@
 //Renderer
 #include "Comet/Renderer/Renderer.h"
 #include "Comet/Renderer/Renderer2D.h"
+#include "Comet/Renderer/EditorCamera.h"
 
 //Scene System
 #include "Comet/Scene/Scene.h"

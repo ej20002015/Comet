@@ -237,14 +237,15 @@ namespace Comet
            (static_cast<float>(m_framebuffer->getSpecification().width) != m_viewportSize.x || static_cast<float>(m_framebuffer->getSpecification().height) != m_viewportSize.y))
         {
             m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-            //m_orthographicCamera.onResize(m_viewportSize.x / m_viewportSize.y);
+            m_editorCamera.setViewportSize(m_viewportSize);
             m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
         }
 
         m_framebuffer->bind();
         m_framebuffer->clear();
 
-        m_scene->onUpdate(ts);
+        m_editorCamera.onUpdate(ts);
+        m_scene->onEditorUpdate(ts, m_editorCamera);
 
         m_framebuffer->unbind();
 	}
@@ -350,9 +351,10 @@ namespace Comet
         Application::get().getImGuiLayer().setBlocking(!(m_viewportFocused || m_viewportHovered));
 
         //Get size available for viewport
-        m_viewportSize = ImGui::GetContentRegionAvail();
+        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+        m_viewportSize = { viewportSize.x, viewportSize.y };
 
-        ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), { m_viewportSize.x, m_viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+        ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), viewportSize, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
         //ImGuizmo
         Entity currentlySelectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
@@ -370,35 +372,29 @@ namespace Comet
             float windowHeight = static_cast<float>(ImGui::GetWindowHeight());
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-            Entity primaryCameraEntity = m_scene->getPrimaryCameraEntity();
-            if (primaryCameraEntity)
+            //Get Model and View matrices of Editor Camera
+            glm::mat4 viewMatrix = m_editorCamera.getViewMatrix();
+            const glm::mat4& projectionMatrix = m_editorCamera.getProjectionMatrix();
+
+            //Get selected entity transform
+            TransformComponent& currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
+            glm::mat4 currentlySelectedEntityTransform = currentlySelectedEntityTransformComponent.getTransform();
+
+            //Determine snap value
+            float snap = 0.0f;
+            if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
+                snap = (m_guizmoOperation == static_cast<int32_t>(ImGuizmo::OPERATION::ROTATE)) ? m_rotationSnapValue : m_translateScaleSnapValue;
+
+            float snapValues[3] = { snap, snap, snap };
+
+            ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(m_guizmoOperation), ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform), nullptr, (snap) ? snapValues : nullptr);
+
+            //Apply changes if gizmo has been used
+            if (ImGuizmo::IsUsing())
             {
-                //Get Model and View matrices
-                const CameraComponent& cameraComponent = primaryCameraEntity.getComponent<CameraComponent>();
-                const TransformComponent& cameraTransformComponent = primaryCameraEntity.getComponent<TransformComponent>();
-                const glm::mat4 viewMatrix = glm::inverse(cameraTransformComponent.getTransform());
-                const glm::mat4& projectionMatrix = cameraComponent.camera.getProjectionMatrix();
-
-                //Get selected entity transform
-                TransformComponent& currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
-                glm::mat4 currentlySelectedEntityTransform = currentlySelectedEntityTransformComponent.getTransform();
-
-                //Determine snap value
-                float snap = 0.0f;
-                if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
-                    snap = (m_guizmoOperation == static_cast<int32_t>(ImGuizmo::OPERATION::ROTATE)) ? m_rotationSnapValue : m_translateScaleSnapValue;
-
-                float snapValues[3] = { snap, snap, snap };
-
-                ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(m_guizmoOperation), ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform), nullptr, (snap) ? snapValues : nullptr);
-
-                //Apply changes if gizmo has been used
-                if (ImGuizmo::IsUsing())
-                {
-                    //Lock changing of operation during use
-                    m_guizmoOperationChangeLocked = true;
-                    currentlySelectedEntityTransformComponent.setTransform(currentlySelectedEntityTransform);
-                }
+                //Lock changing of operation during use
+                m_guizmoOperationChangeLocked = true;
+                currentlySelectedEntityTransformComponent.setTransform(currentlySelectedEntityTransform);
             }
         }
 
@@ -420,6 +416,8 @@ namespace Comet
 	{
         EventDispatcher dispatcher(e);
         dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onKeyPressedEvent));
+
+        m_editorCamera.onEvent(e);
 	}
 
     bool CometEditorLayer::onKeyPressedEvent(KeyPressedEvent& e)

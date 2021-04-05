@@ -7,6 +7,7 @@
 #include "Pipeline.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "EditorCamera.h"
 
 namespace Comet
 {
@@ -29,6 +30,7 @@ namespace Comet
 		static void shutdown();
 
 		static void beginScene(const Camera& camera, const glm::mat4& cameraTransform, bool depthTest = true);
+		static void beginScene(const EditorCamera& editorCamera, bool depthTest = true);
 
 		static void endScene();
 

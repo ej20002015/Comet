@@ -81,6 +81,14 @@ namespace Comet
 		resetStats();
 	}
 
+	void Renderer2D::beginScene(const EditorCamera& editorCamera, bool depthTest)
+	{
+		s_batchData.depthTest = depthTest;
+		s_batchData.viewProjectionMatrix = editorCamera.getViewProjectionMatrix();
+		setInitialBatchData();
+		resetStats();
+	}
+
 	void Renderer2D::endScene()
 	{
 		flush();

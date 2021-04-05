@@ -38,7 +38,41 @@ namespace Comet
 		m_registry.destroy(entity.m_entityHandle);
 	}
 
-	void Scene::onUpdate(Timestep ts)
+	void Scene::onEditorUpdate(Timestep ts, const EditorCamera& editorCamera)
+	{
+		//Begin scene
+		//Render with no depth testing for 2D scene
+		Renderer2D::beginScene(editorCamera, false);
+
+		//Render Sprites
+		{
+			//Partial owning group as transform will be used in other views/groups
+			auto group = m_registry.group<SpriteComponent>(entt::get<TransformComponent>);
+			//Sort by transform z coordinate translation so sprites are drawn in the correct order
+			group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
+			{
+				return lhs.translation.z < rhs.translation.z;
+			});
+
+			for (auto entity : group)
+			{
+				const SpriteComponent& spriteComponent = group.get<SpriteComponent>(entity);
+				const glm::mat4& transform = group.get<TransformComponent>(entity).getTransform();
+
+				//Depending on spriteTextureType make the correct draw command to the renderer
+				if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::NORMAL)
+					Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
+				else
+				{
+					Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor);
+				}
+			}
+		}
+
+		Renderer2D::endScene();
+	}
+
+	void Scene::onRuntimeUpdate(Timestep ts)
 	{
 		//Update scripts
 		{
