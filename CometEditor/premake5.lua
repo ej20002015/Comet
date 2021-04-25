@@ -21,7 +21,8 @@ project "CometEditor"
         "%{includeDirectories.ImGui}",
         "%{includeDirectories.GLM}",
         "%{includeDirectories.ImGuizmo}",
-        "%{includeDirectories.EnTT}"
+        "%{includeDirectories.EnTT}",
+        "%{includeDirectories.yaml_cpp}"
     }
 
     filter "system:windows"

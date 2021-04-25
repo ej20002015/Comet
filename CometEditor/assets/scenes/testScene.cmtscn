@@ -1,0 +1,87 @@
+Scene:
+  Scene Name: Unnamed
+  Entities:
+    - Entity: "a087-b11c-f8d0-d345: spriteEntity1"
+      Components:
+        - UUIDComponent:
+            - UUID: a087-b11c-f8d0-d345
+        - TagComponent:
+            - Tag: spriteEntity1
+    - Entity: "8fde-d866-a408-f0b1: tilemapEntity11"
+      Components:
+        - UUIDComponent:
+            - UUID: 8fde-d866-a408-f0b1
+        - TagComponent:
+            - Tag: tilemapEntity11
+    - Entity: "37a8-d4c4-eb85-671d: tilemapEntity10"
+      Components:
+        - UUIDComponent:
+            - UUID: 37a8-d4c4-eb85-671d
+        - TagComponent:
+            - Tag: tilemapEntity10
+    - Entity: "36a6-0b11-e6c0-d691: tilemapEntity9"
+      Components:
+        - UUIDComponent:
+            - UUID: 36a6-0b11-e6c0-d691
+        - TagComponent:
+            - Tag: tilemapEntity9
+    - Entity: "f3b7-5f4f-5adf-1d78: tilemapEntity12"
+      Components:
+        - UUIDComponent:
+            - UUID: f3b7-5f4f-5adf-1d78
+        - TagComponent:
+            - Tag: tilemapEntity12
+    - Entity: "8ee9-8c68-cfc7-0a7e: tilemapEntity8"
+      Components:
+        - UUIDComponent:
+            - UUID: 8ee9-8c68-cfc7-0a7e
+        - TagComponent:
+            - Tag: tilemapEntity8
+    - Entity: "cd10-7999-ac5a-9ef0: tilemapEntity7"
+      Components:
+        - UUIDComponent:
+            - UUID: cd10-7999-ac5a-9ef0
+        - TagComponent:
+            - Tag: tilemapEntity7
+    - Entity: "0664-0372-0e30-ec06: Window"
+      Components:
+        - UUIDComponent:
+            - UUID: 0664-0372-0e30-ec06
+        - TagComponent:
+            - Tag: Window
+    - Entity: "65d1-e63f-e0b7-0fbb: tilemapEntity5"
+      Components:
+        - UUIDComponent:
+            - UUID: 65d1-e63f-e0b7-0fbb
+        - TagComponent:
+            - Tag: tilemapEntity5
+    - Entity: "1a53-176d-8cd8-c0e5: tilemapEntity4"
+      Components:
+        - UUIDComponent:
+            - UUID: 1a53-176d-8cd8-c0e5
+        - TagComponent:
+            - Tag: tilemapEntity4
+    - Entity: "59fe-016c-806a-cced: tilemapEntity3"
+      Components:
+        - UUIDComponent:
+            - UUID: 59fe-016c-806a-cced
+        - TagComponent:
+            - Tag: tilemapEntity3
+    - Entity: "a85a-8b0b-bccb-bc1a: tilemapEntity2"
+      Components:
+        - UUIDComponent:
+            - UUID: a85a-8b0b-bccb-bc1a
+        - TagComponent:
+            - Tag: tilemapEntity2
+    - Entity: "5ba4-18b0-90f4-d9d0: tilemapEntity1"
+      Components:
+        - UUIDComponent:
+            - UUID: 5ba4-18b0-90f4-d9d0
+        - TagComponent:
+            - Tag: tilemapEntity1
+    - Entity: "613a-a30b-97a5-71c6: camera"
+      Components:
+        - UUIDComponent:
+            - UUID: 613a-a30b-97a5-71c6
+        - TagComponent:
+            - Tag: camera

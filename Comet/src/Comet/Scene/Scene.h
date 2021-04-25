@@ -12,6 +12,7 @@ namespace Comet
 	class SceneHierarchyPanel;
 	struct CameraComponent;
 	struct TagComponent;
+	class SceneSerializer;
 
 	class Scene
 	{
@@ -81,6 +82,7 @@ namespace Comet
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;
+		friend class SceneSerializer;
 	};
 
 }

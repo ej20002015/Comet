@@ -289,6 +289,8 @@ namespace Comet
         {
             if (ImGui::BeginMenu("File"))
             {
+                if (ImGui::MenuItem("Save"))
+                    SceneSerializer::serialize("assets/scenes/testScene.cmtscn", m_scene);
                 if (ImGui::MenuItem("Exit"))
                     Application::get().exit();
 

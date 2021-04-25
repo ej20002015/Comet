@@ -29,6 +29,10 @@ workspace "Comet"
     libDirectories["shaderc"] = "%{wks.location}/Comet/Vendor/shaderc/bin"
     libDirectories["SPIRVCross"] = "%{wks.location}/Comet/Vendor/SPIRV-Cross/bin"
 
+    include "Comet"
+    include "Application"
+    include "CometEditor"
+
     -- Dependencies virtual folder for Comet
     group "CometDependencies"
         include "Comet/Vendor/GLFW"
@@ -36,10 +40,6 @@ workspace "Comet"
         include "Comet/Vendor/ImGui"
         include "Comet/Vendor/yaml-cpp"
     group ""
-
-    include "Comet"
-    include "Application"
-    include "CometEditor"
 
     -- Dependencies folder for Comet and client applications (no such dependencies at the moment)
 
