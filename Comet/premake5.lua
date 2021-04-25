@@ -39,14 +39,16 @@ project "Comet"
         "%{includeDirectories.GLM}",
         "%{includeDirectories.stb}",
         "%{includeDirectories.ImGuizmo}",
-        "%{includeDirectories.EnTT}"
+        "%{includeDirectories.EnTT}",
+        "%{includeDirectories.yaml_cpp}"
     }
 
     links
     {
         "GLFW",
         "Glad",
-        "ImGui"
+        "ImGui",
+        "yaml-cpp"
     }
 
     defines

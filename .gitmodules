@@ -13,3 +13,6 @@
 [submodule "Comet/Vendor/ImGuizmo"]
 	path = Comet/Vendor/ImGuizmo
 	url = https://github.com/ej20002015/ImGuizmo
+[submodule "Comet/Vendor/yaml-cpp"]
+	path = Comet/Vendor/yaml-cpp
+	url = https://github.com/ej20002015/yaml-cpp.git
