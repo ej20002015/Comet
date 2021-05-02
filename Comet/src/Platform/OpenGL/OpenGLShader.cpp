@@ -4,8 +4,6 @@
 namespace Comet
 {
 
-	std::unordered_map<uint32_t, Reference<OpenGLUniformBuffer>> OpenGLShader::s_uniformBuffers;
-
 	static GLenum getGLShaderType(const std::string& typeToken)
 	{
 		if (typeToken == "vertex")
@@ -53,36 +51,6 @@ namespace Comet
 	void OpenGLShader::bind()
 	{
 		glUseProgram(m_rendererID);
-	}
-
-	void OpenGLShader::setUniformBuffer(uint32_t bindingPoint, void* data)
-	{
-		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
-		{
-			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
-			Log::cometTrace("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
-			uniformBuffer.setData(data, uniformBuffer.getDescriptor().getSize());
-		}
-		else
-		{
-			Log::cometError("No uniform buffer exists at binding point {0}", bindingPoint);
-			CMT_COMET_ASSERT(false);
-		}
-	}
-
-	void OpenGLShader::setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset)
-	{
-		if (s_uniformBuffers.find(bindingPoint) != s_uniformBuffers.end())
-		{
-			OpenGLUniformBuffer& uniformBuffer = *s_uniformBuffers.at(bindingPoint);
-			Log::cometTrace("Setting uniform buffer '{0}' data at binding point {1}", uniformBuffer.getDescriptor().getName(), bindingPoint);
-			uniformBuffer.setData(data, size, offset);
-		}
-		else
-		{
-			Log::cometError("No uniform buffer exists at binding point {0}", bindingPoint);
-			CMT_COMET_ASSERT(false);
-		}
 	}
 
 	std::string OpenGLShader::getSourceFromFile()
@@ -220,7 +188,7 @@ namespace Comet
 			{
 				if (s_uniformBuffers.find(uniformBufferDescriptor.getBindingPoint()) == s_uniformBuffers.end())
 				{
-					Reference<OpenGLUniformBuffer> uniformBuffer = OpenGLUniformBuffer::create(uniformBufferDescriptor);
+					Reference<UniformBuffer> uniformBuffer = OpenGLUniformBuffer::create(uniformBufferDescriptor);
 					s_uniformBuffers[uniformBuffer->getDescriptor().getBindingPoint()] = uniformBuffer;
 				}
 			}

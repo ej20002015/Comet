@@ -36,10 +36,10 @@ namespace Comet
 			}
 		};
 
-		Scene();
+		Scene(const std::string& sceneName = "Unnamed Scene");
 		static Reference<Scene> create() { return createReference<Scene>(); }
 
-		Entity createEntity(const std::string& tag = "");
+		Entity createEntity(const std::string& tagString = "Unnamed Entity");
 		void deleteEntity(Entity entity);
 
 		void onEditorUpdate(Timestep ts, const EditorCamera& editorCamera);
@@ -54,6 +54,9 @@ namespace Comet
 		}
 
 		Entity getPrimaryCameraEntity();
+
+		const std::string& getSceneName() const { return m_sceneName; }
+		void setSceneName(const std::string& sceneName) { m_sceneName = sceneName; }
 
 	private:
 		template<typename T>
@@ -77,6 +80,7 @@ namespace Comet
 		entt::registry m_registry;
 
 		uint32_t m_viewportWidth = 0, m_viewportHeight = 0;
+		std::string m_sceneName;
 
 		static std::unordered_map<std::type_index, std::vector<Unique<Dispatcher>>> s_constructCallbacks;
 

@@ -68,7 +68,7 @@ namespace Comet
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter, TextureFilter minFilter, TextureWrap wrap)
-		: m_textureFormat(format), m_textureWrap(wrap), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath(Texture::s_noFilepathName), m_localData(nullptr)
+		: m_textureFormat(format), m_textureWrap(wrap), m_textureMagFilter(magFilter), m_textureMinFilter(minFilter), m_width(width), m_height(height), m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_SRGB(false), m_filepath(Texture::s_noFilepathName), m_localData(nullptr)
 	{
 		m_HDR = m_textureFormat == TextureFormat::FLOAT16;
 
@@ -86,7 +86,7 @@ namespace Comet
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
-		: m_textureWrap(wrap), m_width(0), m_height(0), m_mipMapLevels(0), m_SRGB(SRGB), m_filepath(filepath)
+		: m_textureWrap(wrap), m_textureMagFilter(magFilter), m_textureMinFilter(minFilter), m_width(0), m_height(0), m_mipMapLevels(0), m_SRGB(SRGB), m_filepath(filepath)
 	{
 		int32_t width, height, BPP;
 		void* imageData;

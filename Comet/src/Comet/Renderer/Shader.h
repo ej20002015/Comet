@@ -18,8 +18,8 @@ namespace Comet
 
 		virtual void bind() = 0;
 
-		virtual void setUniformBuffer(uint32_t bindingPoint, void* data) = 0;
-		virtual void setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset = 0) = 0;
+		static void setUniformBuffer(uint32_t bindingPoint, void* data);
+		static void setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset = 0);
 
 		virtual void setUniformData(const std::string& uniformName, float data) = 0;
 		virtual void setUniformData(const std::string& uniformName, glm::vec2 data) = 0;
@@ -42,6 +42,7 @@ namespace Comet
 
 	protected:
 		static bool optimisation;
+		static std::unordered_map<uint32_t, Reference<UniformBuffer>> s_uniformBuffers;
 	};
 
 }

@@ -109,8 +109,6 @@ namespace Comet
 			uint32_t textureSlotIndex;
 
 			bool depthTest;
-
-			glm::mat4 viewProjectionMatrix;
 		};
 
 		static Renderer2DBatchData s_batchData;

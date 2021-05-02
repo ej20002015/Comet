@@ -25,12 +25,15 @@ namespace Comet
 		RendererID getRendererID() const override { return m_rendererID; }
 		const std::string& getFilepath() const override { return m_filepath; }
 		TextureWrap getTextureWrap() const override { return m_textureWrap; }
+		TextureFilter getTextureMagFilter() const override { return m_textureMagFilter; }
+		TextureFilter getTextureMinFilter() const override { return m_textureMinFilter; }
 		virtual bool getSRGB() const override { return m_SRGB; }
 		virtual bool getHDR() const override { return m_HDR; }
 
 	private:
 		RendererID m_rendererID = 0;
 		TextureFormat m_textureFormat;
+		TextureFilter m_textureMagFilter, m_textureMinFilter;
 		TextureWrap m_textureWrap;
 		uint32_t m_width, m_height;
 		uint32_t m_mipMapLevels;

@@ -56,6 +56,8 @@ namespace Comet
 		virtual void setData(void* data, uint32_t size) = 0;
 
 		virtual TextureWrap getTextureWrap() const = 0;
+		virtual TextureFilter getTextureMagFilter() const = 0;
+		virtual TextureFilter getTextureMinFilter() const = 0;
 	};
 
 	class TextureCube : public Texture

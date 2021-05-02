@@ -11,13 +11,14 @@ namespace Comet
 
 	std::unordered_map<std::type_index, std::vector<Unique<Dispatcher>>> Scene::s_constructCallbacks;
 
-	Scene::Scene()
+	Scene::Scene(const std::string& sceneName)
+		: m_sceneName(sceneName)
 	{
 		bindOnComponentConstructionFunction<CameraComponent>(CMT_BIND_METHOD(Scene::onCameraComponentConstruction));
 		bindOnComponentConstructionFunction<TagComponent>(CMT_BIND_METHOD(Scene::onTagComponentCreation));
 	}
 
-	Entity Scene::createEntity(const std::string& tag)
+	Entity Scene::createEntity(const std::string& tagString)
 	{
 		Entity newEntity(this, m_registry.create());
 
@@ -25,10 +26,7 @@ namespace Comet
 		newEntity.addComponent<UUIDComponent>();
 		newEntity.addComponent<TransformComponent>();
 
-		if (!tag.empty())
-			newEntity.addComponent<TagComponent>(tag);
-		else
-			newEntity.addComponent<TagComponent>();
+		newEntity.addComponent<TagComponent>(tagString);
 
 		return newEntity;
 	}

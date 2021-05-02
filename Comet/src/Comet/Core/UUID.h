@@ -23,11 +23,11 @@ namespace Comet
 				<< std::setw(16)
 				<< m_ID;
 
-			std::string unformattedHexString = stream.str();
-			unformattedHexString.insert({ 4 }, "-");
-			unformattedHexString.insert({ 9 }, "-");
-			unformattedHexString.insert({ 14 }, "-");
-			return unformattedHexString;
+			std::string hexString = stream.str();
+			hexString.insert({ 4 }, "-");
+			hexString.insert({ 9 }, "-");
+			hexString.insert({ 14 }, "-");
+			return hexString;
 		}	
 
 	private:

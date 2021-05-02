@@ -21,9 +21,6 @@ namespace Comet
 
 		void bind() override;
 
-		void setUniformBuffer(uint32_t bindingPoint, void* data) override;
-		void setUniformBuffer(uint32_t bindingPoint, void* data, uint32_t size, uint32_t offset = 0) override;
-
 		void setUniformData(const std::string& uniformName, float data) override      { setUniformDataTemplate(uniformName, data); }
 		void setUniformData(const std::string& uniformName, glm::vec2 data) override  { setUniformDataTemplate(uniformName, data); }
 		void setUniformData(const std::string& uniformName, glm::vec3 data) override  { setUniformDataTemplate(uniformName, data); }
@@ -74,8 +71,6 @@ namespace Comet
 
 		std::vector<SpirvShaderInformation> m_shaderInformationVulkan;
 
-		//TODO: MAYBE NOT A MAP?
-		static std::unordered_map<uint32_t, Reference<OpenGLUniformBuffer>> s_uniformBuffers;
 		std::unordered_map<std::string, OpenGLUniformStruct> m_uniformStructs;
 		std::unordered_map<std::string, OpenGLUniformResource> m_resources;
 	};

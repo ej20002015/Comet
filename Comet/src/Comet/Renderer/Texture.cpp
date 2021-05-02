@@ -54,19 +54,17 @@ namespace Comet
     {
         CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
 
+        Reference<Texture> texture = TextureManager::getTexture(filepath);
+        if (texture)
+            return std::static_pointer_cast<Texture2D>(texture);
+
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
         case RendererAPIType::OPENGL:
         {
-            Reference<Texture> texture = TextureManager::getTexture(filepath);
-            if (texture)
-                return std::static_pointer_cast<Texture2D>(texture);
-            else
-            {
-                texture = createReference<OpenGLTexture2D>(filepath, SRGB, magFilter, minFilter, wrap);
-                TextureManager::addTexture(texture);
-                return std::static_pointer_cast<Texture2D>(texture);
-            }
+            texture = createReference<OpenGLTexture2D>(filepath, SRGB, magFilter, minFilter, wrap);
+            TextureManager::addTexture(texture);
+            return std::static_pointer_cast<Texture2D>(texture);
             break;
         }
         default:
@@ -95,20 +93,17 @@ namespace Comet
     {
         CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
 
+        Reference<Texture> texture = TextureManager::getTexture(filepath);
+        if (texture)
+            return std::static_pointer_cast<TextureCube>(texture);
+
         switch (RendererAPI::getCurrrentRendererAPIType())
         {
         case RendererAPIType::OPENGL:
         {
-            Reference<Texture> texture = TextureManager::getTexture(filepath);
-            if (texture)
-                return std::static_pointer_cast<TextureCube>(texture);
-            else
-            {
-                texture = createReference<OpenGLTextureCube>(filepath, SRGB);
-                TextureManager::addTexture(texture);
-                return std::static_pointer_cast<TextureCube>(texture);
-            }
-            return createReference<OpenGLTextureCube>(filepath, SRGB);
+            texture = createReference<OpenGLTextureCube>(filepath, SRGB);
+            TextureManager::addTexture(texture);
+            return std::static_pointer_cast<TextureCube>(texture);
             break;
         }
         default:

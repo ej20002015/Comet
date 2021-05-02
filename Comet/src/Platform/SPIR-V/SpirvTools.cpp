@@ -172,7 +172,7 @@ namespace Comet
 		}
 		else
 		{
-			//If cached vulkan binaries have not be found then create them
+			//If cached binaries have not be found then create them
 
 			Log::cometInfo("Compiling and caching shader {0}", name);
 			//Compile binary
