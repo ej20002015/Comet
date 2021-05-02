@@ -291,6 +291,15 @@ namespace Comet
             {
                 if (ImGui::MenuItem("Save"))
                     SceneSerializer::serialize("assets/scenes/testScene.cmtscn", m_scene);
+                if (ImGui::MenuItem("Load"))
+                {
+                    m_entityPropertiesPanel.setEntity(Comet::Entity());
+                    m_scene = Scene::create();
+                    m_sceneHierarchyPanel.setScene(m_scene);
+                    m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
+                    
+                    SceneSerializer::deserialize("assets/scenes/testScene.cmtscn", m_scene);
+                }
                 if (ImGui::MenuItem("Exit"))
                     Application::get().exit();
 

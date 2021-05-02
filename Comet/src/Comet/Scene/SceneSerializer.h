@@ -16,9 +16,13 @@ namespace Comet
 
 	private:
 		static void serializeEntity(YAML::Emitter& out, Entity entity);
+		static void deserializeEntityNode(const YAML::Node& entityNode, const Reference<Scene>& scene);
 
 		template<typename T, typename SerializeComponentFunction>
 		static void serializeComponent(YAML::Emitter& out, Entity entity, SerializeComponentFunction serializeFunction);
+
+		template<typename T, typename DeserializeComponentFunction>
+		static void deserializeComponent(const YAML::Node& entityNode, Entity deserializedEntity, DeserializeComponentFunction deserializeFunction);
 	};
 
 }

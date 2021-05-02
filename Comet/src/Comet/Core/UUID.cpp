@@ -15,4 +15,9 @@ namespace Comet
 	{
 	}
 
+	UUID::UUID(uint64_t ID)
+		: m_ID(ID)
+	{
+	}
+
 }

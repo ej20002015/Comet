@@ -10,6 +10,7 @@ namespace Comet
 	{
 	public:
 		UUID();
+		UUID(uint64_t ID);
 		UUID(const UUID& other) = default;
 		~UUID() = default;
 
