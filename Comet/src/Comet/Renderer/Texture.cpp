@@ -121,6 +121,13 @@ namespace Comet
 
     void Texture2DSubTexture::calculateTextureAtlasCoordinates()
     {
+        if (!m_textureAtlas)
+        {
+            Log::cometError("Cannot calculate texture atlas coordinates - texture atlas is null");
+            CMT_COMET_ASSERT(false);
+            return;
+        }
+
         float textureWidth = static_cast<float>(m_textureAtlas->getWidth());
         float textureHeight = static_cast<float>(m_textureAtlas->getHeight());
         //Needed to prevent flickering

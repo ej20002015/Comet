@@ -1,0 +1,351 @@
+Scene:
+  Scene Name: Unnamed Scene
+  Entities:
+    - Entity: "4773-051b-1764-672a: Red Square"
+      Components:
+        UUIDComponent:
+          UUID: 5148464412929320746
+        TagComponent:
+          Tag: Red Square
+        TransformComponent:
+          Translation: [-0.0896731243, -0.123887509, 1.10370851]
+          Rotation: [0, 0, 0, 1]
+          Scale: [5.1500001, 5.1500001, 5.1500001]
+        SpriteComponent:
+          Color: [0.987341762, 0, 0, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 0
+    - Entity: "706b-6ed2-68f4-a7bd: spriteEntity1"
+      Components:
+        UUIDComponent:
+          UUID: 8100690204739020733
+        TagComponent:
+          Tag: spriteEntity1
+        TransformComponent:
+          Translation: [-5, 1, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/container2.png
+            SRGB: false
+            Texture Mag Filter: 1
+            Texture Min Filter: 1
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 0
+          Sub Texture:
+            Texture Atlas Cell Size: 0
+            Texture Atlas Index: [0, 0]
+            Texture Scale: [0, 0]
+    - Entity: "bf98-4a12-7db9-59af: tilemapEntity11"
+      Components:
+        UUIDComponent:
+          UUID: 13805866100983421359
+        TagComponent:
+          Tag: tilemapEntity11
+        TransformComponent:
+          Translation: [1, 2, -0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [5, 9]
+            Texture Scale: [1, 1]
+    - Entity: "222e-0f67-fa69-3a8d: tilemapEntity10"
+      Components:
+        UUIDComponent:
+          UUID: 2462922985475488397
+        TagComponent:
+          Tag: tilemapEntity10
+        TransformComponent:
+          Translation: [0, 2, -0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [5, 9]
+            Texture Scale: [1, 1]
+    - Entity: "3671-0b8f-e94d-5c80: tilemapEntity9"
+      Components:
+        UUIDComponent:
+          UUID: 3922929463138802816
+        TagComponent:
+          Tag: tilemapEntity9
+        TransformComponent:
+          Translation: [-1, 2, -0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [5, 9]
+            Texture Scale: [1, 1]
+    - Entity: "aad3-a7db-f2db-5d46: tilemapEntity12"
+      Components:
+        UUIDComponent:
+          UUID: 12309366769647836486
+        TagComponent:
+          Tag: tilemapEntity12
+        TransformComponent:
+          Translation: [0, 3, 0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [3, 3, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [2, 4]
+            Texture Scale: [2, 3]
+    - Entity: "c114-4836-39fd-584b: tilemapEntity8"
+      Components:
+        UUIDComponent:
+          UUID: 13912824546592643147
+        TagComponent:
+          Tag: tilemapEntity8
+        TransformComponent:
+          Translation: [1, 1, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [6, 9]
+            Texture Scale: [1, 1]
+    - Entity: "f405-1db9-7ec1-3721: tilemapEntity7"
+      Components:
+        UUIDComponent:
+          UUID: 17583493002670716705
+        TagComponent:
+          Tag: tilemapEntity7
+        TransformComponent:
+          Translation: [-1, 1, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [4, 9]
+            Texture Scale: [1, 1]
+    - Entity: "6a4f-9efe-0547-d047: Window"
+      Components:
+        UUIDComponent:
+          UUID: 7660516305027977287
+        TagComponent:
+          Tag: Window
+        TransformComponent:
+          Translation: [0, 1, 0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [12, 0]
+            Texture Scale: [1, 1]
+    - Entity: "1a11-5e8b-56e3-7edb: tilemapEntity5"
+      Components:
+        UUIDComponent:
+          UUID: 1878386472141422299
+        TagComponent:
+          Tag: tilemapEntity5
+        TransformComponent:
+          Translation: [0, 1, -0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [5, 9]
+            Texture Scale: [1, 1]
+    - Entity: "b568-fe2d-706d-3c66: tilemapEntity4"
+      Components:
+        UUIDComponent:
+          UUID: 13071977389556055142
+        TagComponent:
+          Tag: tilemapEntity4
+        TransformComponent:
+          Translation: [1, 0, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [3, 9]
+            Texture Scale: [1, 1]
+    - Entity: "c8ca-76e0-fe7d-f24a: tilemapEntity3"
+      Components:
+        UUIDComponent:
+          UUID: 14468507461595558474
+        TagComponent:
+          Tag: tilemapEntity3
+        TransformComponent:
+          Translation: [-1, 0, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [1, 9]
+            Texture Scale: [1, 1]
+    - Entity: "d0d4-c986-90e3-ac6d: tilemapEntity2"
+      Components:
+        UUIDComponent:
+          UUID: 15047873834745310317
+        TagComponent:
+          Tag: tilemapEntity2
+        TransformComponent:
+          Translation: [0, 0, -0.100000001]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [0, 9]
+            Texture Scale: [1, 1]
+    - Entity: "dfa3-fff9-103e-499c: tilemapEntity1"
+      Components:
+        UUIDComponent:
+          UUID: 16115005336846223772
+        TagComponent:
+          Tag: tilemapEntity1
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        SpriteComponent:
+          Texture:
+            Filepath: assets/textures/RPGpack_sheet_2X.png
+            SRGB: false
+            Texture Mag Filter: 0
+            Texture Min Filter: 0
+            Texture Wrap: 0
+          Color: [1, 1, 1, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 1
+          Sub Texture:
+            Texture Atlas Cell Size: 128
+            Texture Atlas Index: [14, 0]
+            Texture Scale: [1, 1]
+    - Entity: "527e-6bf6-1495-763e: camera"
+      Components:
+        UUIDComponent:
+          UUID: 5944307262827099710
+        TagComponent:
+          Tag: camera
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        CameraComponent:
+          Camera:
+            Projection Type: 1
+            Aspect Ratio: 1.15236688
+            Fixed Aspect Ratio: false
+            Perspective FOV: 45
+            Perspective Near Plane: 0.00100000005
+            Perspective Far Plane: 1000
+            Orthographic Size: 10
+            Orthographic Near Plane: -1
+            Orthographic Far Plane: 1
+          Primary: true

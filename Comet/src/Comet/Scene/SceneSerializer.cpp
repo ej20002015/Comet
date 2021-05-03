@@ -293,7 +293,7 @@ namespace Comet
 		out << YAML::EndMap;
 		out << YAML::EndMap;
 
-		std::fstream fout(filepath);
+		std::fstream fout(filepath, std::ios::out);
 		if (!fout)
 		{
 			Log::cometError("Cannot save scene - file cannot be created/written to");
@@ -306,7 +306,7 @@ namespace Comet
 
 	void SceneSerializer::deserialize(const std::string& filepath, Reference<Scene> scene)
 	{
-		//TODO: Why does the order flip when loading a saved file
+		//TODO: Preserve order when reading in
 
 		std::ifstream fin(filepath);
 		if (!fin)
@@ -430,29 +430,36 @@ namespace Comet
 
 	static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& spriteComponent)
 	{
-		out << YAML::Key << "Texture" << YAML::Value << YAML::BeginMap;
+		if (spriteComponent.texture)
+		{
+			out << YAML::Key << "Texture" << YAML::Value << YAML::BeginMap;
 
-		//TODO: Adapt for programatically created textures if supported in the future
+			//TODO: Adapt for programatically created textures if supported in the future
 
-		out << YAML::Key << "Filepath" << YAML::Value << spriteComponent.texture->getFilepath();
-		out << YAML::Key << "SRGB" << YAML::Value << spriteComponent.texture->getSRGB();
-		out << YAML::Key << "Texture Mag Filter" << YAML::Value << spriteComponent.texture->getTextureMagFilter();
-		out << YAML::Key << "Texture Min Filter" << YAML::Value << spriteComponent.texture->getTextureMinFilter();
-		out << YAML::Key << "Texture Wrap" << YAML::Value << spriteComponent.texture->getTextureWrap();
+			out << YAML::Key << "Filepath" << YAML::Value << spriteComponent.texture->getFilepath();
+			out << YAML::Key << "SRGB" << YAML::Value << spriteComponent.texture->getSRGB();
+			out << YAML::Key << "Texture Mag Filter" << YAML::Value << spriteComponent.texture->getTextureMagFilter();
+			out << YAML::Key << "Texture Min Filter" << YAML::Value << spriteComponent.texture->getTextureMinFilter();
+			out << YAML::Key << "Texture Wrap" << YAML::Value << spriteComponent.texture->getTextureWrap();
 
-		out << YAML::EndMap;
+			out << YAML::EndMap;
+		}
+
 
 		out << YAML::Key << "Color" << YAML::Value << spriteComponent.color;
 		out << YAML::Key << "Tiling Factor" << YAML::Value << spriteComponent.tilingFactor;
 		out << YAML::Key << "Sprite Texture Type" << YAML::Value << spriteComponent.spriteTextureType;
 
-		out << YAML::Key << "Sub Texture" << YAML::Value << YAML::BeginMap;
+		if (spriteComponent.texture)
+		{
+			out << YAML::Key << "Sub Texture" << YAML::Value << YAML::BeginMap;
 
-		out << YAML::Key << "Texture Atlas Cell Size" << YAML::Value << spriteComponent.subTexture.getCellSize();
-		out << YAML::Key << "Texture Atlas Index" << YAML::Value << spriteComponent.subTexture.getTextureAtlasIndex();
-		out << YAML::Key << "Texture Scale" << YAML::Value << spriteComponent.subTexture.getTextureScale();
+			out << YAML::Key << "Texture Atlas Cell Size" << YAML::Value << spriteComponent.subTexture.getCellSize();
+			out << YAML::Key << "Texture Atlas Index" << YAML::Value << spriteComponent.subTexture.getTextureAtlasIndex();
+			out << YAML::Key << "Texture Scale" << YAML::Value << spriteComponent.subTexture.getTextureScale();
 
-		out << YAML::EndMap;
+			out << YAML::EndMap;
+		}
 	}
 
 	void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity)
@@ -516,11 +523,17 @@ namespace Comet
 	{
 		YAML::Node textureNode = componentNode["Texture"];
 
-		std::string filepath = textureNode["Filepath"].as<std::string>();
-		bool SRGB = textureNode["SRGB"].as<bool>();
-		TextureFilter textureMagFilter = textureNode["Texture Mag Filter"].as<TextureFilter>();
-		TextureFilter textureMinFilter = textureNode["Texture Min Filter"].as<TextureFilter>();
-		TextureWrap textureWrap = textureNode["Texture Wrap"].as<TextureWrap>();
+		Reference<Texture2D> texture = nullptr;
+		if (textureNode)
+		{
+			std::string filepath = textureNode["Filepath"].as<std::string>();
+			bool SRGB = textureNode["SRGB"].as<bool>();
+			TextureFilter textureMagFilter = textureNode["Texture Mag Filter"].as<TextureFilter>();
+			TextureFilter textureMinFilter = textureNode["Texture Min Filter"].as<TextureFilter>();
+			TextureWrap textureWrap = textureNode["Texture Wrap"].as<TextureWrap>();
+
+			texture = Texture2D::create(filepath, SRGB, textureMagFilter, textureMinFilter, textureWrap);
+		}
 
 		glm::vec4 color = componentNode["Color"].as<glm::vec4>();
 		float tilingFactor = componentNode["Tiling Factor"].as<float>();
@@ -528,13 +541,20 @@ namespace Comet
 
 		YAML::Node subTextureNode = componentNode["Sub Texture"];
 
-		uint32_t textureAtlasCellSize = subTextureNode["Texture Atlas Cell Size"].as<uint32_t>();
-		glm::vec2 textureAtlasIndex = subTextureNode["Texture Atlas Index"].as<glm::vec2>();
-		glm::vec2 textureScale = subTextureNode["Texture Scale"].as<glm::vec2>();
+		if (subTextureNode)
+		{
+			uint32_t textureAtlasCellSize = subTextureNode["Texture Atlas Cell Size"].as<uint32_t>();
+			glm::vec2 textureAtlasIndex = subTextureNode["Texture Atlas Index"].as<glm::vec2>();
+			glm::vec2 textureScale = subTextureNode["Texture Scale"].as<glm::vec2>();
 
-		Reference<Texture2D> texture = Texture2D::create(filepath, SRGB, textureMagFilter, textureMinFilter, textureWrap);
+			entity.addComponent<SpriteComponent>(texture, color, tilingFactor, spriteTextureType, textureAtlasCellSize, textureAtlasIndex, textureScale);
+			return;
+		}
 
-		entity.addComponent<SpriteComponent>(texture, color, tilingFactor, spriteTextureType, textureAtlasCellSize, textureAtlasIndex, textureScale);
+		SpriteComponent& spriteComponent = entity.addComponent<SpriteComponent>();
+		spriteComponent.color = color;
+		spriteComponent.tilingFactor = tilingFactor;
+		spriteComponent.spriteTextureType = spriteTextureType;
 	}
 
 }

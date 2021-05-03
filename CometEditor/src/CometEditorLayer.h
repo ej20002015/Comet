@@ -24,6 +24,8 @@ namespace Comet
 
 	private:
 		bool onKeyPressedEvent(KeyPressedEvent& e);
+		void saveScene();
+		void openScene();
 
 	private:
 		Timestep m_ts;
@@ -41,7 +43,7 @@ namespace Comet
 
 		//Viewport
 		Reference<Framebuffer> m_framebuffer;
-		glm::vec2 m_viewportSize;
+		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 		bool m_viewportFocused = false, m_viewportHovered = false;
 		const glm::vec2 m_initialFramebufferSize = { 1280.0f, 720.0f };
 

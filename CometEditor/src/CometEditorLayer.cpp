@@ -289,17 +289,14 @@ namespace Comet
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Save"))
-                    SceneSerializer::serialize("assets/scenes/testScene.cmtscn", m_scene);
-                if (ImGui::MenuItem("Load"))
+                if (ImGui::MenuItem("New", "Ctrl+N"))
                 {
-                    m_entityPropertiesPanel.setEntity(Comet::Entity());
-                    m_scene = Scene::create();
-                    m_sceneHierarchyPanel.setScene(m_scene);
-                    m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-                    
-                    SceneSerializer::deserialize("assets/scenes/testScene.cmtscn", m_scene);
+
                 }
+                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                    openScene();
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                    saveScene();
                 if (ImGui::MenuItem("Exit"))
                     Application::get().exit();
 
@@ -435,6 +432,9 @@ namespace Comet
     {
         KeyCode keyCode = e.getKeyCode();
 
+        bool controlPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL) || Input::isKeyPressed(KeyCode::KEY_RIGHT_CONTROL);
+        bool shiftPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) || Input::isKeyPressed(KeyCode::KEY_RIGHT_SHIFT);
+
         switch (keyCode)
         {
         case KeyCode::KEY_Q:
@@ -453,11 +453,47 @@ namespace Comet
             if (!m_guizmoOperationChangeLocked)
                 m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
             break;
+        case KeyCode::KEY_N:
+            if (controlPressed)
+            {
+
+            }
+            break;
+        case KeyCode::KEY_O:
+            if (controlPressed)
+                openScene();
+            break;
+        case KeyCode::KEY_S:
+            if (controlPressed && shiftPressed)
+                saveScene();
+            break;
         default:
             break;
         }
 
         return true;
+    }
+
+    void CometEditorLayer::saveScene()
+    {
+        std::string filepath = PlatformUtilities::saveFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0)", "cmtscn");
+        if (!filepath.empty())
+            SceneSerializer::serialize(filepath, m_scene);
+    }
+
+    void CometEditorLayer::openScene()
+    {
+        std::string filepath = PlatformUtilities::openFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0");
+        if (!filepath.empty())
+        {
+            m_guizmoOperation = -1;
+            m_entityPropertiesPanel.setEntity(Comet::Entity());
+            m_scene = Scene::create();
+            m_sceneHierarchyPanel.setScene(m_scene);
+            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
+
+            SceneSerializer::deserialize(filepath, m_scene);
+        }
     }
 
 }

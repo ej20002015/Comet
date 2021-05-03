@@ -24,7 +24,8 @@ project "Comet"
 
     removefiles
     {
-        "src/Comet/Windows"
+        "src/Platform/Windows/**.h",
+        "src/Platform/Windows/**.cpp"
     }
 
     includedirs
@@ -71,7 +72,8 @@ project "Comet"
 
         files
         {
-            "%{prj.name}/src/Comet/Windows"
+            "src/Platform/Windows/**.h",
+            "src/Platform/Windows/**.cpp"
         }
     
     filter "configurations:Debug"

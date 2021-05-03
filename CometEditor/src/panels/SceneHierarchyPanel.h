@@ -14,7 +14,7 @@ namespace Comet
 		SceneHierarchyPanel(const Reference<Scene>& scene)
 			: m_scene(scene) {}
 
-		void setScene(const Reference<Scene>& scene) { m_scene = scene; }
+		void setScene(const Reference<Scene>& scene) { m_scene = scene; m_selectedEntity = Entity(); }
 
 		void onImGuiRender();
 
