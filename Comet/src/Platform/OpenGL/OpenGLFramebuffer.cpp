@@ -13,6 +13,7 @@ namespace Comet
 		case FramebufferColorAttachmentFormat::RGBA8:              return GL_RGBA8; break;
 		case FramebufferColorAttachmentFormat::RGBA16F:            return GL_RGBA16F; break;
 		case FramebufferColorAttachmentFormat::RGBA32F:            return GL_RGBA32F; break;
+		case FramebufferColorAttachmentFormat::R32I:               return GL_R32I; break;
 		default:
 			Log::cometError("Unknown framebuffer color attachment/texture format");
 			CMT_COMET_ASSERT(false);

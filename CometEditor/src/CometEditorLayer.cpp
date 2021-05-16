@@ -20,6 +20,11 @@ namespace Comet
         m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
 
         FramebufferSpecification framebufferSpecification;
+        framebufferSpecification.colorAttachments =
+        {
+            FramebufferColorAttachmentFormat::RGBA16F,
+            FramebufferColorAttachmentFormat::R32I
+        };
         framebufferSpecification.width = static_cast<uint32_t>(m_initialFramebufferSize.x);
         framebufferSpecification.height = static_cast<uint32_t>(m_initialFramebufferSize.y);
         framebufferSpecification.clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -89,6 +94,23 @@ namespace Comet
 
         m_editorCamera.onUpdate(ts);
         m_scene->onEditorUpdate(ts, m_editorCamera);
+
+        //Calculate position of mouse in the viewport
+
+        ImVec2 imMousePosition = ImGui::GetMousePos();
+        glm::vec2 mousePosition = { imMousePosition.x, imMousePosition.y };
+        glm::vec2 mousePositionRelativeToViewport = mousePosition - m_viewportPosition;
+
+        //Flip y-axis so it matches opengl texture coordinate system
+        mousePositionRelativeToViewport.y = m_viewportSize.y - mousePositionRelativeToViewport.y;
+
+        if (mousePositionRelativeToViewport.x >= 0 && mousePositionRelativeToViewport.y >= 0
+            && mousePositionRelativeToViewport.x <= m_viewportSize.x
+            && mousePositionRelativeToViewport.y <= m_viewportSize.y)
+        {
+            //TODO: Identify what entity is being hovered over
+            Log::cometInfo("Mouse position relative to viewport: {0}, {1}", mousePositionRelativeToViewport.x, mousePositionRelativeToViewport.y);
+        }
 
         m_framebuffer->unbind();
 	}
@@ -202,6 +224,14 @@ namespace Comet
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Scene Viewport");
+
+        //Calculate position of viewport
+
+        ImVec2 imViewportOffsetInWindow = ImGui::GetCursorPos();
+        glm::vec2 viewportOffsetInWindow = { imViewportOffsetInWindow.x, imViewportOffsetInWindow.y };
+        ImVec2 imViewportWindowPosition = ImGui::GetWindowPos();
+        glm::vec2 viewportWindowPosition = { imViewportWindowPosition.x, imViewportWindowPosition.y };
+        m_viewportPosition = viewportWindowPosition + viewportOffsetInWindow;
 
         //Work out whether ImGui events should not be blocked
         m_viewportFocused = ImGui::IsWindowFocused();

@@ -49,6 +49,7 @@ layout (location = 3) flat in uint v_textureIndex;
 layout (binding = 0) uniform sampler2D u_textures[32];
 
 layout (location = 0) out vec4 color;
+layout (location = 1) out int entityID;
 
 void main()
 {
@@ -90,4 +91,6 @@ void main()
 		case 30: color = texture(u_textures[30], v_vertexInput.v_textureCoordinates * v_vertexInput.v_tilingFactor) * v_vertexInput.v_color; break;
 		case 31: color = texture(u_textures[31], v_vertexInput.v_textureCoordinates * v_vertexInput.v_tilingFactor) * v_vertexInput.v_color; break;
 	}
+
+	entityID = 1;
 }

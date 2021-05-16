@@ -11,7 +11,8 @@ namespace Comet
 	{
 		RGBA8,
 		RGBA16F,
-		RGBA32F
+		RGBA32F,
+		R32I
 	};
 
 	enum class FramebufferDepthAttachmentFormat
