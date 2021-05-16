@@ -36,11 +36,6 @@ namespace Comet
 		SceneHierarchyPanel m_sceneHierarchyPanel;
 		EntityPropertiesPanel m_entityPropertiesPanel;
 
-		//TODO: REMOVE THESE
-		Reference<Texture2D> m_testTexture;
-		Reference<Texture2D> m_textureAtlas;
-		Entity m_cameraEntity;
-
 		//Viewport
 		Reference<Framebuffer> m_framebuffer;
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
