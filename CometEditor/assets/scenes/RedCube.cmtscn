@@ -1,0 +1,45 @@
+Scene:
+  Scene Name: Unnamed Scene
+  Entities:
+    - Entity: "502a-170c-2e48-e522: Cube Face 3"
+      Components:
+        UUIDComponent:
+          UUID: 5776454813139658018
+        TagComponent:
+          Tag: Cube Face 3
+        TransformComponent:
+          Translation: [0, 0.49999994, 0.000244110823]
+          Rotation: [-0.653121829, -0.270531952, -0.270664036, 0.653441131]
+          Scale: [0.999999881, 0.99999994, 0.999999881]
+        SpriteComponent:
+          Color: [0.932489455, 0.271484286, 0.271484286, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 0
+    - Entity: "1b72-8833-3d05-8a19: Cube Face 2"
+      Components:
+        UUIDComponent:
+          UUID: 1977792940017551897
+        TagComponent:
+          Tag: Cube Face 2
+        TransformComponent:
+          Translation: [-0.353431314, 0, 0.353675425]
+          Rotation: [0, -0.382523954, 0, 0.923945546]
+          Scale: [0.99999994, 1, 0.99999994]
+        SpriteComponent:
+          Color: [0.957805932, 0.117199868, 0.117199868, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 0
+    - Entity: "36f1-d809-3634-3f58: Cube Face 1"
+      Components:
+        UUIDComponent:
+          UUID: 3959183081511075672
+        TagComponent:
+          Tag: Cube Face 1
+        TransformComponent:
+          Translation: [0.353553385, 0, 0.353553414]
+          Rotation: [0, 0.382683426, 0, 0.923879564]
+          Scale: [0.999909163, 1, 0.999909163]
+        SpriteComponent:
+          Color: [1, 0, 0, 1]
+          Tiling Factor: 1
+          Sprite Texture Type: 0

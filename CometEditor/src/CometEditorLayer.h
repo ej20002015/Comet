@@ -24,6 +24,7 @@ namespace Comet
 
 	private:
 		bool onKeyPressedEvent(KeyPressedEvent& e);
+		void newScene();
 		void saveScene();
 		void openScene();
 

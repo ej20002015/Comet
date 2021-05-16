@@ -45,6 +45,9 @@ namespace Comet
         static void setClearColor(const glm::vec4& color);
         static void clear();
 
+        static bool getBackfaceCulling();
+        static void setBackfaceCulling(bool culling);
+
         static const RendererAPICapabilities& getCapabilities();
 
         static RendererAPIType getCurrrentRendererAPIType() { return s_currentRendererAPIType; }
@@ -59,6 +62,9 @@ namespace Comet
 
         virtual void i_setClearColor(const glm::vec4& color) = 0;
         virtual void i_clear() = 0;
+
+        virtual bool i_getBackfaceCulling() const = 0;
+        virtual void i_setBackfaceCulling(bool culling) = 0;
 
     protected:
         static RendererAPICapabilities s_rendererAPICapabilities;

@@ -16,6 +16,9 @@ namespace Comet
 
 		void i_setClearColor(const glm::vec4& color) override;
 		void i_clear() override;
+
+		bool i_getBackfaceCulling() const override;
+		void i_setBackfaceCulling(bool culling) override;
 	};
 
 }

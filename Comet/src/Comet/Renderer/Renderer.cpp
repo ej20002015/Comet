@@ -32,6 +32,16 @@ namespace Comet
 		RendererAPI::clear();
 	}
 
+	bool Renderer::getBackfaceCulling()
+	{
+		return RendererAPI::getBackfaceCulling();
+	}
+
+	void Renderer::setBackfaceCulling(bool culling)
+	{
+		RendererAPI::setBackfaceCulling(culling);
+	}
+
 	void Renderer::drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest)
 	{
 		RendererAPI::drawIndexed(count, primitive, depthTest);

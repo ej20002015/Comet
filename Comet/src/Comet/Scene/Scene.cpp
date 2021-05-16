@@ -40,7 +40,7 @@ namespace Comet
 	{
 		//Begin scene
 		//Render with no depth testing for 2D scene
-		Renderer2D::beginScene(editorCamera, false);
+		Renderer2D::beginScene(editorCamera, true);
 
 		//Render Sprites
 		{

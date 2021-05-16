@@ -82,7 +82,7 @@ namespace Comet
 
 		ImGui::PushItemWidth(contentColumnWidth);
 		glm::vec3 rotationEuler = glm::degrees(glm::eulerAngles(transformComponent.rotation));
-		if (ImGui::SliderFloat3("##Rotation", glm::value_ptr(rotationEuler), 0.0f, 360.0f))
+		if (ImGui::DragFloat3("##Rotation", glm::value_ptr(rotationEuler), 1.0f))
 		{
 			//Change euler angles back to quaternions
 			glm::quat rotationX = glm::angleAxis(glm::radians(rotationEuler.x), glm::vec3(1.0f, 0.0f, 0.0f));

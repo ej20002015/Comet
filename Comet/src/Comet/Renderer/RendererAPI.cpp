@@ -51,6 +51,18 @@ namespace Comet
 		s_instance->i_clear();
 	}
 
+	bool RendererAPI::getBackfaceCulling()
+	{
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		return s_instance->i_getBackfaceCulling();
+	}
+
+	void RendererAPI::setBackfaceCulling(bool culling)
+	{
+		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+		s_instance->i_setBackfaceCulling(culling);
+	}
+
 	const RendererAPICapabilities& RendererAPI::getCapabilities()
 	{
 		CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");

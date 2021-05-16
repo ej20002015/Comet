@@ -133,9 +133,7 @@ namespace Comet
             if (ImGui::BeginMenu("File"))
             {
                 if (ImGui::MenuItem("New", "Ctrl+N"))
-                {
-
-                }
+                    newScene();
                 if (ImGui::MenuItem("Open...", "Ctrl+O"))
                     openScene();
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
@@ -187,6 +185,15 @@ namespace Comet
         ImGui::Text("%u vertices", stats.getVertices());
         ImGui::Text("%u triangles", stats.getTriangles());
         ImGui::Text("%u draw calls", stats.drawCalls);
+
+        ImGui::End();
+
+        ImGui::Begin("Renderer Options");
+
+        bool culling = Renderer::getBackfaceCulling();
+
+        if (ImGui::Checkbox("Enable back face culling", &culling))
+            Renderer::setBackfaceCulling(culling);
 
         ImGui::End();
 
@@ -298,9 +305,7 @@ namespace Comet
             break;
         case KeyCode::KEY_N:
             if (controlPressed)
-            {
-
-            }
+                newScene();
             break;
         case KeyCode::KEY_O:
             if (controlPressed)
@@ -317,6 +322,14 @@ namespace Comet
         return true;
     }
 
+    void CometEditorLayer::newScene()
+    {
+        m_entityPropertiesPanel.setEntity(Entity());
+        m_scene = Scene::create();
+        m_sceneHierarchyPanel.setScene(m_scene);
+        m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
+    }
+
     void CometEditorLayer::saveScene()
     {
         std::string filepath = PlatformUtilities::saveFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0)", "cmtscn");
@@ -330,7 +343,7 @@ namespace Comet
         if (!filepath.empty())
         {
             m_guizmoOperation = -1;
-            m_entityPropertiesPanel.setEntity(Comet::Entity());
+            m_entityPropertiesPanel.setEntity(Entity());
             m_scene = Scene::create();
             m_sceneHierarchyPanel.setScene(m_scene);
             m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));

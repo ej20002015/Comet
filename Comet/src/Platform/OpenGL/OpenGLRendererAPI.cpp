@@ -99,6 +99,18 @@ namespace Comet
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
+	bool OpenGLRendererAPI::i_getBackfaceCulling() const
+	{
+		bool culling;
+		glGetBooleanv(GL_CULL_FACE, reinterpret_cast<GLboolean*>(&culling));
+		return culling;
+	}
+
+	void OpenGLRendererAPI::i_setBackfaceCulling(bool culling)
+	{
+		culling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+	}
+
 	void OpenGLRendererAPI::i_setClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
