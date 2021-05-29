@@ -173,7 +173,7 @@ namespace Comet
 			{
 				case GLFW_PRESS:
 				{
-					MouseButtonPressedEvent e(static_cast<MouseCode>(mouseKeyCode));
+					MouseButtonPressedEvent e(static_cast<MouseButtonCode>(mouseKeyCode));
 					windowData.callbackFunction(e);
 					break;
 				}
@@ -182,7 +182,7 @@ namespace Comet
 
 				case GLFW_RELEASE:
 				{
-					MouseButtonReleasedEvent e(static_cast<MouseCode>(mouseKeyCode));
+					MouseButtonReleasedEvent e(static_cast<MouseButtonCode>(mouseKeyCode));
 					windowData.callbackFunction(e);
 					break;
 				}

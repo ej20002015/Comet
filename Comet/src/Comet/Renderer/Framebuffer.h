@@ -68,8 +68,11 @@ namespace Comet
 		//Directly resize framebuffer - does not care what the value of m_specification.resizeOnWindowResize is
 		virtual void resize(uint32_t width, uint32_t height, bool forceRecreate = false) = 0;
 
+		virtual int32_t readColorAttachmentPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) const = 0;
+
 		//Clear depth buffer and any color attachments to the value specified by m_specification.clearColor
-		virtual void clear() const = 0;
+		virtual void clear() = 0;
+		virtual void clearColorAttachment(uint32_t attachmentIndex, int32_t value) = 0;
 
 		virtual void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const = 0;
 		virtual void bindDepthTexture(uint32_t slot = 0) const = 0;

@@ -20,7 +20,10 @@ namespace Comet
 		void onWindowResize(uint32_t width, uint32_t height) override;
 		void resize(uint32_t width, uint32_t height, bool forceRecreate = false) override;
 
-		void clear() const override;
+		int32_t readColorAttachmentPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) const override;
+
+		void clear() override;
+		virtual void clearColorAttachment(uint32_t attachmentIndex, int32_t value) override;
 
 		void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const override;
 		void bindDepthTexture(uint32_t slot = 0) const override;

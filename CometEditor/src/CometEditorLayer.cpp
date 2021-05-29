@@ -91,26 +91,11 @@ namespace Comet
 
         m_framebuffer->bind();
         m_framebuffer->clear();
+        //Clear entityID color attachment specifically to -1
+        m_framebuffer->clearColorAttachment(1, -1);
 
         m_editorCamera.onUpdate(ts);
         m_scene->onEditorUpdate(ts, m_editorCamera);
-
-        //Calculate position of mouse in the viewport
-
-        ImVec2 imMousePosition = ImGui::GetMousePos();
-        glm::vec2 mousePosition = { imMousePosition.x, imMousePosition.y };
-        glm::vec2 mousePositionRelativeToViewport = mousePosition - m_viewportPosition;
-
-        //Flip y-axis so it matches opengl texture coordinate system
-        mousePositionRelativeToViewport.y = m_viewportSize.y - mousePositionRelativeToViewport.y;
-
-        if (mousePositionRelativeToViewport.x >= 0 && mousePositionRelativeToViewport.y >= 0
-            && mousePositionRelativeToViewport.x <= m_viewportSize.x
-            && mousePositionRelativeToViewport.y <= m_viewportSize.y)
-        {
-            //TODO: Identify what entity is being hovered over
-            Log::cometInfo("Mouse position relative to viewport: {0}, {1}", mousePositionRelativeToViewport.x, mousePositionRelativeToViewport.y);
-        }
 
         m_framebuffer->unbind();
 	}
@@ -233,6 +218,15 @@ namespace Comet
         glm::vec2 viewportWindowPosition = { imViewportWindowPosition.x, imViewportWindowPosition.y };
         m_viewportPosition = viewportWindowPosition + viewportOffsetInWindow;
 
+        //Calculate position of mouse in the viewport
+
+        ImVec2 imMousePosition = ImGui::GetMousePos();
+        glm::vec2 mousePosition = { imMousePosition.x, imMousePosition.y };
+        m_mousePositionRelativeToViewport = mousePosition - m_viewportPosition;
+
+        //Flip y-axis so it matches opengl texture coordinate system
+        m_mousePositionRelativeToViewport.y = m_viewportSize.y - m_mousePositionRelativeToViewport.y;
+
         //Work out whether ImGui events should not be blocked
         m_viewportFocused = ImGui::IsWindowFocused();
         m_viewportHovered = ImGui::IsWindowHovered();
@@ -304,6 +298,7 @@ namespace Comet
 	{
         EventDispatcher dispatcher(e);
         dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onKeyPressedEvent));
+        dispatcher.dispatch<MouseButtonPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onMouseButtonPressedEvent));
 
         m_editorCamera.onEvent(e);
 	}
@@ -350,6 +345,23 @@ namespace Comet
         }
 
         return true;
+    }
+
+    bool CometEditorLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
+    {
+        if (e.getKeyCode() == MouseButtonCode::MOUSE_BUTTON_LEFT)
+        {
+            if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::isKeyPressed(KeyCode::KEY_LEFT_ALT))
+            {
+                int32_t pixelValue = m_framebuffer->readColorAttachmentPixel(1, static_cast<uint32_t>(m_mousePositionRelativeToViewport.x), static_cast<uint32_t>(m_mousePositionRelativeToViewport.y));
+                Entity clickedEntity = (pixelValue == -1) ? Entity() : Entity(m_scene.get(), static_cast<entt::entity>(pixelValue));
+                m_sceneHierarchyPanel.setSelectedEntity(clickedEntity);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     void CometEditorLayer::newScene()

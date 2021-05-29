@@ -4,7 +4,7 @@
 namespace Comet
 {
 
-	enum class MouseCode : uint16_t
+	enum class MouseButtonCode : uint16_t
 	{
 		//Taken from glfw3.h
 
@@ -21,7 +21,7 @@ namespace Comet
 		MOUSE_BUTTON_MIDDLE =   MOUSE_BUTTON_3
 	};
 
-	inline std::ostream& operator <<(std::ostream& os, MouseCode mouseCode)
+	inline std::ostream& operator <<(std::ostream& os, MouseButtonCode mouseCode)
 	{
 		os << static_cast<int>(mouseCode);
 		return os;

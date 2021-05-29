@@ -120,6 +120,7 @@ namespace Comet
 		uint32_t colorAttachmentCount = static_cast<uint32_t>(m_specification.colorAttachments.attachments.size());
 		m_colorAttachmentsRendererID.resize(colorAttachmentCount);
 
+		//TODO: This shouldn't be a blanket setting for all color attachments?
 		glCreateTextures(multisample ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D, colorAttachmentCount, m_colorAttachmentsRendererID.data());
 
 		for (uint32_t i = 0; i < colorAttachmentCount; ++i)
@@ -142,10 +143,50 @@ namespace Comet
 
 		glNamedFramebufferTexture(m_rendererID, getGLDepthAttachmentType(m_specification.depthAttachment.attachment), m_depthAttachmentRendererID, 0);
 
+		//Specify draw buffers
+		if (colorAttachmentCount > 0)
+		{
+			CMT_COMET_ASSERT_MESSAGE(colorAttachmentCount < 5, "Only a maximum of 4 color buffers supported at the moment");
+			const GLenum drawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+			glNamedFramebufferDrawBuffers(m_rendererID, colorAttachmentCount, drawBuffers);
+		}
+		else
+		{
+			const GLenum drawBuffers = GL_NONE;
+			glNamedFramebufferDrawBuffers(m_rendererID, 1, &drawBuffers);
+		}
+
 		CMT_COMET_ASSERT_MESSAGE(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is not complete");
 	}
 
-	void OpenGLFramebuffer::clear() const
+	int32_t OpenGLFramebuffer::readColorAttachmentPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) const
+	{
+		if (m_specification.colorAttachments.attachments[attachmentIndex] != FramebufferColorAttachmentFormat::R32I)
+		{
+			Log::cometError("Attempting to read integer from framebuffer color attachment with format that is not R32I");
+			CMT_COMET_ASSERT(false);
+			return 0;
+		}
+
+		if (attachmentIndex >= m_specification.colorAttachments.attachments.size())
+		{
+			Log::cometError("Attachment index specified does not correspond to a color attachment in the framebuffer");
+			CMT_COMET_ASSERT(false);
+			return 0;
+		}
+
+		//glNamedFramebufferReadBuffer does not work here for whatever reason
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
+		glViewport(0, 0, m_specification.width, m_specification.height);
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		int32_t pixelValue;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelValue);
+		return pixelValue;
+	}
+
+	void OpenGLFramebuffer::clear()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
 		glViewport(0, 0, m_specification.width, m_specification.height);
@@ -154,8 +195,31 @@ namespace Comet
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
+	void OpenGLFramebuffer::clearColorAttachment(uint32_t attachmentIndex, int32_t value)
+	{
+		if (m_specification.colorAttachments.attachments[attachmentIndex] != FramebufferColorAttachmentFormat::R32I)
+		{
+			Log::cometError("Attempting to clear framebuffer color attachment to integer that does not have a format of R32I");
+			CMT_COMET_ASSERT(false);
+		}
+
+		if (attachmentIndex >= m_specification.colorAttachments.attachments.size())
+		{
+			Log::cometError("Attachment index specified does not correspond to a color attachment in the framebuffer");
+			CMT_COMET_ASSERT(false);
+		}
+
+		glClearTexImage(m_colorAttachmentsRendererID[attachmentIndex], 0, GL_RED_INTEGER, GL_INT, &value);
+	}
+
 	void OpenGLFramebuffer::bindColorTexture(uint32_t attachmentIndex, uint32_t slot) const
 	{
+		if (attachmentIndex >= m_specification.colorAttachments.attachments.size())
+		{
+			Log::cometError("Attachment index specified does not correspond to a color attachment in the framebuffer");
+			CMT_COMET_ASSERT(false);
+		}
+
 		glBindTextureUnit(slot, m_colorAttachmentsRendererID[attachmentIndex]);
 	}
 

@@ -19,6 +19,7 @@ namespace Comet
 		void onImGuiRender();
 
 		Entity getSelectedEntity() const { return m_selectedEntity; }
+		void setSelectedEntity(Entity entity) { m_selectedEntity = entity; }
 
 	private:
 		void drawEntityNode(Entity entity);

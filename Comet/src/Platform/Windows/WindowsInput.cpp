@@ -15,7 +15,7 @@ namespace Comet
         return action == GLFW_PRESS;
     }
 
-    bool Input::isMouseButtonPressed(MouseCode mouseCode)
+    bool Input::isMouseButtonPressed(MouseButtonCode mouseCode)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         int action = glfwGetMouseButton(window, static_cast<int>(mouseCode));

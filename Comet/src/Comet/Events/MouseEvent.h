@@ -10,20 +10,20 @@ namespace Comet
 	class MouseButtonEvent : public Event
 	{
 	public:
-		MouseButtonEvent(MouseCode mouseCode) : m_mouseCode(mouseCode) {}
+		MouseButtonEvent(MouseButtonCode mouseCode) : m_mouseCode(mouseCode) {}
 
 		CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_MOUSE_BUTTON | EventCategory::EVENT_CATEGORY_MOUSE| EventCategory::EVENT_CATEGORY_INPUT)
 
-		MouseCode getKeyCode() const { return m_mouseCode; }
+		MouseButtonCode getKeyCode() const { return m_mouseCode; }
 
 	protected:
-		MouseCode m_mouseCode;
+		MouseButtonCode m_mouseCode;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(MouseCode mouseCode, int repeatCount = 0) : MouseButtonEvent(mouseCode), m_repeatCount(repeatCount) {}
+		MouseButtonPressedEvent(MouseButtonCode mouseCode, int repeatCount = 0) : MouseButtonEvent(mouseCode), m_repeatCount(repeatCount) {}
 
 		CMT_EVENT_CLASS_TYPE(MouseButtonPressedEvent)
 
@@ -43,7 +43,7 @@ namespace Comet
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(MouseCode mouseCode) : MouseButtonEvent(mouseCode) {}
+		MouseButtonReleasedEvent(MouseButtonCode mouseCode) : MouseButtonEvent(mouseCode) {}
 
 		CMT_EVENT_CLASS_TYPE(MouseButtonReleasedEvent)
 

@@ -13,7 +13,7 @@ namespace Comet
 	{
 	public:
 		static bool isKeyPressed(KeyCode keyCode);
-		static bool isMouseButtonPressed(MouseCode mouseCode);
+		static bool isMouseButtonPressed(MouseButtonCode mouseCode);
 
 		static glm::vec2 getMousePosition();
 	};

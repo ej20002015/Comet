@@ -17,15 +17,15 @@ namespace Comet
 			glm::vec2 mousePositionDelta = (currentMousePosition - m_lastMousePosition) * ts.getSeconds();
 			m_lastMousePosition = currentMousePosition;
 
-			if (Input::isMouseButtonPressed(MouseCode::MOUSE_BUTTON_1))
+			if (Input::isMouseButtonPressed(MouseButtonCode::MOUSE_BUTTON_1))
 			{
 				mousePan(mousePositionDelta);
 			}
-			else if (Input::isMouseButtonPressed(MouseCode::MOUSE_BUTTON_3))
+			else if (Input::isMouseButtonPressed(MouseButtonCode::MOUSE_BUTTON_3))
 			{
 				mouseRotate(mousePositionDelta);
 			}
-			else if (Input::isMouseButtonPressed(MouseCode::MOUSE_BUTTON_2))
+			else if (Input::isMouseButtonPressed(MouseButtonCode::MOUSE_BUTTON_2))
 			{
 				mouseZoom(mousePositionDelta.y);
 			}
