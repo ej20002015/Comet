@@ -59,10 +59,10 @@ namespace Comet
 
 				//Depending on spriteTextureType make the correct draw command to the renderer
 				if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::NORMAL)
-					Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
+					Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
 				else
 				{
-					Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor);
+					Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
 				}
 			}
 		}
