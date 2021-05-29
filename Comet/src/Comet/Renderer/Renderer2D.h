@@ -49,8 +49,8 @@ namespace Comet
 		static void drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
 		static void drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), float tilingFactor = 1.0f);
 
-		static void drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, float tilingFactor = 1.0f);
-		static void drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, float tilingFactor = 1.0f);
+		static void drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, float tilingFactor = 1.0f, int32_t entityID = -1);
+		static void drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, float tilingFactor = 1.0f, int32_t entityID = -1);
 
 		static void resetStats();
 
@@ -71,6 +71,9 @@ namespace Comet
 			glm::vec2 textureCoordinates;
 			uint32_t textureIndex;
 			float tilingFactor;
+
+			//For the editor only (TODO: decide how to separate this from the runtime renderer code execute at runtime)
+			int32_t entityID;
 		};
 
 		//SET ON INITIALISATION OF RENDERER2D

@@ -21,7 +21,8 @@ namespace Comet
 			{ "a_color",              ShaderDataType::FLOAT4 },
 			{ "a_textureCoordinates", ShaderDataType::FLOAT2 },
 			{ "a_textureIndex",       ShaderDataType::UINT },
-			{ "a_tilingFactor",       ShaderDataType::FLOAT }
+			{ "a_tilingFactor",       ShaderDataType::FLOAT },
+			{ "a_entityID",           ShaderDataType::INT }
 		};
 
 		s_data.quadPipeline = Pipeline::create(quadPipelineSpecification);
@@ -165,7 +166,7 @@ namespace Comet
 		drawSubQuad(transform, colorTint, subTexture, tilingFactor);
 	}
 
-	void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, float tilingFactor)
+	void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, float tilingFactor, int32_t entityID)
 	{
 		//Check to see if max quads per batch has been exceeded
 		if (s_batchData.quadCount >= s_data.maxQuads)
@@ -201,6 +202,7 @@ namespace Comet
 			s_batchData.quadVertexBufferPointer->textureCoordinates = s_data.quadTextureCoordinates[i];
 			s_batchData.quadVertexBufferPointer->textureIndex = textureIndex;
 			s_batchData.quadVertexBufferPointer->tilingFactor = tilingFactor;
+			s_batchData.quadVertexBufferPointer->entityID = entityID;
 			s_batchData.quadVertexBufferPointer++;
 		}
 
@@ -208,7 +210,7 @@ namespace Comet
 		s_stats.quads++;
 	}
 
-	void Renderer2D::drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, float tilingFactor)
+	void Renderer2D::drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, float tilingFactor, int32_t entityID)
 	{
 		//Check to see if max quads per batch has been exceeded
 		if (s_batchData.quadCount >= s_data.maxQuads)
@@ -245,6 +247,7 @@ namespace Comet
 			s_batchData.quadVertexBufferPointer->textureCoordinates = subTexture.getTextureAtlasCoordinates()[i];
 			s_batchData.quadVertexBufferPointer->textureIndex = textureIndex;
 			s_batchData.quadVertexBufferPointer->tilingFactor = tilingFactor;
+			s_batchData.quadVertexBufferPointer->entityID = entityID;
 			s_batchData.quadVertexBufferPointer++;
 		}
 

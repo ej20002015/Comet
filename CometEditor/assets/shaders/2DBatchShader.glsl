@@ -7,6 +7,7 @@ layout (location = 1) in vec4  a_color;
 layout (location = 2) in vec2  a_textureCoordinates;
 layout (location = 3) in uint  a_textureIndex;
 layout (location = 4) in float a_tilingFactor;
+layout (location = 5) in int   a_entityID;
 
 layout (binding = 0) uniform Camera
 {
@@ -22,6 +23,7 @@ struct VertexOutput
 
 layout (location = 0) out VertexOutput v_vertexOutput;
 layout (location = 3) flat out uint v_textureIndex;
+layout (location = 4) flat out int v_entityID;
 
 void main()
 {
@@ -29,6 +31,7 @@ void main()
 	v_vertexOutput.v_textureCoordinates = a_textureCoordinates;
 	v_vertexOutput.v_tilingFactor = a_tilingFactor;
 	v_textureIndex = a_textureIndex;
+	v_entityID = a_entityID;
 	gl_Position = u_camera.u_viewProjectionMatrix * vec4(a_position, 1.0);
 }
 
@@ -45,6 +48,7 @@ struct VertexOutput
 
 layout (location = 0) in VertexOutput v_vertexInput;
 layout (location = 3) flat in uint v_textureIndex;
+layout (location = 4) flat in int v_entityID;
 
 layout (binding = 0) uniform sampler2D u_textures[32];
 
@@ -92,5 +96,5 @@ void main()
 		case 31: color = texture(u_textures[31], v_vertexInput.v_textureCoordinates * v_vertexInput.v_tilingFactor) * v_vertexInput.v_color; break;
 	}
 
-	entityID = 1;
+	entityID = v_entityID;
 }
