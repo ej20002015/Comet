@@ -21,6 +21,9 @@ Comet requires the shaderc library. However, before building shaderc we need to 
     cd build 
     cmake ../ -DSHADERC_SKIP_TESTS=ON
     ```
+- Clone the SPIRV-Cross library [https://github.com/ej20002015/SPIRV-Cross]()
+- Need to set the runtime library to Multi-threaded Debug (/MTd) for debug build
+- Need to set the runtime library to Multi-threaded (/MT) for release build
 
 # WIP!!
   
