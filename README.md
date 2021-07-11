@@ -15,11 +15,11 @@ Currently Comet only supports Windows.
 Comet uses Premake5 to generate the project files which can then be used to build. The only target toolchain that has been validated so far is Visual Studio. Peform the following steps to build Comet:
 
 1. The first thing to do is to generate Visual Studio project files for Comet using Premake5:
-    - run the Scripts/GenerateWindowsFiles.bat batch script - this script calls Premake:
+    1. run the Scripts/GenerateWindowsFiles.bat batch script - this script calls Premake:
     ```bat
     call scripts/GenerateWindowsFiles.bat
     ```
-    - In the root directory you will now see a Comet.sln Visual Studio solution file
+    2. In the root directory you will now see a Comet.sln Visual Studio solution file
 2. Before opening the Visual Studio solution and building Comet, a couple of libraries need to be present. Build these libraries in a separate folder to the Comet directory. To build the shaderc library follow these steps:
     1. Clone my fork of the shaderc repository recursively; it contains a load of submodules that are shaderc dependencies:
     ```bat
