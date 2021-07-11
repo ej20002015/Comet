@@ -1,5 +1,7 @@
 **/bin/
 !vendor/bin/premake/
+!Comet/Vendor/shaderc/bin/**/README.md
+!Comet/Vendor/SPIRV-Cross/bin/**/README.md
 bin-int/
 
 #comet files
