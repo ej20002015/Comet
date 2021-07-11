@@ -1,6 +1,6 @@
 workspace "Comet"
     architecture "x86_64"
-    startproject "Application"
+    startproject "CometEditor"
 
     configurations
     {
