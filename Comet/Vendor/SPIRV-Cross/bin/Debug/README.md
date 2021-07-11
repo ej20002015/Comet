@@ -1,10 +1,8 @@
 The following static libary files must be present in this directory for Comet to build
 
-In SPIRV-Cross sln file build ALL_BUILD project in Debug
+Build the "ALL_BUILDS" SPIRV-Cross project in Debug to generate all these libraries.
 
-Then all binaries can be found in the following directory:
-\
-SPIRV-Cross/build/Debug
+Then all these binaries can be found in the "SPIRV-Cross/build/Debug" directory
 
 - spirv-cross-cd.lib
 - spirv-cross-cored.lib
