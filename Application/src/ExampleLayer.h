@@ -16,7 +16,6 @@ public:
 	{
 		Comet::Renderer::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		texture = Comet::Texture2D::create("assets/textures/container2.png");
-		m_orthographicCamera = Comet::OrthographicCamera(static_cast<float>(Comet::Application::get().getWindow().getWidth()) / static_cast<float>(Comet::Application::get().getWindow().getHeight()));
 	}
 	void onDetach() override {}
 	void onUpdate(Comet::Timestep ts) override
@@ -99,6 +98,5 @@ public:
 
 private:
 	Comet::Timestep m_ts;
-	Comet::OrthographicCamera m_orthographicCamera;
 	Comet::Reference<Comet::Texture2D> texture;
 };
