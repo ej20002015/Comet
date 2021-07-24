@@ -4,6 +4,7 @@
 
 #include "panels/SceneHierarchyPanel.h"
 #include "panels/EntityPropertiesPanel.h"
+#include "panels/ContentBrowserPanel.h"
 
 #include "imgui.h"
 
@@ -37,6 +38,7 @@ namespace Comet
 		//Panels
 		SceneHierarchyPanel m_sceneHierarchyPanel;
 		EntityPropertiesPanel m_entityPropertiesPanel;
+		ContentBrowserPanel m_contentBrowserPanel;
 
 		//Viewport
 		Reference<Framebuffer> m_framebuffer;

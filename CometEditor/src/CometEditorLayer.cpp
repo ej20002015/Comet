@@ -298,6 +298,9 @@ namespace Comet
         m_entityPropertiesPanel.setEntity(selectedEntity);
         m_entityPropertiesPanel.onImGuiRender();
 
+        //Content Browser Panel
+        m_contentBrowserPanel.onImGuiRender();
+
         ImGui::End();
 	}
 
