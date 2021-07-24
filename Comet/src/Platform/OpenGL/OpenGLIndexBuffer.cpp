@@ -14,10 +14,10 @@ namespace Comet
 		{
 			case IndexBufferUsage::STATIC:    return GL_STATIC_DRAW; break;
 			case IndexBufferUsage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
+			default:
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown index buffer usage");
+				return 0;
 		}
-
-		CMT_COMET_ASSERT_MESSAGE(false, "Unknown index buffer usage");
-		return 0;
 	}
 
 	OpenGLIndexBuffer::OpenGLIndexBuffer(void* data, uint32_t count, IndexBufferUsage usage)

@@ -38,11 +38,9 @@ namespace Comet
     ImFont* ImGuiUtilities::getFont(ImGuiFontType fontType)
     {
         if (auto it = s_ImGuiFontsIndexMap.find(fontType); it != s_ImGuiFontsIndexMap.end())
-        {
             return ImGui::GetIO().Fonts->Fonts[(*it).second];
-        }
         
-        Log::cometError("No font can be found of the supplied type");
+        CMT_COMET_ASSERT_MESSAGE(false, "No font can be found of the supplied type");
         return nullptr;
     }
 

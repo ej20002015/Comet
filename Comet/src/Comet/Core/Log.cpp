@@ -40,7 +40,7 @@ namespace Comet
 		case LogLevel::CMT_WARN: s_cometLogger->set_level(spdlog::level::warn); s_clientLogger->set_level(spdlog::level::warn); break;
 		case LogLevel::CMT_ERROR: s_cometLogger->set_level(spdlog::level::err); s_clientLogger->set_level(spdlog::level::err); break;
 		case LogLevel::CMT_CRITICAL: s_cometLogger->set_level(spdlog::level::critical); s_clientLogger->set_level(spdlog::level::critical); break;
-		default: Log::cometError("Unknown LogLevel"); break;
+		default: CMT_COMET_ASSERT_MESSAGE(false, "Unknown logging level"); break;
 		}
 	}
 

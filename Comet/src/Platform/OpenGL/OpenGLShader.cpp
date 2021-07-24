@@ -14,9 +14,11 @@ namespace Comet
 			return GL_FRAGMENT_SHADER;
 		else if (typeToken == "compute")
 			return GL_COMPUTE_SHADER;
-
-		CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader type");
-		return 0;
+		else
+		{
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader type");
+			return 0;
+		}
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)

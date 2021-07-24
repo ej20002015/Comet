@@ -97,7 +97,6 @@ namespace Comet
 		if (!primaryCameraEntity)
 		{
 			Log::cometError("Cannot render scene - no primary camera set");
-			//Only works if rendering commands are the last ones in update
 			return;
 		}
 

@@ -69,7 +69,7 @@ namespace Comet
 
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown Shader Data Type");
-			return 0;
+			return "";
 		}
 	}
 

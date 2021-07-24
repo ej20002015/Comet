@@ -11,7 +11,12 @@ namespace Comet
 
     Reference<Shader> Shader::create(const std::string& filepath)
     {
-        CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
+		if (!filepath.size())
+		{
+			Log::cometError("Shader filepath is empty");
+			CMT_COMET_ASSERT(false);
+			return nullptr;
+		}
 
         switch (RendererAPI::getCurrrentRendererAPIType())
         {

@@ -25,7 +25,7 @@ namespace Comet
 		{
 			case GL_DEBUG_SEVERITY_HIGH:
 				Log::cometError("[OpenGL Debug HIGH] {0}", message);
-				CMT_COMET_ASSERT_MESSAGE(false, "GL_DEBUG_SEVERITY_HIGH");
+				CMT_COMET_ASSERT(false);
 				break;
 			case GL_DEBUG_SEVERITY_MEDIUM:
 				Log::cometWarn("[OpenGL Debug MEDIUM] {0}", message);
@@ -45,10 +45,6 @@ namespace Comet
 		glDebugMessageCallback(OpenGLLogMessage, nullptr);
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-		//unsigned int vao;
-		//glGenVertexArrays(1, &vao);
-		//glBindVertexArray(vao);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -71,12 +67,9 @@ namespace Comet
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &s_rendererAPICapabilities.maxAnisotropy);
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &s_rendererAPICapabilities.maxTextureUnits);
 
-		GLenum error = glGetError();
-		while (error != GL_NO_ERROR)
-		{
+		GLenum error;
+		while ((error = glGetError()) != GL_NO_ERROR)
 			Log::cometError("OpenGL Error {0}", error);
-			error = glGetError();
-		}
 	}
 
 	void OpenGLRendererAPI::i_shutdown()

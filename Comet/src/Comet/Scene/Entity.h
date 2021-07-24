@@ -11,6 +11,9 @@ namespace Comet
 	class Entity
 	{
 	public:
+
+
+	public:
 		Entity() = default;
 
 		Entity(Scene* scene, entt::entity entityHandle)
@@ -22,7 +25,10 @@ namespace Comet
 		template<typename T, typename ...Args>
 		T& addComponent(Args&&... args)
 		{
-			CMT_CLIENT_ASSERT_MESSAGE(!hasComponent<T>(), "Cannot add component - entity already has component");
+			CMT_COMET_ASSERT_MESSAGE(!hasComponent<T>(), "Cannot add component - entity already has component");
+			if (hasComponent<T>())
+				throw std::exception("Cannot add component - entity already has component");
+
 			auto& component = m_scene->m_registry.emplace<T>(m_entityHandle, std::forward<Args>(args)...);
 			m_scene->onComponentConstruction<T>(*this);
 			return component;
@@ -31,7 +37,10 @@ namespace Comet
 		template<typename T>
 		void removeComponent()
 		{
-			CMT_CLIENT_ASSERT_MESSAGE(hasComponent<T>(), "Cannot remove component - entity does not have component");
+			CMT_COMET_ASSERT_MESSAGE(hasComponent<T>(), "Cannot remove component - entity does not have component");
+			if (!hasComponent<T>())
+				throw std::exception("Cannot remove component - entity does not have component");
+
 			return m_scene->m_registry.remove<T>(m_entityHandle);
 		}
 
@@ -44,7 +53,10 @@ namespace Comet
 		template<typename T>
 		T& getComponent()
 		{
-			CMT_CLIENT_ASSERT_MESSAGE(hasComponent<T>(), "Cannot get component - entity does not have component");
+			CMT_COMET_ASSERT_MESSAGE(hasComponent<T>(), "Cannot get component - entity does not have component");
+			if (!hasComponent<T>())
+				throw std::exception("Cannot get component - entity does not have component");
+
 			return m_scene->m_registry.get<T>(m_entityHandle);
 		}
 

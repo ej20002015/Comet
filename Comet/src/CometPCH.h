@@ -13,6 +13,7 @@
 #include <functional>
 #include <filesystem>
 #include <typeinfo>
+#include <stdexcept>
 
 //STL Data structures
 #include <string>

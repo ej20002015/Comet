@@ -10,9 +10,7 @@ namespace Comet
 	};
 
 	uint32_t getShaderDataTypeSize(ShaderDataType type);
-
 	uint32_t getShaderDataTypeComponentCount(ShaderDataType type);
-
 	std::string getShaderDataTypeString(ShaderDataType type);
 
 }

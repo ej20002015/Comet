@@ -15,8 +15,7 @@ namespace Comet
 		case FramebufferColorAttachmentFormat::RGBA32F:            return GL_RGBA32F; break;
 		case FramebufferColorAttachmentFormat::R32I:               return GL_R32I; break;
 		default:
-			Log::cometError("Unknown framebuffer color attachment/texture format");
-			CMT_COMET_ASSERT(false);
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer color attachment/texture format");
 			return 0;
 			break;
 		}
@@ -28,8 +27,7 @@ namespace Comet
 		{
 		case FramebufferDepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH24_STENCIL8;
 		default:
-			Log::cometError("Unknown framebuffer depth attachment/texture format");
-			CMT_COMET_ASSERT(false);
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer depth attachment/texture format");
 			return 0;
 			break;
 		}
@@ -41,8 +39,7 @@ namespace Comet
 		{
 		case FramebufferDepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH_STENCIL_ATTACHMENT;
 		default:
-			Log::cometError("Unknown framebuffer depth attachment/texture format");
-			CMT_COMET_ASSERT(false);
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer depth attachment/texture format");
 			return 0;
 			break;
 		}
@@ -201,12 +198,14 @@ namespace Comet
 		{
 			Log::cometError("Attempting to clear framebuffer color attachment to integer that does not have a format of R32I");
 			CMT_COMET_ASSERT(false);
+			return;
 		}
 
 		if (attachmentIndex >= m_specification.colorAttachments.attachments.size())
 		{
 			Log::cometError("Attachment index specified does not correspond to a color attachment in the framebuffer");
 			CMT_COMET_ASSERT(false);
+			return;
 		}
 
 		glClearTexImage(m_colorAttachmentsRendererID[attachmentIndex], 0, GL_RED_INTEGER, GL_INT, &value);
@@ -218,6 +217,7 @@ namespace Comet
 		{
 			Log::cometError("Attachment index specified does not correspond to a color attachment in the framebuffer");
 			CMT_COMET_ASSERT(false);
+			return;
 		}
 
 		glBindTextureUnit(slot, m_colorAttachmentsRendererID[attachmentIndex]);

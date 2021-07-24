@@ -30,7 +30,7 @@ namespace Comet
 		case TextureFormat::FLOAT16:  return 8;
 		
 		default:
-			CMT_COMET_ASSERT_MESSAGE(false, "Unknown Texture format");
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown texture format");
 			return 0;
 		}
     }
@@ -52,7 +52,12 @@ namespace Comet
 
     Reference<Texture2D> Texture2D::create(const std::string& filepath, const bool SRGB, TextureFilter magFilter, TextureFilter minFilter, const TextureWrap wrap)
     {
-        CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
+        if (!filepath.size())
+        {
+            Log::cometError("Texture2D filepath is empty");
+            CMT_COMET_ASSERT(false);
+            return nullptr;
+        }
 
         Reference<Texture> texture = TextureManager::getTexture(filepath);
         if (texture)
@@ -91,7 +96,12 @@ namespace Comet
 
     Reference<TextureCube> TextureCube::create(const std::string& filepath, const bool SRGB)
     {
-        CMT_COMET_ASSERT_MESSAGE(filepath.size(), "filepath is empty");
+        if (!filepath.size())
+        {
+            Log::cometError("Texture Cube filepath is empty");
+            CMT_COMET_ASSERT(false);
+            return nullptr;
+        }
 
         Reference<Texture> texture = TextureManager::getTexture(filepath);
         if (texture)
@@ -121,12 +131,7 @@ namespace Comet
 
     void Texture2DSubTexture::calculateTextureAtlasCoordinates()
     {
-        if (!m_textureAtlas)
-        {
-            Log::cometError("Cannot calculate texture atlas coordinates - texture atlas is null");
-            CMT_COMET_ASSERT(false);
-            return;
-        }
+        CMT_COMET_ASSERT_MESSAGE(m_textureAtlas, "Cannot calculate texture atlas coordinates - texture atlas is null");
 
         float textureWidth = static_cast<float>(m_textureAtlas->getWidth());
         float textureHeight = static_cast<float>(m_textureAtlas->getHeight());
@@ -147,7 +152,7 @@ namespace Comet
         const std::string& filepath = texture->getFilepath();
         if (filepath == Texture::s_noFilepathName)
         {
-            Log::cometError("Cannot add textures created during runtime to the Texture Manager");
+            Log::cometError("Cannot add runtime generated textures to the Texture Manager");
             return;
         }
 
