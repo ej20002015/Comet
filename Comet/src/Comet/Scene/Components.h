@@ -16,7 +16,6 @@
 
 namespace Comet
 {
-	//TODO: Create an entity with a given UUID
 	struct UUIDComponent
 	{
 		UUID ID;

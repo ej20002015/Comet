@@ -206,6 +206,7 @@ namespace Comet
 			binary = std::vector<uint32_t>(result.cbegin(), result.cend());
 
 			//Cache compiled binary
+
 			//Create 'cached' directory if it does not exist
 			std::filesystem::path cachedDirectoryPath = path.parent_path();
 			std::filesystem::create_directory(cachedDirectoryPath);

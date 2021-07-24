@@ -306,8 +306,6 @@ namespace Comet
 
 	void SceneSerializer::deserialize(const std::string& filepath, Reference<Scene> scene)
 	{
-		//TODO: Preserve order when reading in
-
 		std::ifstream fin(filepath);
 		if (!fin)
 		{
@@ -331,10 +329,12 @@ namespace Comet
 		Log::cometInfo("Deserializing scene \"{0}\"", sceneName);
 
 		YAML::Node entitiesNode = inputData["Scene"]["Entities"];
-		for (YAML::Node entityNode : entitiesNode)
+		//Parse nodes in reverse so they appear in the scene heirarchy panel in the same order as the save file
+		for (int32_t i = static_cast<int32_t>(entitiesNode.size() - 1); i > -1; --i)
 		{
-			deserializeEntityNode(entityNode, scene);
+			deserializeEntityNode(entitiesNode[i], scene);
 		}
+	
 	}
 
 	void SceneSerializer::serializeEntity(YAML::Emitter& out, Entity entity)

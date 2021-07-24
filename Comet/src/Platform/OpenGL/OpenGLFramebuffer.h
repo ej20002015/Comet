@@ -6,8 +6,6 @@
 namespace Comet
 {
 
-	//TODO: Create getters for the color and depth attachments' formats
-
 	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:
