@@ -204,6 +204,13 @@ namespace Comet
 
         ImGui::End();
 
+        ImGui::Begin("Gizmo Options");
+
+        ImGui::DragFloat("Translation and Scale Snap Value", &m_translateScaleSnapValue, 0.1f, 0.0f, 100.0f);
+        ImGui::DragFloat("Rotation Snap Value", &m_rotationSnapValue, 1.0f, 0.0f, 180.0f);
+
+        ImGui::End();
+
         //TODO: MOVE VIEWPORT CODE INTO SEPARATE FILE
         //Scene Viewport
 
@@ -245,7 +252,7 @@ namespace Comet
 
         if (currentlySelectedEntity && m_guizmoOperation > -1)
         {
-            //TODO: Editor Camera that is always perspective
+            //Editor Camera has a perspective projection
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
             

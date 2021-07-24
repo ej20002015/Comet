@@ -49,7 +49,6 @@ namespace Comet
 		//Guizmo
 		int32_t m_guizmoOperation = -1;
 		bool m_guizmoOperationChangeLocked = false;
-		//TODO: To be configurable through the UI
 		float m_translateScaleSnapValue = 0.5f, m_rotationSnapValue = 45.0f;
 	};
 
