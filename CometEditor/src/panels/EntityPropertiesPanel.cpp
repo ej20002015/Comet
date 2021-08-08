@@ -1,15 +1,17 @@
 #include "EntityPropertiesPanel.h"
 
 #include "ComponentWidget.h"
+#include "CometEditorResourceManager.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
 
 namespace Comet
 {
+
 	EntityPropertiesPanel::EntityPropertiesPanel()
 	{
-		m_optionsTexture = Texture2D::create("assets/textures/MenuIcon.png");
+		m_optionsTexture = CometEditorResourceManager::getTexture("MenuIcon");
 	}
 
 	void EntityPropertiesPanel::onImGuiRender()

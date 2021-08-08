@@ -2,6 +2,7 @@
 #include <Comet.h>
 
 #include "CometEditorLayer.h"
+#include "CometEditorResourceManager.h"
 
 namespace Comet
 {
@@ -12,6 +13,7 @@ namespace Comet
 		CometEditorApplication()
 			: Application("Comet Editor")
 		{
+			CometEditorResourceManager::init();
 			pushLayer(new CometEditorLayer());
 			Log::setLogLevel(Log::LogLevel::CMT_INFO);
 		}

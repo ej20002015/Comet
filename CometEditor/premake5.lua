@@ -17,6 +17,7 @@ project "CometEditor"
     includedirs
     {
         "%{wks.location}/Comet/src",
+        "src",
         "%{includeDirectories.spdlog}",
         "%{includeDirectories.ImGui}",
         "%{includeDirectories.GLM}",

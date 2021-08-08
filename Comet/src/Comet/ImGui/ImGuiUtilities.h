@@ -26,6 +26,10 @@ namespace Comet
 		static ImVec2 getMinimumWindowSize();
 		static void setMinimumWindowSize(const ImVec2& size);
 
+		//Window Padding
+		static ImVec2 getWindowPadding();
+		static void setWindowPadding(const ImVec2& padding);
+
 		//Font Management
 		static void loadFont(const std::string& filepath, float fontSize, ImGuiFontType fontType);
 		static void setDefaultFont(ImGuiFontType fontType);

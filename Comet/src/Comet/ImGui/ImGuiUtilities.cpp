@@ -17,6 +17,17 @@ namespace Comet
         style.WindowMinSize = size;
     }
 
+    ImVec2 ImGuiUtilities::getWindowPadding()
+    {
+        return ImGui::GetStyle().WindowPadding;
+    }
+
+    void ImGuiUtilities::setWindowPadding(const ImVec2& padding)
+    {
+        ImGuiStyle& style = ImGui::GetStyle();
+        style.WindowPadding = padding;
+    }
+
     void ImGuiUtilities::loadFont(const std::string& filepath, float fontSize, ImGuiFontType fontType)
     {
         ImGuiIO& io = ImGui::GetIO();
