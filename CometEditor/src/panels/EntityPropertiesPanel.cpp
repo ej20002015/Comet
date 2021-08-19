@@ -69,7 +69,6 @@ namespace Comet
 	template<typename T, typename ComponentUIFunction>
 	void EntityPropertiesPanel::componentImGuiRender(const std::string& headerName, ComponentUIFunction componentUIFunction, EntityOptionsFlags optionsFlags)
 	{
-
 		if (!m_entity.hasComponent<T>())
 			return;
 

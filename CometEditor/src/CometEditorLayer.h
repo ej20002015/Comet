@@ -29,6 +29,7 @@ namespace Comet
 		void newScene();
 		void saveScene();
 		void openScene();
+		void openScene(const std::filesystem::path& path);
 
 	private:
 		Timestep m_ts;

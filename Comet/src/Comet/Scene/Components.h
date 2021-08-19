@@ -46,6 +46,7 @@ namespace Comet
 		operator const std::string&() const { return tag; }
 	};
 
+	//TODO: FIX NON INDEPENDENT ADJUSTMENT OF ROTATION COMPONENTS
 	struct TransformComponent
 	{
 		glm::vec3 translation = glm::vec3(0.0f);

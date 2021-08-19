@@ -272,6 +272,14 @@ namespace Comet
 
 	void SceneSerializer::serialize(const std::string& filepath, Reference<Scene> scene)
 	{
+		std::filesystem::path path(filepath);
+		if (path.extension() != ".cmtscn")
+		{
+			Log::cometError("File '{0}' does not have the .cmtscn extension so cannot be used as a save file", filepath);
+			CMT_COMET_ASSERT(false);
+			return;
+		}
+
 		Log::cometInfo("Serializing scene {0}", scene->getSceneName());
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -306,6 +314,14 @@ namespace Comet
 
 	void SceneSerializer::deserialize(const std::string& filepath, Reference<Scene> scene)
 	{
+		std::filesystem::path path(filepath);
+		if (path.extension() != ".cmtscn")
+		{
+			Log::cometError("File '{0}' does not have the .cmtscn extension so cannot be opened", filepath);
+			CMT_COMET_ASSERT(false);
+			return;
+		}
+
 		std::ifstream fin(filepath);
 		if (!fin)
 		{

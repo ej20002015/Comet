@@ -57,9 +57,9 @@ namespace Comet
 			m_thumbnailSizeExponent = thumbnailSizeExponentOffset + 5;
 		}
 
-		//ImGui::BeginChild("BottomBar", ImVec2(0, 0), true, 0); // Use avail width/height
-		//ImGui::Text("Footer");
-		//ImGui::EndChild();
+		ImGui::BeginChild("BottomBar", ImVec2(0, 0), true, 0); // Use avail width/height
+		ImGui::Text("Footer");
+		ImGui::EndChild();
 
 		ImGui::End();
 	}
@@ -69,18 +69,37 @@ namespace Comet
 		std::filesystem::path directoryEntryPath = directoryEntry.path();
 		std::string directoryEntryFilenameString = directoryEntryPath.filename().string();
 
-		Reference<Texture2D> buttonIcon = directoryEntry.is_directory() ? m_directoryIcon : m_fileIcon;
-		ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((buttonIcon->getRendererID()))), { thumbnailSize, thumbnailSize }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0);
+		//Push ID to give each image button a unique ID (if this is not present the ID will be taken from the rendererID which could be the same for different buttons)
+		ImGui::PushID(directoryEntryFilenameString.c_str());
 
+		Reference<Texture2D> buttonIcon = directoryEntry.is_directory() ? m_directoryIcon : m_fileIcon;
+
+		//Temporarily change ImGui button color style to make button background color transparent
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((buttonIcon->getRendererID()))), { thumbnailSize, thumbnailSize }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0);
+		ImGui::PopStyleColor();
+
+		//Double click behaviour on directory entries
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
 			if (directoryEntry.is_directory())
-				m_currentDirectory = directoryEntryPath;
+				m_currentDirectory /= directoryEntryPath.filename();
+		}
+
+		//Drag and Drop behaviour on directory entries
+		if (ImGui::BeginDragDropSource())
+		{
+			std::string pathString = directoryEntryPath.string();
+			const char* pathCString = pathString.c_str();
+			ImGui::SetDragDropPayload("ContentBrowserEntryPathCString", pathCString, (strlen(pathCString) + 1) * sizeof(char), ImGuiCond_Once);
+			ImGui::EndDragDropSource();
 		}
 
 		ImGui::TextWrapped(directoryEntryFilenameString.c_str());
 
 		ImGui::NextColumn();
+
+		ImGui::PopID();
 	}
 
 }

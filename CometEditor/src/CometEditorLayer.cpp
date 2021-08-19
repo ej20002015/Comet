@@ -60,7 +60,7 @@ namespace Comet
             const float m_cameraSpeed = 4.0f;
         };
 
-        //Set font
+        //Set fonts
         ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Regular.ttf",    16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
         ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Bold.ttf",       16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD);
         ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Italic.ttf",     16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL_ITALIC);
@@ -75,10 +75,6 @@ namespace Comet
 	void CometEditorLayer::onUpdate(Timestep ts)
 	{
         m_ts = ts;
-
-        //Only allow inputs to work and change camera position when on the viewport
-        /*if (m_viewportFocused && m_viewportHovered)
-            m_orthographicCamera.onUpdate(ts);*/
 
         //Resize framebuffer and set camera projection if viewport size has changed
         if (!(m_viewportSize.x < 1.0f || m_viewportSize.y < 1.0f) &&
@@ -245,6 +241,18 @@ namespace Comet
 
         ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), viewportSize, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
+        //Set drag drop payload target for opening scene files
+        if (ImGui::BeginDragDropTarget())
+        {
+            const ImGuiPayload* dragDropPayload = nullptr;
+            if (dragDropPayload = ImGui::AcceptDragDropPayload("ContentBrowserEntryPathCString"))
+            {
+                const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
+                openScene(std::filesystem::path(directoryEntryPathCString));
+            }
+            ImGui::EndDragDropTarget();
+        }
+
         //ImGuizmo
         Entity currentlySelectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
 
@@ -392,6 +400,21 @@ namespace Comet
     void CometEditorLayer::openScene()
     {
         std::string filepath = PlatformUtilities::openFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0");
+        if (!filepath.empty())
+        {
+            m_guizmoOperation = -1;
+            m_entityPropertiesPanel.setEntity(Entity());
+            m_scene = Scene::create();
+            m_sceneHierarchyPanel.setScene(m_scene);
+            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
+
+            SceneSerializer::deserialize(filepath, m_scene);
+        }
+    }
+
+    void CometEditorLayer::openScene(const std::filesystem::path& path)
+    {
+        std::string filepath = path.string();
         if (!filepath.empty())
         {
             m_guizmoOperation = -1;
