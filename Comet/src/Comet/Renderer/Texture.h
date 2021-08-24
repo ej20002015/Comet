@@ -85,7 +85,7 @@ namespace Comet
 		void setCellSize(uint32_t textureAtlasCellSize) { m_textureAtlasCellSize = textureAtlasCellSize; calculateTextureAtlasCoordinates(); }
 
 		const glm::vec2& getTextureAtlasIndex() const { return m_textureAtlasIndex; }
-		void setTextureAtlasIndex(const glm::vec2& textureAtlasIndex) { m_textureAtlasIndex = m_textureAtlasIndex; calculateTextureAtlasCoordinates(); }
+		void setTextureAtlasIndex(const glm::vec2& textureAtlasIndex) { m_textureAtlasIndex = textureAtlasIndex; calculateTextureAtlasCoordinates(); }
 
 		const glm::vec2& getTextureScale() const { return m_textureScale; }
 		void setTextureScale(const glm::vec2 textureScale) { m_textureScale = textureScale; calculateTextureAtlasCoordinates(); }
