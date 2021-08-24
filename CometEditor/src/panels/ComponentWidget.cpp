@@ -4,7 +4,8 @@
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
 
-#include <filesystem>
+#include "Comet/Core/PlatformUtilities.h"
+#include "CometEditorResourceManager.h"
 
 namespace Comet
 {
@@ -292,41 +293,55 @@ namespace Comet
 		ImGui::Separator();
 
 		ImGuiUtilities::pushFont(ImGuiUtilities::ImGuiFontType::FONT_BOLD);
-		ImGui::Text("Texture Filepath");
+		ImGui::Text("Texture");
 		ImGui::NextColumn();
 		ImGuiUtilities::popFont();
 
 		ImGui::PushItemWidth(contentColumnWidth);
-		std::string textureFilepath = (spriteComponent.texture) ? spriteComponent.texture->getFilepath() : "";
-		char textBuffer[512];
-		strcpy_s(textBuffer, sizeof(textBuffer), textureFilepath.c_str());
-		if (ImGui::InputText("##Texture Filepath", textBuffer, sizeof(textBuffer)))
+
+		int32_t textureRendererID = (spriteComponent.texture) ? static_cast<int32_t>(spriteComponent.texture->getRendererID()) : CometEditorResourceManager::getTexture("NoTextureIcon")->getRendererID();
+
+		if (ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((textureRendererID))), { 64.0f, 64.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0))
 		{
-			textureFilepath = std::string(textBuffer);
-			if (!textureFilepath.size())
+			std::string textureFilepath = PlatformUtilities::openFile("All Picture Files\0*.png;*.jpg\0\0");
+
+			auto texture = Texture2D::create(textureFilepath);
+			spriteComponent.texture = texture;
+			spriteComponent.subTexture.setTextureAtlas(texture);
+		}
+
+		//Set drag drop payload target for opening scene files
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* dragDropPayload = nullptr;
+			if (dragDropPayload = ImGui::AcceptDragDropPayload("ContentBrowserEntryPathCString"))
 			{
-				spriteComponent.texture = nullptr;
-				spriteComponent.subTexture.setTextureAtlas(nullptr);
-			}
-			else
-			{
-				//TODO: Needs cleaning up
-				std::filesystem::path textureFilepathPath = textureFilepath;
-				auto extension = textureFilepathPath.extension();
+				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
+				std::filesystem::path textureFilepathPath(directoryEntryPathCString);
+				std::filesystem::path extension = textureFilepathPath.extension();
 				if (!extension.empty())
 				{
 					if (extension == ".png" || extension == ".jpg")
 					{
-						if (std::filesystem::exists(textureFilepath))
-						{
-							auto texture = Texture2D::create(textureFilepath);
-							spriteComponent.texture = texture;
-							spriteComponent.subTexture.setTextureAtlas(texture);
-						}
+						auto texture = Texture2D::create(directoryEntryPathCString);
+						spriteComponent.texture = texture;
+						spriteComponent.subTexture.setTextureAtlas(texture);
 					}
 				}
 			}
+			ImGui::EndDragDropTarget();
 		}
+
+		//TODO: REMOVE TEXTURE
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("X"))
+		{
+			spriteComponent.texture = nullptr;
+			spriteComponent.subTexture.setTextureAtlas(nullptr);
+		}
+		
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 

@@ -10,6 +10,7 @@ namespace Comet
 		s_textures["MenuIcon"] = Texture2D::create("EditorResources/Textures/Icons/EntityProperitesPanel/MenuIcon.png");
 		s_textures["DirectoryIcon"] = Texture2D::create("EditorResources/Textures/Icons/ContentBrowserPanel/DirectoryIcon.png");
 		s_textures["FileIcon"] = Texture2D::create("EditorResources/Textures/Icons/ContentBrowserPanel/FileIcon.png");
+		s_textures["NoTextureIcon"] = Texture2D::create("EditorResources/Textures/Icons/EntityProperitesPanel/NoTextureIcon.png");
 	}
 
 	Reference<Texture2D> CometEditorResourceManager::getTexture(const std::string& textureName)
