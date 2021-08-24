@@ -178,7 +178,7 @@ namespace Comet
 
         ImGui::Separator();
 
-        ImGui::Text("%fms (%f.2 fps)", m_ts.getMilliseconds(), 1.0f / m_ts.getSeconds());
+        ImGui::Text("%fms (%.2f fps)", m_ts.getMilliseconds(), 1.0f / m_ts.getSeconds());
 
         ImGui::Separator();
 
