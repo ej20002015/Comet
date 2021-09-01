@@ -1,8 +1,8 @@
 #pragma once
+#include "CometPCH.h"
 
-#include <Comet.h>
-
-#include "imgui.h"
+#include "Comet/Scene/Entity.h"
+#include "Comet/Scene/Scene.h"
 
 namespace Comet
 {

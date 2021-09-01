@@ -1,11 +1,13 @@
+#include "CometPCH.h"
 #include "ComponentWidget.h"
+
+#include "Comet/Core/PlatformUtilities.h"
+#include "Comet/ImGui/ImGuiUtilities.h"
+#include "Comet/Renderer/Texture.h"
 
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
-
-#include "Comet/Core/PlatformUtilities.h"
-#include "CometEditorResourceManager.h"
 
 namespace Comet
 {
@@ -272,6 +274,9 @@ namespace Comet
 
 	void ComponentWidget::ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent)
 	{
+		//Temp
+		Reference<Texture2D> noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityProperitesPanel/NoTextureIcon.png");
+
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
 		ImGui::Columns(2, "SpriteColumns", false);
@@ -299,7 +304,7 @@ namespace Comet
 
 		ImGui::PushItemWidth(contentColumnWidth);
 
-		int32_t textureRendererID = (spriteComponent.texture) ? static_cast<int32_t>(spriteComponent.texture->getRendererID()) : CometEditorResourceManager::getTexture("NoTextureIcon")->getRendererID();
+		int32_t textureRendererID = (spriteComponent.texture) ? static_cast<int32_t>(spriteComponent.texture->getRendererID()) : noTextureIcon->getRendererID();
 
 		if (ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((textureRendererID))), { 64.0f, 64.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0))
 		{

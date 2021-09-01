@@ -1,6 +1,7 @@
 #pragma once
+#include "CometPCH.h"
 
-#include <Comet.h>
+#include "Comet/Scene/Entity.h"
 
 namespace Comet
 {
@@ -15,7 +16,7 @@ namespace Comet
 			CAN_DELETE_ENTITY = CMT_BIT(0)
 		};
 
-		EntityPropertiesPanel();
+		EntityPropertiesPanel() = default;
 
 		void setEntity(Entity entity) { m_entity = entity; }
 
@@ -27,7 +28,6 @@ namespace Comet
 
 	private:
 		Entity m_entity;
-		Reference<Texture2D> m_optionsTexture;
 	};
 
 }

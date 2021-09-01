@@ -1,4 +1,9 @@
+#include "CometPCH.h"
 #include "SceneHierarchyPanel.h"
+
+#include "Comet/Scene/Components.h"
+
+#include "imgui.h"
 
 namespace Comet
 {

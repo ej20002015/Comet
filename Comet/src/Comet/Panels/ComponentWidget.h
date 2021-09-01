@@ -1,6 +1,7 @@
 #pragma once
+#include "CometPCH.h"
 
-#include <Comet.h>
+#include "Comet/Scene/Components.h"
 
 #include "imgui.h"
 

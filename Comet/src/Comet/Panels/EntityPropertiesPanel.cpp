@@ -1,18 +1,13 @@
+#include "CometPCH.h"
 #include "EntityPropertiesPanel.h"
 
 #include "ComponentWidget.h"
-#include "CometEditorResourceManager.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
 
 namespace Comet
 {
-
-	EntityPropertiesPanel::EntityPropertiesPanel()
-	{
-		m_optionsTexture = CometEditorResourceManager::getTexture("MenuIcon");
-	}
 
 	void EntityPropertiesPanel::onImGuiRender()
 	{
@@ -97,7 +92,7 @@ namespace Comet
 			ImGui::SetColumnOffset(-1, buttonColumnCurrentOffset + buttonColumnLength - lineHeight);
 
 			//TODO: fix alignment
-			if (ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((m_optionsTexture->getRendererID()))), { lineHeight + 3.0f, lineHeight }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0))
+			if (ImGui::Button("+", { lineHeight + 3.0f, lineHeight }))
 				ImGui::OpenPopup("ComponentSettings");
 
 			bool removeComponent = false;

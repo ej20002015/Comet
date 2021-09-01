@@ -2,8 +2,6 @@
 
 #include <Comet.h>
 
-#include "panels/SceneHierarchyPanel.h"
-#include "panels/EntityPropertiesPanel.h"
 #include "panels/ContentBrowserPanel.h"
 
 #include "imgui.h"

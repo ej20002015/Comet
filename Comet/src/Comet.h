@@ -28,6 +28,11 @@
 #include "Comet/Scene/EntityNativeScript.h"
 #include "Comet/Scene/SceneSerializer.h"
 
+//Panels
+#include "Comet/Panels/ComponentWidget.h"
+#include "Comet/Panels/EntityPropertiesPanel.h"
+#include "Comet/Panels/SceneHierarchyPanel.h"
+
 //maybe temp?
 #include "Comet/Renderer/Framebuffer.h"
 #include "Comet/Renderer/Camera.h"
