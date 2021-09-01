@@ -26,9 +26,7 @@ namespace Comet
 		if (ImGui::BeginPopupContextWindow(0, ImGuiMouseButton_Right, false))
 		{
 			if (ImGui::MenuItem("Create Entity"))
-			{
 				m_scene->createEntity();
-			}
 
 			ImGui::EndPopup();
 		}
@@ -38,28 +36,21 @@ namespace Comet
 
 	void SceneHierarchyPanel::drawEntityNode(Entity entity)
 	{
+		bool deleteEntity = false;
+
 		const UUIDComponent& UUID = entity.getComponent<UUIDComponent>();
 		const uint64_t UUIDNum = UUID;
 		const std::string& UUIDString = UUID;
 
 		const std::string& tag = entity.getComponent<TagComponent>();
 		
-		ImGui::PushID(reinterpret_cast<void*>(UUIDNum));
-
-		ImGuiTreeNodeFlags flags = ((entity == m_selectedEntity) ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
-		bool nodeOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>("TreeNode"), flags, tag.c_str());
-
-		/*if (ImGui::IsItemHovered())
-		{
-			ImGui::BeginTooltip();
-			ImGui::Text(UUIDString.c_str());
-			ImGui::EndTooltip();
-		}*/
+		//All nodes are currently leaves as there is no concept of entity parents
+		ImGuiTreeNodeFlags flags = ((entity == m_selectedEntity) ? ImGuiTreeNodeFlags_Selected : ImGuiTreeNodeFlags_None) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Leaf;
+		bool nodeOpened = ImGui::TreeNodeEx(reinterpret_cast<void*>(UUIDNum), flags, tag.c_str());
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_selectedEntity = entity;
 
-		bool deleteEntity = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
@@ -77,8 +68,6 @@ namespace Comet
 			if (m_selectedEntity == entity)
 				m_selectedEntity = {};
 		}
-
-		ImGui::PopID();
 	}
 
 }

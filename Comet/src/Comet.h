@@ -29,7 +29,6 @@
 #include "Comet/Scene/SceneSerializer.h"
 
 //Panels
-#include "Comet/Panels/ComponentWidget.h"
 #include "Comet/Panels/EntityPropertiesPanel.h"
 #include "Comet/Panels/SceneHierarchyPanel.h"
 
