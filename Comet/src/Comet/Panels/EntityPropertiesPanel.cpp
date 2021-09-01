@@ -3,7 +3,6 @@
 
 #include "Comet/Core/PlatformUtilities.h"
 #include "Comet/ImGui/ImGuiUtilities.h"
-#include "Comet/Renderer/Texture.h"
 
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/quaternion.hpp"
@@ -17,23 +16,44 @@ namespace Comet
 
 	const float EntityPropertiesPanel::s_labelColumnWidth = 160.0f;
 
+	EntityPropertiesPanel::EntityPropertiesPanel()
+	{
+		m_noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityPropertiesPanel/NoTextureIcon.png");
+	}
+
 	void EntityPropertiesPanel::onImGuiRender()
 	{
 		ImGui::Begin("Entity Properties");
 
 		if (!m_entity)
 		{
-			ImGui::Text("No Entity Selected");
 			ImGui::End();
 			return;
 		}
 
-		ImGui::Indent(-3.0f);
+		//Push ID to encapsulate all UI widgets for the current entity
+		const UUIDComponent& UUID = m_entity.getComponent<UUIDComponent>();
+		const uint64_t UUIDNum = UUID;
+		ImGui::PushID(static_cast<int32_t>(UUIDNum));
+
+		//Display input box for the tag component and a button to add new components to the entity
+		TagComponent tagComponent = m_entity.getComponent<TagComponent>();
+		std::string& tagString = tagComponent;
+		char textBuffer[256];
+		strcpy_s(textBuffer, sizeof(textBuffer), tagString.c_str());
+		if (ImGui::InputText("##Tag", textBuffer, sizeof(textBuffer)))
+		{
+			tagString = std::string(textBuffer);
+		}
+
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		ImVec2 textSize = ImGui::CalcTextSize("Add Component");
+
+		ImGui::SameLine(contentRegion.x + GImGui->Style.FramePadding.x - textSize.x);
 		if (ImGui::Button("Add Component"))
 		{
 			ImGui::OpenPopup("ComponentMenu");
 		}
-		ImGui::Unindent(-3.0f);
 
 		if (ImGui::BeginPopup("ComponentMenu"))
 		{
@@ -60,11 +80,14 @@ namespace Comet
 
 		ImGui::Separator();
 
+		//Render section for each component
 		componentImGuiRender<UUIDComponent>("UUID Component", CMT_BIND_METHOD(EntityPropertiesPanel::ImGuiRenderUUIDComponentWidget), EntityOptionsFlags::NONE);
 		componentImGuiRender<TagComponent>("Tag Component", CMT_BIND_METHOD(EntityPropertiesPanel::ImGuiRenderTagComponentWidget), EntityOptionsFlags::NONE);
 		componentImGuiRender<TransformComponent>("Transform Component", CMT_BIND_METHOD(EntityPropertiesPanel::ImGuiRenderTransformComponentWidget), EntityOptionsFlags::NONE);
 		componentImGuiRender<CameraComponent>("Camera Component", CMT_BIND_METHOD(EntityPropertiesPanel::ImGuiRenderCameraComponentWidget));
 		componentImGuiRender<SpriteComponent>("Sprite Component", CMT_BIND_METHOD(EntityPropertiesPanel::ImGuiRenderSpriteComponentWidget));
+
+		ImGui::PopID();
 
 		ImGui::End();
 	}
@@ -77,9 +100,11 @@ namespace Comet
 
 		ImGui::PushID(headerName.c_str());
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+
 		if (optionsFlags == EntityOptionsFlags::NONE)
 		{
-			if (ImGui::CollapsingHeader(headerName.c_str(), ImGuiTreeNodeFlags_None))
+			if (ImGui::CollapsingHeader(headerName.c_str(), treeNodeFlags))
 			{
 				T& component = m_entity.getComponent<T>();
 				componentUIFunction(component);
@@ -88,19 +113,12 @@ namespace Comet
 		else
 		{
 			ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-			ImGui::Columns(2, "0", false);
-			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			float lineHeight = GImGui->Font->FontSize + (GImGui->Style.FramePadding.y * 2.0f);
 
-			ImGui::SetColumnWidth(-1, (static_cast<float>(contentRegion.x) * 1.0f) - lineHeight);
-			bool opened = ImGui::CollapsingHeader(headerName.c_str(), ImGuiTreeNodeFlags_None);
+			bool opened = ImGui::CollapsingHeader(headerName.c_str(), treeNodeFlags);
 
-			ImGui::NextColumn();
-			float buttonColumnLength = ImGui::GetColumnWidth();
-			float buttonColumnCurrentOffset = ImGui::GetColumnOffset();
-			ImGui::SetColumnOffset(-1, buttonColumnCurrentOffset + buttonColumnLength - lineHeight);
-
-			//TODO: fix alignment
-			if (ImGui::Button("+", { lineHeight + 3.0f, lineHeight }))
+			ImGui::SameLine(contentRegion.x - (lineHeight * 0.5f));
+			if (ImGui::Button("+", { lineHeight, lineHeight }))
 				ImGui::OpenPopup("ComponentSettings");
 
 			bool removeComponent = false;
@@ -114,8 +132,6 @@ namespace Comet
 
 				ImGui::EndPopup();
 			}
-
-			ImGui::Columns(1, "1");
 
 			if (opened)
 			{
@@ -134,6 +150,7 @@ namespace Comet
 	//UI METHODS FOR EACH COMPONENT
 	//
 
+	//TODO: ABSTRACT ATTRIBUTE UI INTO SOME EASY TO USE CLASS
 	void EntityPropertiesPanel::ImGuiRenderUUIDComponentWidget(const UUIDComponent& UUID)
 	{
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
@@ -394,9 +411,6 @@ namespace Comet
 
 	void EntityPropertiesPanel::ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent)
 	{
-		//Temp
-		Reference<Texture2D> noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityPropertiesPanel/NoTextureIcon.png");
-
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		float contentColumnWidth = contentRegion.x - s_labelColumnWidth;
 		ImGui::Columns(2, "SpriteColumns", false);
@@ -424,7 +438,7 @@ namespace Comet
 
 		ImGui::PushItemWidth(contentColumnWidth);
 
-		int32_t textureRendererID = (spriteComponent.texture) ? static_cast<int32_t>(spriteComponent.texture->getRendererID()) : noTextureIcon->getRendererID();
+		int32_t textureRendererID = (spriteComponent.texture) ? static_cast<int32_t>(spriteComponent.texture->getRendererID()) : m_noTextureIcon->getRendererID();
 
 		if (ImGui::ImageButton(reinterpret_cast<void*>(static_cast<uint64_t>((textureRendererID))), { 64.0f, 64.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, 0))
 		{

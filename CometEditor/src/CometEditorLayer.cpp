@@ -121,7 +121,7 @@ namespace Comet
 
         //ImGui styling
         ImVec2 originalWindowMinSize = ImGuiUtilities::getMinimumWindowSize();
-        ImGuiUtilities::setMinimumWindowSize({ 350.0f, originalWindowMinSize.y });
+        ImGuiUtilities::setMinimumWindowSize({ 400.0f, originalWindowMinSize.y });
 
         // DockSpace
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");

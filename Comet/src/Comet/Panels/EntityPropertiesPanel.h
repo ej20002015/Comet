@@ -3,6 +3,7 @@
 
 #include "Comet/Scene/Entity.h"
 #include "Comet/Scene/Components.h"
+#include "Comet/Renderer/Texture.h"
 
 namespace Comet
 {
@@ -17,7 +18,7 @@ namespace Comet
 			CAN_DELETE_ENTITY = CMT_BIT(0)
 		};
 
-		EntityPropertiesPanel() = default;
+		EntityPropertiesPanel();
 
 		void setEntity(Entity entity) { m_entity = entity; }
 
@@ -37,6 +38,8 @@ namespace Comet
 	private:
 		Entity m_entity;
 		static const float s_labelColumnWidth;
+
+		Reference<Texture2D> m_noTextureIcon;
 	};
 
 }
