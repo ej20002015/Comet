@@ -127,7 +127,8 @@ namespace Comet
 
 		enum class SpriteTextureType
 		{
-			NORMAL, SUB_TEXTURE
+			NORMAL = 0,
+			SUB_TEXTURE
 		};
 
 		SpriteTextureType spriteTextureType = SpriteTextureType::NORMAL;

@@ -28,13 +28,6 @@ namespace Comet
 		template<typename T, typename ComponentUIFunction>
 		void componentImGuiRender(const std::string& headerName, ComponentUIFunction componentUIFunction, EntityOptionsFlags optionsFlags = EntityOptionsFlags::CAN_DELETE_ENTITY);
 
-		//UI method for each Component
-		void ImGuiRenderUUIDComponentWidget(const UUIDComponent& UUID);
-		void ImGuiRenderTagComponentWidget(TagComponent& tagComponent);
-		void ImGuiRenderTransformComponentWidget(TransformComponent& transformComponent);
-		void ImGuiRenderCameraComponentWidget(CameraComponent& cameraComponent);
-		void ImGuiRenderSpriteComponentWidget(SpriteComponent& spriteComponent);
-
 	private:
 		Entity m_entity;
 		static const float s_labelColumnWidth;
