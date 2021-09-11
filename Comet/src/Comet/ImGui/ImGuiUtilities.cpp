@@ -157,6 +157,22 @@ namespace Comet
         ImGui::Separator();
     }
 
+    void ImGuiUtilities::pushButtonDisabled()
+    {
+        //Reduce opacity of button
+        pushAlphaFactorStyleVariable(0.5f);
+        //Set hover and clicked color of button to be the same as non-hovered to show the button is disabled
+        ImVec4 buttonColor = ImGui::GetStyle().Colors[ImGuiCol_Button];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, buttonColor);
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, buttonColor);
+    }
+
+    void ImGuiUtilities::popButtonDisabled()
+    {
+        ImGuiUtilities::popStyleVariable();
+        ImGui::PopStyleColor(2);
+    }
+
     void ImGuiUtilities::pushID()
     {
         ImGui::PushID(s_contextID++);
@@ -240,6 +256,26 @@ namespace Comet
 
         ImGui::PushItemWidth(-1.0f);
         if (ImGui::DragInt(generateItemID(), &value, delta, min, max, format))
+            modified = true;
+        ImGui::PopItemWidth();
+
+        ImGui::NextColumn();
+
+        return modified;
+    }
+
+    bool ImGuiUtilities::propertySlider(const char* label, int32_t& value, const char* format, int32_t min, int32_t max)
+    {
+        bool modified = false;
+
+        pushFont(ImGuiFontType::FONT_BOLD);
+        ImGui::Text(label);
+        popFont();
+
+        ImGui::NextColumn();
+
+        ImGui::PushItemWidth(-1.0f);
+        if (ImGui::SliderInt(generateItemID(), &value, min, max, format))
             modified = true;
         ImGui::PopItemWidth();
 

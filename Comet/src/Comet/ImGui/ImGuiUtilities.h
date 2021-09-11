@@ -55,6 +55,8 @@ namespace Comet
 
 		//Helper Methods
 		static void seperator();
+		static void pushButtonDisabled();
+		static void popButtonDisabled();
 
 		//Context IDs
 		static void pushID();
@@ -69,6 +71,7 @@ namespace Comet
 		static bool property(const char* label, std::string& value);
 
 		static bool property(const char* label, int32_t& value, float delta = 1.0f, const char* format = "%d", int32_t min = 0, int32_t max = 0);
+		static bool propertySlider(const char* label, int32_t& value, const char* format = "%d", int32_t min = 0, int32_t max = 0);
 
 		static bool property(const char* label, float& value, float delta = 0.1f, const char* format = "%.1f", float min = 0.0f, float max = 0.0f);
 		static bool property(const char* label, glm::vec2& value, float delta = 0.1f, const char* format = "%.1f", float min = 0.0f, float max = 0.0f);

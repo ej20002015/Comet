@@ -13,15 +13,16 @@ namespace Comet
 		void onImGuiRender();
 
 	private:
+		void renderHeader();
+		void renderFooter();
 		void renderDirectoryEntry(const std::filesystem::directory_entry& directoryEntry, float thumbnailSize);
 
 	private:
 		//TODO: Set up projects so this can be removed
-		const std::filesystem::path m_AssetDirectoryPath = "assets";
-		std::filesystem::path m_currentDirectory = m_AssetDirectoryPath;
+		const std::filesystem::path m_assetDirectoryPath = "assets";
+		std::filesystem::path m_currentDirectory = m_assetDirectoryPath;
 
-		Reference<Texture2D> m_directoryIcon;
-		Reference<Texture2D> m_fileIcon;
+		Reference<Texture2D> m_directoryIcon, m_fileIcon, m_backButtonIcon;
 
 		uint32_t m_thumbnailSizeExponent = 6;
 
