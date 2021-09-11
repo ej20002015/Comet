@@ -11,26 +11,62 @@ namespace Comet
     uint32_t ImGuiUtilities::s_itemCounter = 0;
     char ImGuiUtilities::s_itemID[16];
 
-    ImVec2 ImGuiUtilities::getMinimumWindowSize()
+    void ImGuiUtilities::beginDockspace()
     {
-        return ImGui::GetStyle().WindowMinSize;
+        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+        // because it would be confusing to have two docking targets within each others.
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->GetWorkPos());
+        ImGui::SetNextWindowSize(viewport->GetWorkSize());
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+        // all active windows docked into it will lose their parent and become undocked.
+        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace", nullptr, window_flags);
+        ImGui::PopStyleVar(3);
+
+        // DockSpace
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     }
 
-    void ImGuiUtilities::setMinimumWindowSize(const ImVec2& size)
+    void ImGuiUtilities::endDockspace()
+    {
+        //Just need to call ImGui::End() as you do with any other window
+        ImGui::End();
+    }
+
+    glm::vec2 ImGuiUtilities::getMinimumWindowSize()
+    {
+        ImVec2 minSize = ImGui::GetStyle().WindowMinSize;
+        return { minSize.x, minSize.y };
+    }
+
+    void ImGuiUtilities::setMinimumWindowSize(const glm::vec2& size)
     {
         ImGuiStyle& style = ImGui::GetStyle();
-        style.WindowMinSize = size;
+        style.WindowMinSize = { size.x, size.y };
     }
 
-    ImVec2 ImGuiUtilities::getWindowPadding()
+    glm::vec2 ImGuiUtilities::getWindowPadding()
     {
-        return ImGui::GetStyle().WindowPadding;
+        ImVec2 windowPadding = ImGui::GetStyle().WindowPadding;
+        return { windowPadding.x, windowPadding.y };
     }
 
-    void ImGuiUtilities::setWindowPadding(const ImVec2& padding)
+    void ImGuiUtilities::setWindowPadding(const glm::vec2& padding)
     {
         ImGuiStyle& style = ImGui::GetStyle();
-        style.WindowPadding = padding;
+        style.WindowPadding = { padding.x, padding.y };
     }
 
     void ImGuiUtilities::loadFont(const std::string& filepath, float fontSize, ImGuiFontType fontType)

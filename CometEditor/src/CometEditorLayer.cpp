@@ -98,36 +98,9 @@ namespace Comet
 
 	void CometEditorLayer::onImGuiRender()
 	{
-        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-        // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->GetWorkPos());
-        ImGui::SetNextWindowSize(viewport->GetWorkSize());
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        //TODO: MOVE TOWARDS AN API FOR SETTING THE MINIMUM SIZE OF EACH WINDOW INDIVIDUALLY RATHER THAN GLOBALLY
 
-        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-        // all active windows docked into it will lose their parent and become undocked.
-        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace", nullptr, window_flags);
-        ImGui::PopStyleVar(3);
-
-        //ImGui styling
-        ImVec2 originalWindowMinSize = ImGuiUtilities::getMinimumWindowSize();
-        ImGuiUtilities::setMinimumWindowSize({ 400.0f, originalWindowMinSize.y });
-
-        // DockSpace
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-        ImGuiUtilities::setMinimumWindowSize(originalWindowMinSize);
+        ImGuiUtilities::beginDockspace();
 
         ImGuiUtilities::setDarkModeColors();
 
@@ -193,17 +166,24 @@ namespace Comet
 
         ImGui::Begin("Renderer Options");
 
-        bool culling = Renderer::getBackfaceCulling();
+        ImGuiUtilities::beginPropertyGrid();
 
-        if (ImGui::Checkbox("Enable back face culling", &culling))
+        bool culling = Renderer::getBackfaceCulling();
+        if (ImGuiUtilities::property("Enable back face culling", culling))
             Renderer::setBackfaceCulling(culling);
+
+        ImGuiUtilities::endPropertyGrid();
 
         ImGui::End();
 
         ImGui::Begin("Gizmo Options");
 
-        ImGui::DragFloat("Translation and Scale Snap Value", &m_translateScaleSnapValue, 0.1f, 0.0f, 100.0f);
-        ImGui::DragFloat("Rotation Snap Value", &m_rotationSnapValue, 1.0f, 0.0f, 180.0f);
+        ImGuiUtilities::beginPropertyGrid();
+
+        ImGuiUtilities::property("Translation and Scale Snap Value", m_translateScaleSnapValue, 0.1f, "%.1f", 0.0f, 100.0f);
+        ImGuiUtilities::property("Rotation Snap Value", m_rotationSnapValue, 0.1f, "%.1f", 0.0f, 180.0f);
+
+        ImGuiUtilities::endPropertyGrid();
 
         ImGui::End();
 
@@ -233,7 +213,7 @@ namespace Comet
         //Work out whether ImGui events should not be blocked
         m_viewportFocused = ImGui::IsWindowFocused();
         m_viewportHovered = ImGui::IsWindowHovered();
-        Application::get().getImGuiLayer().setBlocking(!(m_viewportFocused || m_viewportHovered));
+        Application::get().getImGuiLayer().setBlocking(!m_viewportHovered);
 
         //Get size available for viewport
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();

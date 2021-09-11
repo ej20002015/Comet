@@ -25,13 +25,17 @@ namespace Comet
 	public:
 		ImGuiUtilities() = delete;
 
+		//Dockspace
+		static void beginDockspace();
+		static void endDockspace();
+
 		//Window Size
-		static ImVec2 getMinimumWindowSize();
-		static void setMinimumWindowSize(const ImVec2& size);
+		static glm::vec2 getMinimumWindowSize();
+		static void setMinimumWindowSize(const glm::vec2& size);
 
 		//Window Padding
-		static ImVec2 getWindowPadding();
-		static void setWindowPadding(const ImVec2& padding);
+		static glm::vec2 getWindowPadding();
+		static void setWindowPadding(const glm::vec2& padding);
 
 		//Font Management
 		static void loadFont(const std::string& filepath, float fontSize, ImGuiFontType fontType);
