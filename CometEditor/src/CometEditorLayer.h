@@ -3,6 +3,7 @@
 #include <Comet.h>
 
 #include "panels/ContentBrowserPanel.h"
+#include "panels/SceneStateToolbarPanel.h"
 
 #include "imgui.h"
 
@@ -11,6 +12,13 @@ namespace Comet
 
 	class CometEditorLayer : public Layer
 	{
+	public:
+		enum class SceneState
+		{
+			EDIT = 0,
+			PLAY
+		};
+
 	public:
 		CometEditorLayer() : Layer("Comet Editor Layer") {}
 		~CometEditorLayer();
@@ -28,9 +36,12 @@ namespace Comet
 		void saveScene();
 		void openScene();
 		void openScene(const std::filesystem::path& path);
+		void onScenePlay();
+		void onSceneStop();
 
 	private:
 		Timestep m_ts;
+		SceneState m_sceneState = SceneState::EDIT;
 		Reference<Scene> m_scene;
 		EditorCamera m_editorCamera;
 
@@ -38,6 +49,7 @@ namespace Comet
 		SceneHierarchyPanel m_sceneHierarchyPanel;
 		EntityPropertiesPanel m_entityPropertiesPanel;
 		ContentBrowserPanel m_contentBrowserPanel;
+		SceneStateToolbarPanel m_sceneStateToolbarPanel;
 
 		//Viewport
 		Reference<Framebuffer> m_framebuffer;

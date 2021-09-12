@@ -60,6 +60,10 @@ namespace Comet
             const float m_cameraSpeed = 4.0f;
         };
 
+        //Set callbacks for scene state panel
+        m_sceneStateToolbarPanel.setScenePlayedCallback(CMT_BIND_METHOD(CometEditorLayer::onScenePlay));
+        m_sceneStateToolbarPanel.setSceneStoppedCallback(CMT_BIND_METHOD(CometEditorLayer::onSceneStop));
+
         //Set fonts
         ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Regular.ttf",    16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
         ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Bold.ttf",       16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD);
@@ -90,8 +94,17 @@ namespace Comet
         //Clear entityID color attachment specifically to -1
         m_framebuffer->clearColorAttachment(1, -1);
 
-        m_editorCamera.onUpdate(ts);
-        m_scene->onEditorUpdate(ts, m_editorCamera);
+        switch (m_sceneState)
+        {
+            case SceneState::EDIT:
+                m_editorCamera.onUpdate(ts);
+                m_scene->onEditorUpdate(ts, m_editorCamera);
+                break;
+
+            case SceneState::PLAY:
+                m_scene->onRuntimeUpdate(ts);
+                break;
+        }
 
         m_framebuffer->unbind();
 	}
@@ -124,6 +137,8 @@ namespace Comet
         }
 
         //Dockable windows lie within dockspace code
+
+        m_sceneStateToolbarPanel.onImGuiRender();
 
         ImGui::Begin("Rendering Device Information");
 
@@ -405,6 +420,16 @@ namespace Comet
 
             SceneSerializer::deserialize(filepath, m_scene);
         }
+    }
+
+    void CometEditorLayer::onScenePlay()
+    {
+        m_sceneState = SceneState::PLAY;
+    }
+
+    void CometEditorLayer::onSceneStop()
+    {
+        m_sceneState = SceneState::EDIT;
     }
 
 }
