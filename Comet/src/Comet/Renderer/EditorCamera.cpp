@@ -14,7 +14,8 @@ namespace Comet
 		if (Input::isKeyPressed(KeyCode::KEY_LEFT_ALT))
 		{
 			glm::vec2 currentMousePosition = Input::getMousePosition();
-			glm::vec2 mousePositionDelta = (currentMousePosition - m_lastMousePosition) * ts.getSeconds();
+			// Do not need to multiply by the timestep as this value is encoded implicitly in the mouse delta anyway
+			glm::vec2 mousePositionDelta = currentMousePosition - m_lastMousePosition;
 			m_lastMousePosition = currentMousePosition;
 
 			if (Input::isMouseButtonPressed(MouseButtonCode::MOUSE_BUTTON_1))

@@ -63,10 +63,10 @@ namespace Comet
 		{
 			int success = glfwInit();
 			CMT_COMET_ASSERT_MESSAGE(success, "Could not initialise GLFW");
-			s_GLFWWindowCount++;
 		}
 
 		m_window = glfwCreateWindow((int)m_windowData.width, (int)m_windowData.height, m_windowData.title.c_str(), nullptr, nullptr);
+		s_GLFWWindowCount++;
 
 		//Create RenderingContext
 		m_context = RenderingContext::create(m_window);
