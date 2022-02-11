@@ -43,7 +43,7 @@ namespace Comet
 
 	bool EditorCamera::onMouseScrolledEvent(MouseScrolledEvent& e)
 	{
-		float delta = e.getYOffset() * -0.2f;
+		float delta = e.getYOffset() * -20.0f;
 		mouseZoom(delta);
 		recalculateViewMatrix();
 		return true;
@@ -89,8 +89,8 @@ namespace Comet
 	glm::vec2 EditorCamera::getMousePanSpeed() const
 	{
 		glm::vec2 panSpeed;
-		panSpeed.x = m_distance * (1 / m_viewportSize.x) * 100.0f;
-		panSpeed.y = m_distance * (1 / m_viewportSize.y) * 100.0f;
+		panSpeed.x = m_distance * (1 / m_viewportSize.x) * 0.2f;
+		panSpeed.y = m_distance * (1 / m_viewportSize.y) * 0.2f;
 
 		return getShiftModifiedSpeed(panSpeed);
 	}
@@ -98,13 +98,13 @@ namespace Comet
 	float EditorCamera::getMouseRotateSpeed() const
 	{
 		//Consider making this into a const member variable
-		constexpr float rotateSpeed = 4.0f;
+		constexpr float rotateSpeed = 0.005f;
 		return getShiftModifiedSpeed(rotateSpeed);
 	}
 
 	float EditorCamera::getMouseZoomSpeed() const
 	{
-		float zoomSpeed = glm::sqrt(10.0f * m_distance);
+		float zoomSpeed = glm::sqrt(0.0005f * m_distance);
 		return getShiftModifiedSpeed(zoomSpeed);
 	}
 
