@@ -30,7 +30,7 @@ namespace Comet
 		template<typename... Args>					    
 		inline static void cometError(Args&&... args)     { s_cometLogger->error(std::forward<Args>(args)...); }
 		template<typename... Args>					    
-		inline static void cometCritical(Args&&... args)  { s_cometLogger->Critical(std::forward<Args>(args)...); }
+		inline static void cometCritical(Args&&... args)  { s_cometLogger->critical(std::forward<Args>(args)...); }
 		
 		//For logging from client applications
 		template<typename... Args>					    
@@ -42,7 +42,7 @@ namespace Comet
 		template<typename... Args>					    
 		inline static void clientError(Args&&... args)    { s_clientLogger->error(std::forward<Args>(args)...); }
 		template<typename... Args>
-		inline static void clientCritical(Args&&... args) { s_clientLogger->Critical(std::forward<Args>(args)...); }
+		inline static void clientCritical(Args&&... args) { s_clientLogger->critical(std::forward<Args>(args)...); }
 	
 	private:
 		static Reference<spdlog::logger> s_cometLogger, s_clientLogger;

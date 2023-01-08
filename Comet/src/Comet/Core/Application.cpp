@@ -21,7 +21,7 @@ namespace Comet
 		//Initialise window
 		Window::WindowProperties windowProperties;
 		windowProperties.title = windowTitle;
-		m_window = Unique<Window>(Window::create(windowProperties));
+		m_window = Window::create(windowProperties);
 		m_window->setEventCallback(CMT_BIND_METHOD(Application::onEvent));
 		m_window->setVSync(false);
 
