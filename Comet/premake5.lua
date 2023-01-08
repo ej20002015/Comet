@@ -1,7 +1,7 @@
 project "Comet"
     kind "StaticLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++20"
     staticruntime "on"
 
     targetdir ("%{wks.location}/bin/" .. outputDirectory .. "/%{prj.name}")
@@ -54,7 +54,8 @@ project "Comet"
 
     defines
     {
-        "GLFW_INCLUDE_NONE"
+        "GLFW_INCLUDE_NONE",
+        "NOMINMAX"
     }
 
     filter "files:Vendor/ImGuizmo/ImGuizmo.cpp"
