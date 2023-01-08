@@ -12,8 +12,8 @@ namespace Comet
 	class Input
 	{
 	public:
-		static bool isKeyPressed(KeyCode keyCode);
-		static bool isMouseButtonPressed(MouseButtonCode mouseCode);
+		static bool isKeyPressed(const KeyCode keyCode);
+		static bool isMouseButtonPressed(const MouseButtonCode mouseCode);
 
 		static glm::vec2 getMousePosition();
 	};

@@ -19,10 +19,12 @@ namespace Comet
 	class Application
 	{
 	public:
-		Application(const std::string& windowTitle = "Comet Application");
+		Application(const std::string_view windowTitle = "Comet Application");
 		virtual ~Application();
 
 		Application(const Application&) = delete;
+		
+		void initialiseWindow(const std::string_view windowTitle);
 
 		static Application& get() { return *s_instance; }
 
@@ -41,6 +43,9 @@ namespace Comet
 
 	private:
 		void run();
+		void renderImGui();
+		void updateLayers();
+		void updateTimestep();
 		bool onWindowClosedEvent(WindowClosedEvent& e);
 		bool onWindowResizedEvent(WindowResizedEvent& e);
 
@@ -51,6 +56,7 @@ namespace Comet
 		LayerStack m_layerStack;
 		bool m_running;
 		float m_timeAtLastFrame = 0.0f;
+		Timestep m_ts;
 
 	private:
 		friend int ::main(int argc, char** argv);

@@ -6,7 +6,6 @@
 
 namespace Comet
 {
-	//Define static members;
 	Reference<spdlog::logger> Log::s_cometLogger, Log::s_clientLogger;
 
 	void Log::init()

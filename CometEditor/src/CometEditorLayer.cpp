@@ -76,7 +76,7 @@ namespace Comet
 	{
 	}
     
-	void CometEditorLayer::onUpdate(Timestep ts)
+	void CometEditorLayer::onUpdate(const Timestep ts)
 	{
         m_ts = ts;
 

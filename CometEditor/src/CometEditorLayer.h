@@ -25,7 +25,7 @@ namespace Comet
 
 		void onAttach() override;
 		void onDetach() override;
-		void onUpdate(Timestep ts) override;
+		void onUpdate(const Timestep ts) override;
 		void onImGuiRender() override;
 		void onEvent(Event& e) override;
 

@@ -13,6 +13,7 @@
 
 namespace Comet
 {
+    //TODO: Refactor this - doesn't have to be attached to this layer thing - should be in an ImGui renderer class
 
 	ImGuiLayer::~ImGuiLayer()
 	{

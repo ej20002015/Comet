@@ -12,25 +12,27 @@ namespace Comet
 
 	Application* Application::s_instance = nullptr;
 
-	Application::Application(const std::string& windowTitle)
+	Application::Application(const std::string_view windowTitle)
 		: m_running(true)
 	{
 		CMT_COMET_ASSERT_MESSAGE(!s_instance, "Application already exists");
 		s_instance = this;
 
-		//Initialise window
+		initialiseWindow(windowTitle);
+
+		m_ImGuiLayer = new ImGuiLayer;
+		pushOverlay(m_ImGuiLayer);
+
+		Renderer::init();
+	}
+
+	void Application::initialiseWindow(const std::string_view windowTitle)
+	{
 		Window::WindowProperties windowProperties;
 		windowProperties.title = windowTitle;
 		m_window = Window::create(windowProperties);
 		m_window->setEventCallback(CMT_BIND_METHOD(Application::onEvent));
 		m_window->setVSync(false);
-
-		//Create ImGui Layer
-		m_ImGuiLayer = new ImGuiLayer;
-		pushOverlay(m_ImGuiLayer);
-
-		//Initialise renderer
-		Renderer::init();
 	}
 
 	Application::~Application()
@@ -42,24 +44,35 @@ namespace Comet
 	{
 		while (m_running)
 		{
-			//Calculate timestep
-			float currentTime = m_window->getWindowTime();
-			Timestep ts(currentTime - m_timeAtLastFrame);
-			m_timeAtLastFrame = currentTime;
+			updateTimestep();
 
 			Renderer::clear();
-
-			for (auto layer : m_layerStack)
-				layer->onUpdate(ts);
-
-			//Render all the ImGui ui set up by the layers in the stack
-			m_ImGuiLayer->begin();
-			for (auto layer : m_layerStack)
-				layer->onImGuiRender();
-			m_ImGuiLayer->end();
-
-			m_window->onUpdate(ts);
+			updateLayers();
+			renderImGui();
+			
+			m_window->onUpdate(m_ts);
 		}
+	}
+
+	void Application::renderImGui()
+	{
+		m_ImGuiLayer->begin();
+		for (auto layer : m_layerStack)
+			layer->onImGuiRender();
+		m_ImGuiLayer->end();
+	}
+
+	void Application::updateLayers()
+	{
+		for (auto layer : m_layerStack)
+			layer->onUpdate(m_ts);
+	}
+
+	void Application::updateTimestep()
+	{
+		float currentTime = m_window->getWindowTime();
+		m_ts = currentTime - m_timeAtLastFrame;
+		m_timeAtLastFrame = currentTime;
 	}
 
 	void Application::onEvent(Event& e)
@@ -68,13 +81,17 @@ namespace Comet
 
 		dispatcher.dispatch<WindowClosedEvent>(CMT_BIND_METHOD(Application::onWindowClosedEvent));
 		dispatcher.dispatch<WindowResizedEvent>(CMT_BIND_METHOD(Application::onWindowResizedEvent));
+		
+		//If handled by Application class then return
+		if (e.handled)
+			return;
 
 		//Propagate events down the layer stack in reverse order (from the top item on the stack downwards - overlays to layers)
-		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++)
+		for (auto& layer : m_layerStack | std::views::reverse)
 		{
-			(*it)->onEvent(e);
+			layer->onEvent(e);
 			//If the layer is set to not block events, then set the event handled boolean to false regardless
-			if (!(*it)->getBlocking())
+			if (!layer->getBlocking())
 				e.handled = false;
 			//If event has been handled then do not pass it to the other layers
 			if (e.handled)
@@ -112,11 +129,8 @@ namespace Comet
 	{
 		m_window->getRenderingContext().onResize(e.getWidth(), e.getHeight());
 		
-		//Resize framebuffers
-		for (Reference<Framebuffer> framebuffer : FramebufferPool::getGlobalPool())
-		{
+		for (auto& framebuffer : FramebufferPool::getGlobalPool())
 			framebuffer->onWindowResize(e.getWidth(), e.getHeight());
-		}
 
 		return false;
 	}

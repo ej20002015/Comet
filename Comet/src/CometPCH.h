@@ -8,12 +8,14 @@
 //STL Misc files
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdint>
 #include <memory>
 #include <functional>
 #include <filesystem>
 #include <typeinfo>
 #include <stdexcept>
+#include <ranges>
 
 //STL Data structures
 #include <string>

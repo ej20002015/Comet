@@ -8,23 +8,23 @@
 namespace Comet
 {
 
-    bool Input::isKeyPressed(KeyCode keyCode)
+    bool Input::isKeyPressed(const KeyCode keyCode)
     {
-        GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
+        GLFWwindow* const window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         int action = glfwGetKey(window, static_cast<int>(keyCode));
         return action == GLFW_PRESS;
     }
 
-    bool Input::isMouseButtonPressed(MouseButtonCode mouseCode)
+    bool Input::isMouseButtonPressed(const MouseButtonCode mouseCode)
     {
-        GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
+        GLFWwindow* const window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         int action = glfwGetMouseButton(window, static_cast<int>(mouseCode));
         return action == GLFW_PRESS;
     }
 
     glm::vec2 Input::getMousePosition()
     {
-        GLFWwindow* window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
+        GLFWwindow* const window = static_cast<GLFWwindow*>(Application::get().getWindow().getImplementationWindow());
         double xPos, yPos;
         glfwGetCursorPos(window, &xPos, &yPos);
 

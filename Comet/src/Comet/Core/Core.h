@@ -2,6 +2,8 @@
 #include "CometPCH.h"
 
 #include <memory>
+#include <exception>
+#include <sstream>
 
 #define CMT_BIT(x) (1 << x)
 
@@ -66,5 +68,40 @@ namespace Comet
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
+
+	class CometException : public std::exception
+	{
+	public:
+		CometException() = default;
+
+		CometException(const CometException& other)
+		{
+			m_ss << other.m_ss.rdbuf();
+			m_str = other.m_str;
+		}
+
+		CometException(CometException&& other) noexcept
+		{
+			m_ss = std::move(other.m_ss);
+			m_str = std::move(other.m_str);
+		}
+
+		template<typename T>
+		CometException& operator<<(T&& output)
+		{
+			m_ss << std::forward<T>(output);
+			m_str = m_ss.str();
+			return *this;
+		}
+
+		char const* what() const override
+		{
+			return m_str.c_str();
+		}
+
+	private:
+		std::stringstream m_ss;
+		std::string m_str;
+	};
 
 }
