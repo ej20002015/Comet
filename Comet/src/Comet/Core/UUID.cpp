@@ -6,18 +6,18 @@
 namespace Comet
 {
 
-	static std::random_device s_randomDevice;
-	static std::mt19937_64 s_eng(s_randomDevice());
-	static std::uniform_int_distribution<uint64_t> s_uniformDistribution;
+static std::random_device s_randomDevice;
+static std::mt19937_64 s_eng(s_randomDevice());
+static std::uniform_int_distribution<uint64_t> s_uniformDistribution;
+	
+UUID::UUID()
+	: m_ID(s_uniformDistribution(s_eng))
+{
+}
 
-	UUID::UUID()
-		: m_ID(s_uniformDistribution(s_eng))
-	{
-	}
-
-	UUID::UUID(uint64_t ID)
-		: m_ID(ID)
-	{
-	}
+UUID::UUID(uint64_t ID)
+	: m_ID(ID)
+{
+}
 
 }

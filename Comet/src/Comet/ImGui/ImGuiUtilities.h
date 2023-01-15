@@ -4,145 +4,149 @@
 #include "ImGui.h"
 #include "glm/glm.hpp"
 
+#include <filesystem>
+#include <ranges>
+
 namespace Comet
 {
 
-	class ImGuiLayer;
+class ImGuiLayer;
 
-	class ImGuiUtilities
+class ImGuiUtilities
+{
+public:
+
+	//Start from 1 as index 0 is being used by ImGui
+	enum ImGuiFontType
 	{
-	public:
-
-		//Start from 1 as index 0 is being used by ImGui
-		enum ImGuiFontType
-		{
-			FONT_NORMAL = 1,
-			FONT_BOLD,
-			FONT_NORMAL_ITALIC,
-			FONT_BOLD_ITALIC
-		};
-
-	public:
-		ImGuiUtilities() = delete;
-
-		//Dockspace
-		static void beginDockspace();
-		static void endDockspace();
-
-		//Window Size
-		static glm::vec2 getMinimumWindowSize();
-		static void setMinimumWindowSize(const glm::vec2& size);
-
-		//Window Padding
-		static glm::vec2 getWindowPadding();
-		static void setWindowPadding(const glm::vec2& padding);
-
-		//Font Management
-		static void loadFont(const std::string& filepath, float fontSize, ImGuiFontType fontType);
-		static void setDefaultFont(ImGuiFontType fontType);
-
-		static ImFont* getFont(ImGuiFontType fontType);
-
-		static void pushFont(ImGuiFontType fontType);
-		static void popFont();
-
-		//Window Colours
-		static void setDarkModeColors();
-
-		//Style Vars
-		static void pushAlphaFactorStyleVariable(float alphaFactor);
-		static void popStyleVariable();
-
-		//Helper Methods
-		static void seperator();
-		static void pushButtonDisabled();
-		static void popButtonDisabled();
-
-		//Context IDs
-		static void pushID();
-		static void popID();
-
-		//Property Grid
-		static void beginPropertyGrid();
-		static void endPropertyGrid();
-
-		//Property Elements
-		static void property(const char* label, const std::string& value);
-		static bool property(const char* label, std::string& value);
-
-		static bool property(const char* label, int32_t& value, float delta = 1.0f, const char* format = "%d", int32_t min = 0, int32_t max = 0);
-		static bool propertySlider(const char* label, int32_t& value, const char* format = "%d", int32_t min = 0, int32_t max = 0);
-
-		static bool property(const char* label, float& value, float delta = 0.1f, const char* format = "%.1f", float min = 0.0f, float max = 0.0f);
-		static bool property(const char* label, glm::vec2& value, float delta = 0.1f, const char* format = "%.1f", float min = 0.0f, float max = 0.0f);
-		static bool property(const char* label, glm::vec3& value, float delta = 0.1f, const char* format = "%.1f", float min = 0.0f, float max = 0.0f);
-
-		static bool propertyColorPicker(const char* label, glm::vec4& value);
-
-		static bool propertyButton(const char* label, const char* buttonText);
-		static bool propertyImageButton(const char* label, uint32_t textureRendererID, const glm::vec2& size);
-
-		static bool property(const char* label, bool& value);
-
-		template<typename TEnum>
-		static bool property(const char* label, const char** options, uint32_t optionsCount, TEnum& selected);
-
-		//Used to create a UI context
-		static uint32_t s_contextID;
-
-	private:
-		//Item IDs
-		static char* generateItemID();
-
-	private:
-		static std::unordered_map<ImGuiFontType, uint32_t> s_ImGuiFontsIndexMap;
-		
-		//Used to generate unique IDs for each UI item in a context
-		static uint32_t s_itemCounter;
-		//Used as the ID for each UI item
-		static char s_itemID[16];
+		FONT_NORMAL = 1,
+		FONT_BOLD,
+		FONT_NORMAL_ITALIC,
+		FONT_BOLD_ITALIC
 	};
 
+public:
+	ImGuiUtilities() = delete;
+
+	//Dockspace
+	static void beginDockspace();
+	static void endDockspace();
+
+	//Window Size
+	static glm::vec2 getMinimumWindowSize();
+	static void setMinimumWindowSize(const glm::vec2& size);
+
+	//Window Padding
+	static glm::vec2 getWindowPadding();
+	static void setWindowPadding(const glm::vec2& padding);
+
+	//Font Management
+	static void loadFont(const std::filesystem::path& filepath, float fontSize, ImGuiFontType fontType);
+	static void setDefaultFont(ImGuiFontType fontType);
+
+	static ImFont* getFont(ImGuiFontType fontType);
+
+	static void pushFont(ImGuiFontType fontType);
+	static void popFont();
+
+	//Window Colours
+	static void setDarkModeColors();
+
+	//Style Vars
+	static void pushAlphaFactorStyleVariable(float alphaFactor);
+	static void popStyleVariable();
+
+	//Helper Methods
+	static void seperator();
+	static void pushButtonDisabled();
+	static void popButtonDisabled();
+
+	//Context IDs
+	static void pushID();
+	static void popID();
+
+	//Property Grid
+	static void beginPropertyGrid();
+	static void endPropertyGrid();
+
+	//Property Elements
+	static void property(const std::string_view label, const std::string& value);
+	static bool property(const std::string_view label, std::string& value);
+
+	static bool property(const std::string_view label, int32_t& value, float delta = 1.0f, const std::string_view format = "%d", int32_t min = 0, int32_t max = 0);
+	static bool propertySlider(const std::string_view label, int32_t& value, const std::string_view format = "%d", int32_t min = 0, int32_t max = 0);
+
+	static bool property(const std::string_view label, float& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
+	static bool property(const std::string_view label, glm::vec2& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
+	static bool property(const std::string_view label, glm::vec3& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
+
+	static bool propertyColorPicker(const std::string_view label, glm::vec4& value);
+
+	static bool propertyButton(const std::string_view label, const std::string_view buttonText);
+	static bool propertyImageButton(const std::string_view label, uint32_t textureRendererID, const glm::vec2& size);
+
+	static bool property(const std::string_view label, bool& value);
+
 	template<typename TEnum>
-	bool ImGuiUtilities::property(const char* label, const char** options, uint32_t optionsCount, TEnum& selected)
+	static bool property(const std::string_view label, const std::span<const std::string_view> options, TEnum& selected);
+
+	static void propertyLabel(const std::string_view label);
+
+private:
+	//Item IDs
+	static char* generateItemID();
+
+private:
+	static std::unordered_map<ImGuiFontType, uint32_t> s_ImGuiFontsIndexMap;
+		
+	//Used to create a UI context
+	static uint32_t s_contextID;
+	//Used to generate unique IDs for each UI item in a context
+	static uint32_t s_itemCounter;
+	//Used as the ID for each UI item
+	static char s_itemID[16];
+};
+
+template<typename TEnum>
+bool ImGuiUtilities::property(const std::string_view label, const std::span<const std::string_view> options, TEnum& selected)
+{
+	bool modified = false;
+
+	pushFont(ImGuiFontType::FONT_BOLD);
+	ImGui::Text(label.data());
+	popFont();
+
+	ImGui::NextColumn();
+
+	ImGui::PushItemWidth(-1.0f);
+
+	const uint32_t indexOfSelectedOption = static_cast<uint32_t>(selected);
+	std::string_view currentOption = options[indexOfSelectedOption];
+
+	if (ImGui::BeginCombo(generateItemID(), currentOption.data(), ImGuiComboFlags_NoArrowButton))
 	{
-		bool modified = false;
-
-		pushFont(ImGuiFontType::FONT_BOLD);
-		ImGui::Text(label);
-		popFont();
-
-		ImGui::NextColumn();
-
-		ImGui::PushItemWidth(-1.0f);
-
-		uint32_t indexOfSelectedOption = static_cast<uint32_t>(selected);
-		const char* currentOption = options[indexOfSelectedOption];
-
-		if (ImGui::BeginCombo(generateItemID(), currentOption, ImGuiComboFlags_NoArrowButton))
+		for (uint32_t i = 0; i < options.size(); i++)
 		{
-			for (uint32_t i = 0; i < optionsCount; i++)
+			bool isSelected = i == indexOfSelectedOption;
+			if (ImGui::Selectable(options[i].data(), isSelected))
 			{
-				bool isSelected = i == indexOfSelectedOption;
-				if (ImGui::Selectable(options[i], isSelected))
-				{
-					currentOption = options[i];
-					selected = static_cast<TEnum>(i);
-					modified = true;
-				}
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
+				currentOption = options[i];
+				selected = static_cast<TEnum>(i);
+				modified = true;
 			}
-			ImGui::EndCombo();
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
 		}
-
-		ImGui::PopItemWidth();
-
-		ImGui::NextColumn();
-
-		return modified;
+		ImGui::EndCombo();
 	}
+
+	ImGui::PopItemWidth();
+
+	ImGui::NextColumn();
+
+	return modified;
+}
 
 }

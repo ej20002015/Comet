@@ -4,9 +4,9 @@
 namespace Comet
 {
 
-	struct Dispatcher
-	{
-		virtual void invoke() = 0;
-	};
+struct Dispatcher
+{
+	virtual void invoke() = 0;
+};
 
 }

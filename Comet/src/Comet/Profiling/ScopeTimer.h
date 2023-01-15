@@ -15,7 +15,7 @@ namespace Comet
 		static void logTime(bool log) { s_logTime = log; }
 
 	private:
-		std::chrono::high_resolution_clock::time_point m_startTime;
+		const std::chrono::high_resolution_clock::time_point m_startTime;
 		std::string m_timerName;
 
 		static bool s_logTime;

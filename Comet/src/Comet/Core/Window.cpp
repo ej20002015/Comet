@@ -10,14 +10,14 @@
 namespace Comet
 {
 
-    Unique<Window> Window::create(const WindowProperties& properties)
-    {
-        #ifdef CMT_PLATFORM_WINDOWS
-            return createUnique<WindowsWindow>(properties);
-        #else
-            CMT_COMET_ASSERT_MESSAGE(false, "Unknown platform");
-            return nullptr;
-        #endif
-    }
+Unique<Window> Window::create(const WindowProperties& properties)
+{
+    #ifdef CMT_PLATFORM_WINDOWS
+        return createUnique<WindowsWindow>(properties);
+    #else
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown platform");
+        return nullptr;
+    #endif
+}
 
 }

@@ -51,57 +51,57 @@ after (args) unpacks the arguments and passes them to the function.
 namespace Comet
 {
 
-	using byte = uint8_t;
+using byte = uint8_t;
 
-	template<typename T>
-	using Reference = std::shared_ptr<T>;
-	template<typename T, typename... Args>
-	constexpr Reference<T> createReference(Args&&... args)
+template<typename T>
+using Reference = std::shared_ptr<T>;
+template<typename T, typename... Args>
+constexpr Reference<T> createReference(Args&&... args)
+{
+	return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template<typename T>
+using Unique = std::unique_ptr<T>;
+template<typename T, typename... Args>
+constexpr Unique<T> createUnique(Args&&... args)
+{
+	return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+class CometException : public std::exception
+{
+public:
+	CometException() = default;
+
+	CometException(const CometException& other)
 	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
+		m_ss << other.m_ss.rdbuf();
+		m_str = other.m_str;
+	}
+
+	CometException(CometException&& other) noexcept
+	{
+		m_ss = std::move(other.m_ss);
+		m_str = std::move(other.m_str);
 	}
 
 	template<typename T>
-	using Unique = std::unique_ptr<T>;
-	template<typename T, typename... Args>
-	constexpr Unique<T> createUnique(Args&&... args)
+	CometException& operator<<(T&& output)
 	{
-		return std::make_unique<T>(std::forward<Args>(args)...);
+		m_ss << std::forward<T>(output);
+		m_str = m_ss.str();
+		return *this;
 	}
 
-	class CometException : public std::exception
+	char const* what() const override
 	{
-	public:
-		CometException() = default;
+		return m_str.c_str();
+	}
 
-		CometException(const CometException& other)
-		{
-			m_ss << other.m_ss.rdbuf();
-			m_str = other.m_str;
-		}
-
-		CometException(CometException&& other) noexcept
-		{
-			m_ss = std::move(other.m_ss);
-			m_str = std::move(other.m_str);
-		}
-
-		template<typename T>
-		CometException& operator<<(T&& output)
-		{
-			m_ss << std::forward<T>(output);
-			m_str = m_ss.str();
-			return *this;
-		}
-
-		char const* what() const override
-		{
-			return m_str.c_str();
-		}
-
-	private:
-		std::stringstream m_ss;
-		std::string m_str;
-	};
+private:
+	std::stringstream m_ss;
+	std::string m_str;
+};
 
 }
