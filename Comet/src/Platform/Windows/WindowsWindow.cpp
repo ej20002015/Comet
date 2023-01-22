@@ -34,13 +34,13 @@ namespace Comet
 		shutdown();
 	}
 
-	void WindowsWindow::onUpdate(Timestep ts)
+	void WindowsWindow::onUpdate(const Timestep ts)
 	{
 		glfwPollEvents();
 		m_context->swapBuffers();
 	}
 
-	void WindowsWindow::setVSync(bool enabled)
+	void WindowsWindow::setVSync(const bool enabled)
 	{
 		if (enabled)
 			glfwSwapInterval(1);
@@ -50,7 +50,7 @@ namespace Comet
 		m_windowData.VSync = enabled;
 	}
 
-	bool WindowsWindow::getWindowFocused() const
+	bool WindowsWindow::getFocused() const
 	{
 		return glfwGetWindowAttrib(m_window, GLFW_FOCUSED);
 	}

@@ -15,18 +15,18 @@ namespace Comet
 		WindowsWindow(const Window::WindowProperties& properties);
 		~WindowsWindow() override;
 
-		void onUpdate(Timestep ts) override;
+		void onUpdate(const Timestep ts) override;
 
 		uint32_t getWidth() const override { return m_windowData.width; };
 		uint32_t getHeight() const override { return m_windowData.height; };
 
 		void setEventCallback(const EventCallbackFunction& callbackFunction) override { m_windowData.callbackFunction = callbackFunction; }
-		void setVSync(bool enabled) override;
+		void setVSync(const bool enabled) override;
 		bool getVSync() const override { return m_windowData.VSync; }
 
-		bool getWindowFocused() const override;
+		bool getFocused() const override;
 
-		float getWindowTime() const override { return static_cast<float>(glfwGetTime()); }
+		float getTime() const override { return static_cast<float>(glfwGetTime()); }
 
 		void* getImplementationWindow() const override { return m_window; }
 		const RenderingContext& getRenderingContext() const override{ return *m_context; }

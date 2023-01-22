@@ -25,18 +25,18 @@ public:
 
 	virtual ~Window() = default;
 
-	virtual void onUpdate(Timestep ts) = 0;
+	virtual void onUpdate(const Timestep ts) = 0;
 
 	virtual uint32_t getWidth() const = 0;
 	virtual uint32_t getHeight() const = 0;
 
 	virtual void setEventCallback(const EventCallbackFunction& callbackFunction) = 0;
-	virtual void setVSync(bool enabled) = 0;
+	virtual void setVSync(const bool enabled) = 0;
 	virtual bool getVSync() const = 0;
 
-	virtual bool getWindowFocused() const = 0;
+	virtual bool getFocused() const = 0;
 
-	virtual float getWindowTime() const = 0;
+	virtual float getTime() const = 0;
 
 	virtual void* getImplementationWindow() const = 0;
 	virtual const RenderingContext& getRenderingContext() const = 0;

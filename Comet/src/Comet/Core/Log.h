@@ -18,7 +18,7 @@ public:
 		CMT_TRACE, CMT_INFO, CMT_WARN, CMT_ERROR, CMT_CRITICAL
 	};
 
-	static void setLogLevel(LogLevel level);
+	static void setLevel(const LogLevel level);
 
 	//For logging within the Comet engine
 	template<typename... Args>

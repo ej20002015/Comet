@@ -15,16 +15,16 @@ public:
 	KeyCode getKeyCode() const { return m_keyCode; }
 
 protected:
-	KeyEvent(KeyCode keyCode) : m_keyCode(keyCode) {}
+	KeyEvent(const KeyCode keyCode) : m_keyCode(keyCode) {}
 
 protected:
-	KeyCode m_keyCode;
+	const KeyCode m_keyCode;
 };
 
 class KeyPressedEvent : public KeyEvent
 {
 public:
-	KeyPressedEvent(KeyCode keyCode, int repeat = false) : KeyEvent(keyCode), m_repeat(repeat) {}
+	KeyPressedEvent(const KeyCode keyCode, const bool repeat = false) : KeyEvent(keyCode), m_repeat(repeat) {}
 
 	CMT_EVENT_CLASS_TYPE(KeyPressedEvent)
 		
@@ -38,13 +38,13 @@ public:
 	bool getRepeat() const { return m_repeat; }
 
 private:
-	int m_repeat;
+	const bool m_repeat;
 };
 
 class KeyReleasedEvent : public KeyEvent
 {
 public:
-	KeyReleasedEvent(KeyCode keyCode) : KeyEvent(keyCode) {}
+	KeyReleasedEvent(const KeyCode keyCode) : KeyEvent(keyCode) {}
 
 	CMT_EVENT_CLASS_TYPE(KeyReleasedEvent)
 
@@ -60,7 +60,7 @@ public:
 class KeyTypedEvent : public KeyEvent
 {
 public:
-	KeyTypedEvent(KeyCode keyCode) : KeyEvent(keyCode) {}
+	KeyTypedEvent(const KeyCode keyCode) : KeyEvent(keyCode) {}
 
 	CMT_EVENT_CLASS_TYPE(KeyTypedEvent)
 

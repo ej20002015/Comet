@@ -41,16 +41,16 @@ public:
 	virtual int getEventCategory() const = 0;
 	virtual std::string toString() const { return getEventName(); }
 
-	bool isInEventCategory(EventCategory eventCategory) { return eventCategory & getEventCategory(); }
+	bool isInEventCategory(const EventCategory eventCategory) { return eventCategory & getEventCategory(); }
 };
 
 #define CMT_EVENT_CLASS_TYPE(type)\
 static  EventType getStaticEventType() { return EventType::type; }\
-virtual EventType getEventType() const override { return getStaticEventType(); }\
-virtual const char* getEventName() const override { return #type; }
+EventType getEventType() const override { return getStaticEventType(); }\
+const char* getEventName() const override { return #type; }
 
 #define CMT_EVENT_CLASS_CATEGORY(category)\
-virtual int getEventCategory() const override { return category; }
+int getEventCategory() const override { return category; }
 
 class EventDispatcher
 {

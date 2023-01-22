@@ -15,7 +15,7 @@ namespace Comet
 		{
 			CometEditorResourceManager::init();
 			pushLayer(new CometEditorLayer());
-			Log::setLogLevel(Log::LogLevel::CMT_INFO);
+			Log::setLevel(Log::LogLevel::CMT_INFO);
 		}
 
 		~CometEditorApplication() = default;

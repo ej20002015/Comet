@@ -10,7 +10,7 @@ class UUID
 {
 public:
 	UUID();
-	UUID(uint64_t ID);
+	UUID(const uint64_t ID);
 	UUID(const UUID& other) = default;
 	~UUID() = default;
 
@@ -29,7 +29,7 @@ public:
 		hexString.insert(9, "-");
 		hexString.insert(14, "-");
 		return hexString;
-	}	
+	}
 
 private:
 	uint64_t m_ID;

@@ -15,7 +15,7 @@ UUID::UUID()
 {
 }
 
-UUID::UUID(uint64_t ID)
+UUID::UUID(const uint64_t ID)
 	: m_ID(ID)
 {
 }

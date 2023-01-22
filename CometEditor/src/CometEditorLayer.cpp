@@ -19,11 +19,11 @@ namespace Comet
 
         m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
 
-        FramebufferSpecification framebufferSpecification;
+        Framebuffer::Specification framebufferSpecification;
         framebufferSpecification.colorAttachments =
         {
-            FramebufferColorAttachmentFormat::RGBA16F,
-            FramebufferColorAttachmentFormat::R32I
+            Framebuffer::ColorAttachmentFormat::RGBA16F,
+            Framebuffer::ColorAttachmentFormat::R32I
         };
         framebufferSpecification.width = static_cast<uint32_t>(m_initialFramebufferSize.x);
         framebufferSpecification.height = static_cast<uint32_t>(m_initialFramebufferSize.y);

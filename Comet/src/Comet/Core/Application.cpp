@@ -71,7 +71,7 @@ void Application::updateLayers()
 
 void Application::updateTimestep()
 {
-	float currentTime = m_window->getWindowTime();
+	float currentTime = m_window->getTime();
 	m_ts = currentTime - m_timeAtLastFrame;
 	m_timeAtLastFrame = currentTime;
 }
@@ -100,22 +100,22 @@ void Application::onEvent(Event& e)
 	}
 }
 
-void Application::pushLayer(Layer* layer)
+void Application::pushLayer(Layer* const layer)
 {
 	m_layerStack.pushLayer(layer);
 }
 
-void Application::popLayer(Layer* layer)
+void Application::popLayer(Layer* const layer)
 {
 	m_layerStack.popLayer(layer);
 }
 
-void Application::pushOverlay(Layer* overlay)
+void Application::pushOverlay(Layer* const overlay)
 {
 	m_layerStack.pushOverlay(overlay);
 }
 
-void Application::popOverlay(Layer* overlay)
+void Application::popOverlay(Layer* const overlay)
 {
 	m_layerStack.popOverlay(overlay);
 }

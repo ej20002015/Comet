@@ -135,7 +135,7 @@ enum class KeyCode : uint16_t
 	KEY_MENU           =   348
 };
 
-inline std::ostream& operator <<(std::ostream& os, KeyCode keyCode)
+inline std::ostream& operator <<(std::ostream& os, const KeyCode keyCode)
 {
 	os << static_cast<int>(keyCode);
 	return os;

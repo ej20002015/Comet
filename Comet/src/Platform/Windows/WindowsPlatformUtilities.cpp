@@ -12,7 +12,7 @@
 namespace Comet
 {
 
-	std::string PlatformUtilities::openFile(const char* filters)
+	std::string PlatformUtilities::openFile(const char* const filters)
 	{
 		OPENFILENAMEA ofn;
 		CHAR filepath[256] = { 0 };
@@ -37,7 +37,7 @@ namespace Comet
 	}
 
 
-	std::string PlatformUtilities::saveFile(const char* filters, const std::string& defaultFileExtension)
+	std::string PlatformUtilities::saveFile(const char* filters, const std::string_view defaultFileExtension)
 	{
 		OPENFILENAMEA ofn;
 		CHAR filepath[256] = { 0 };
@@ -50,7 +50,7 @@ namespace Comet
 		ofn.lpstrFilter = filters;
 		ofn.nFilterIndex = 1;
 		if (!defaultFileExtension.empty())
-			ofn.lpstrDefExt = defaultFileExtension.c_str();
+			ofn.lpstrDefExt = defaultFileExtension.data();
 		if (GetCurrentDirectoryA(sizeof(currentDirectory), currentDirectory))
 			ofn.lpstrInitialDir = currentDirectory;
 		ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;

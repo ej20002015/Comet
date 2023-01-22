@@ -22,7 +22,7 @@ public:
 	const std::string_view& getName() const { return m_name; }
 
 	bool getBlocking() const { return m_blockEvents; }
-	void setBlocking(bool block) { m_blockEvents = block; }
+	void setBlocking(const bool block) { m_blockEvents = block; }
 
 private:
 	const std::string_view m_name;

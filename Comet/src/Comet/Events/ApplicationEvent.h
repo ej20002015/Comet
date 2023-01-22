@@ -9,7 +9,7 @@ namespace Comet
 class WindowResizedEvent : public Event
 {
 public:
-	WindowResizedEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
+	WindowResizedEvent(const uint32_t width, const uint32_t height) : m_width(width), m_height(height) {}
 
 	CMT_EVENT_CLASS_TYPE(WindowResizedEvent)
 	CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_APPLICATION)
@@ -25,7 +25,7 @@ public:
 	uint32_t getHeight() const { return m_height; }
 
 private:
-	uint32_t m_width, m_height;
+	const uint32_t m_width, m_height;
 };
 
 class WindowClosedEvent : public Event
@@ -58,7 +58,7 @@ public:
 class WindowMovedEvent : public Event
 {
 public:
-	WindowMovedEvent(uint32_t xPos, uint32_t yPos) : m_xPos(xPos), m_yPos(yPos) {}
+	WindowMovedEvent(const uint32_t xPos, const uint32_t yPos) : m_xPos(xPos), m_yPos(yPos) {}
 
 	CMT_EVENT_CLASS_TYPE(WindowMovedEvent)
 	CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_APPLICATION)
@@ -74,7 +74,7 @@ public:
 	uint32_t getYPos() const { return m_yPos; }
 
 private:
-	uint32_t m_xPos, m_yPos;
+	const uint32_t m_xPos, m_yPos;
 };
 
 }

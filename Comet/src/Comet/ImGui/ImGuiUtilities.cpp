@@ -69,7 +69,7 @@ void ImGuiUtilities::setWindowPadding(const glm::vec2& padding)
     style.WindowPadding = { padding.x, padding.y };
 }
 
-void ImGuiUtilities::loadFont(const std::filesystem::path& filepath, float fontSize, ImGuiFontType fontType)
+void ImGuiUtilities::loadFont(const std::filesystem::path& filepath, const float fontSize, const ImGuiFontType fontType)
 {
     const ImGuiIO& io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF(filepath.string().c_str(), fontSize);
@@ -77,7 +77,7 @@ void ImGuiUtilities::loadFont(const std::filesystem::path& filepath, float fontS
     s_ImGuiFontsIndexMap[fontType] = index;
 }
 
-void ImGuiUtilities::setDefaultFont(ImGuiFontType fontType)
+void ImGuiUtilities::setDefaultFont(const ImGuiFontType fontType)
 {
     ImFont* font = getFont(fontType);
     if (font)
@@ -87,7 +87,7 @@ void ImGuiUtilities::setDefaultFont(ImGuiFontType fontType)
     }
 }
 
-ImFont* ImGuiUtilities::getFont(ImGuiFontType fontType)
+ImFont* ImGuiUtilities::getFont(const ImGuiFontType fontType)
 {
     if (auto it = s_ImGuiFontsIndexMap.find(fontType); it != s_ImGuiFontsIndexMap.end())
         return ImGui::GetIO().Fonts->Fonts[(*it).second];
@@ -96,7 +96,7 @@ ImFont* ImGuiUtilities::getFont(ImGuiFontType fontType)
     return nullptr;
 }
 
-void ImGuiUtilities::pushFont(ImGuiFontType fontType)
+void ImGuiUtilities::pushFont(const ImGuiFontType fontType)
 {
     ImFont* font = getFont(fontType);
     if (font)
@@ -142,7 +142,7 @@ void ImGuiUtilities::setDarkModeColors()
     colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.95f, 0.1505f, 0.951f, 1.0f };
 }
 
-void ImGuiUtilities::pushAlphaFactorStyleVariable(float alphaFactor)
+void ImGuiUtilities::pushAlphaFactorStyleVariable(const float alphaFactor)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * alphaFactor);
 }
@@ -200,7 +200,7 @@ void ImGuiUtilities::endPropertyGrid()
     popID();
 }
 
-void ImGuiUtilities::property(const std::string_view label, const std::string& value)
+void ImGuiUtilities::property(const std::string_view label, const std::string_view value)
 {
     propertyLabel(label);
 
@@ -208,7 +208,7 @@ void ImGuiUtilities::property(const std::string_view label, const std::string& v
 
     ImGui::PushItemWidth(-1.0f);
     pushAlphaFactorStyleVariable(0.5f);
-    ImGui::InputText(generateItemID(), const_cast<char*>(value.c_str()), value.size() + 1, ImGuiInputTextFlags_ReadOnly);
+    ImGui::InputText(generateItemID(), const_cast<char*>(value.data()), value.size() + 1, ImGuiInputTextFlags_ReadOnly);
     popStyleVariable();
     ImGui::PopItemWidth();
 
@@ -240,7 +240,7 @@ bool ImGuiUtilities::property(const std::string_view label, std::string& value)
     return modified;
 }
 
-bool ImGuiUtilities::property(const std::string_view label, int32_t& value, float delta, const std::string_view format, int32_t min, int32_t max)
+bool ImGuiUtilities::property(const std::string_view label, int32_t& value, const float delta, const std::string_view format, const int32_t min, const int32_t max)
 {
     bool modified = false;
 
@@ -258,7 +258,7 @@ bool ImGuiUtilities::property(const std::string_view label, int32_t& value, floa
     return modified;
 }
 
-bool ImGuiUtilities::propertySlider(const std::string_view label, int32_t& value, const std::string_view format, int32_t min, int32_t max)
+bool ImGuiUtilities::propertySlider(const std::string_view label, int32_t& value, const std::string_view format, const int32_t min, const int32_t max)
 {
     bool modified = false;
 
@@ -276,7 +276,7 @@ bool ImGuiUtilities::propertySlider(const std::string_view label, int32_t& value
     return modified;
 }
 
-bool ImGuiUtilities::property(const std::string_view label, float& value, float delta, const std::string_view format, float min, float max)
+bool ImGuiUtilities::property(const std::string_view label, float& value, const float delta, const std::string_view format, const float min, const float max)
 {
     bool modified = false;
 
@@ -294,7 +294,7 @@ bool ImGuiUtilities::property(const std::string_view label, float& value, float 
     return modified;
 }
 
-bool ImGuiUtilities::property(const std::string_view label, glm::vec2& value, float delta, const std::string_view format, float min, float max)
+bool ImGuiUtilities::property(const std::string_view label, glm::vec2& value, const float delta, const std::string_view format, const float min, const float max)
 {
     bool modified = false;
 
@@ -312,7 +312,7 @@ bool ImGuiUtilities::property(const std::string_view label, glm::vec2& value, fl
     return modified;
 }
 
-bool ImGuiUtilities::property(const std::string_view label, glm::vec3& value, float delta, const std::string_view format, float min, float max)
+bool ImGuiUtilities::property(const std::string_view label, glm::vec3& value, const float delta, const std::string_view format, const float min, const float max)
 {
     bool modified = false;
 
@@ -366,7 +366,7 @@ bool ImGuiUtilities::propertyButton(const std::string_view label, const std::str
     return pressed;
 }
 
-bool ImGuiUtilities::propertyImageButton(const std::string_view label, uint32_t textureRendererID, const glm::vec2& size)
+bool ImGuiUtilities::propertyImageButton(const std::string_view label, const uint32_t textureRendererID, const glm::vec2& size)
 {
     //ImageButtonIDs are based of the rendererID so need to push an ID to prevent conflicts arising
     pushID();
@@ -407,13 +407,6 @@ bool ImGuiUtilities::property(const std::string_view label, bool& value)
     return modified;
 }
 
-void ImGuiUtilities::propertyLabel(const std::string_view label)
-{
-    pushFont(ImGuiFontType::FONT_BOLD);
-    ImGui::Text(label.data());
-    popFont();
-}
-
 char* ImGuiUtilities::generateItemID()
 {
     //Indicate to ImGui that this ID should not be used as a label
@@ -426,6 +419,13 @@ char* ImGuiUtilities::generateItemID()
 
     //Return the buffer for convenience
     return s_itemID;
+}
+
+void ImGuiUtilities::propertyLabel(const std::string_view label)
+{
+    pushFont(ImGuiFontType::FONT_BOLD);
+    ImGui::Text(label.data());
+    popFont();
 }
 
 }

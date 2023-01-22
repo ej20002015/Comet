@@ -6,19 +6,19 @@
 namespace Comet
 {
 
-	class ScopeTimer
-	{
-	public:
-		ScopeTimer(const std::string& timerName = "");
-		~ScopeTimer();
+class ScopeTimer
+{
+public:
+	ScopeTimer(const std::string_view timerName = "");
+	~ScopeTimer();
 
-		static void logTime(bool log) { s_logTime = log; }
+	static void logTime(const bool log) { s_logTime = log; }
 
-	private:
-		const std::chrono::high_resolution_clock::time_point m_startTime;
-		std::string m_timerName;
+private:
+	const std::chrono::high_resolution_clock::time_point m_startTime;
+	std::string_view m_timerName;
 
-		static bool s_logTime;
-	};
+	static bool s_logTime;
+};
 
 }

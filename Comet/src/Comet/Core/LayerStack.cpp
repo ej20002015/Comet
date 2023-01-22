@@ -15,13 +15,13 @@ Comet::LayerStack::~LayerStack()
 		delete layer;
 }
 
-void LayerStack::pushLayer(Layer* layer)
+void LayerStack::pushLayer(Layer* const layer)
 {
 	layer->onAttach();
 	m_layers.emplace(m_layers.begin() + m_layerInsertIndex++, layer);
 }
 
-void LayerStack::popLayer(Layer* layer)
+void LayerStack::popLayer(Layer* const layer)
 {
 	const auto it = std::find(m_layers.begin(), m_layers.begin() + m_layerInsertIndex, layer);
 	if (it != m_layers.begin() + m_layerInsertIndex)
@@ -32,13 +32,13 @@ void LayerStack::popLayer(Layer* layer)
 	}
 }
 
-void LayerStack::pushOverlay(Layer* overlay)
+void LayerStack::pushOverlay(Layer* const overlay)
 {
 	overlay->onAttach();
 	m_layers.emplace_back(overlay);
 }
 
-void LayerStack::popOverlay(Layer* overlay)
+void LayerStack::popOverlay(Layer* const overlay)
 {
 	const auto it = std::find(m_layers.begin() + m_layerInsertIndex, m_layers.end(), overlay);
 	if (it != m_layers.end())

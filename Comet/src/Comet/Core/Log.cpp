@@ -30,7 +30,7 @@ void Log::init()
 	s_clientLogger->flush_on(spdlog::level::trace);
 }
 
-void Log::setLogLevel(LogLevel level)
+void Log::setLevel(const LogLevel level)
 {
 	switch (level)
 	{

@@ -10,7 +10,7 @@ Buffer::~Buffer()
 		delete[] m_data;
 }
 
-Unique<Buffer> Buffer::create(uint32_t size)
+Unique<Buffer> Buffer::create(const uint32_t size)
 {
 	Unique<Buffer> buffer = createUnique<Buffer>();
 	buffer->m_size = size;
@@ -19,7 +19,7 @@ Unique<Buffer> Buffer::create(uint32_t size)
 	return buffer;
 }
 
-Unique<Buffer> Buffer::create(void* data, uint32_t size)
+Unique<Buffer> Buffer::create(const void* const data, const uint32_t size)
 {
 	Unique<Buffer> buffer = createUnique<Buffer>();
 	buffer->m_size = size;
@@ -28,7 +28,7 @@ Unique<Buffer> Buffer::create(void* data, uint32_t size)
 	return buffer;
 }
 
-Unique<Buffer> Buffer::create(uint32_t value, uint32_t size)
+Unique<Buffer> Buffer::create(const uint32_t value, const uint32_t size)
 {
 	Unique<Buffer> buffer = createUnique<Buffer>();
 	buffer->m_size = size;

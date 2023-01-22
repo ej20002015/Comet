@@ -8,7 +8,7 @@ class Timestep
 {
 public:
 	Timestep() : m_time(0.0f) {}
-	Timestep(float time) : m_time(time) {}
+	Timestep(const float time) : m_time(time) {}
 		
 	operator float() const { return m_time; }
 

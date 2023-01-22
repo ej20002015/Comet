@@ -23,7 +23,7 @@ public:
 	void deselectEntityIfNeeded();
 
 	Entity getSelectedEntity() const { return m_selectedEntity; }
-	void setSelectedEntity(Entity entity) { m_selectedEntity = entity; }
+	void setSelectedEntity(const Entity entity) { m_selectedEntity = entity; }
 
 private:
 	void drawEntityNode(Entity entity);

@@ -86,7 +86,7 @@ void EntityPropertiesPanel::onImGuiRender()
 	componentImGuiRender<UUIDComponent>("UUID Component", [](const UUIDComponent& UUID)
 	{
 		ImGuiUtilities::beginPropertyGrid();
-		ImGuiUtilities::property("UUID", UUID.ID);
+		ImGuiUtilities::property("UUID", static_cast<std::string>(UUID.ID));
 		ImGuiUtilities::endPropertyGrid();
 	},
 	ComponentOptionsFlags::NONE);
@@ -275,7 +275,7 @@ void EntityPropertiesPanel::onImGuiRender()
 }
 
 template<typename T, typename ComponentUIFunction>
-void EntityPropertiesPanel::componentImGuiRender(const std::string_view headerName, ComponentUIFunction componentUIFunction, ComponentOptionsFlags optionsFlags)
+void EntityPropertiesPanel::componentImGuiRender(const std::string_view headerName, const ComponentUIFunction& componentUIFunction, ComponentOptionsFlags optionsFlags)
 {
 	if (!m_entity.hasComponent<T>())
 		return;
@@ -291,7 +291,7 @@ void EntityPropertiesPanel::componentImGuiRender(const std::string_view headerNa
 }
 
 template<typename T, typename ComponentUIFunction>
-inline void EntityPropertiesPanel::renderStandardComponent(const std::string_view headerName, ComponentUIFunction componentUIFunction)
+inline void EntityPropertiesPanel::renderStandardComponent(const std::string_view headerName, const ComponentUIFunction& componentUIFunction)
 {
 	if (ImGui::CollapsingHeader(headerName.data(), NODE_FLAGS))
 	{
@@ -301,7 +301,7 @@ inline void EntityPropertiesPanel::renderStandardComponent(const std::string_vie
 }
 
 template<typename T, typename ComponentUIFunction>
-inline void EntityPropertiesPanel::renderComponentWithOptions(const std::string_view headerName, ComponentUIFunction componentUIFunction, ComponentOptionsFlags optionsFlags)
+inline void EntityPropertiesPanel::renderComponentWithOptions(const std::string_view headerName, const ComponentUIFunction& componentUIFunction, ComponentOptionsFlags optionsFlags)
 {
 	const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 	const float lineHeight = GImGui->Font->FontSize + (GImGui->Style.FramePadding.y * 2.0f);

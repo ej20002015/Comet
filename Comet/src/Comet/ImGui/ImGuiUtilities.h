@@ -41,19 +41,19 @@ public:
 	static void setWindowPadding(const glm::vec2& padding);
 
 	//Font Management
-	static void loadFont(const std::filesystem::path& filepath, float fontSize, ImGuiFontType fontType);
-	static void setDefaultFont(ImGuiFontType fontType);
+	static void loadFont(const std::filesystem::path& filepath, const float fontSize, const ImGuiFontType fontType);
+	static void setDefaultFont(const ImGuiFontType fontType);
 
-	static ImFont* getFont(ImGuiFontType fontType);
+	static ImFont* getFont(const ImGuiFontType fontType);
 
-	static void pushFont(ImGuiFontType fontType);
+	static void pushFont(const ImGuiFontType fontType);
 	static void popFont();
 
 	//Window Colours
 	static void setDarkModeColors();
 
 	//Style Vars
-	static void pushAlphaFactorStyleVariable(float alphaFactor);
+	static void pushAlphaFactorStyleVariable(const float alphaFactor);
 	static void popStyleVariable();
 
 	//Helper Methods
@@ -70,31 +70,30 @@ public:
 	static void endPropertyGrid();
 
 	//Property Elements
-	static void property(const std::string_view label, const std::string& value);
+	static void property(const std::string_view label, const std::string_view value);
 	static bool property(const std::string_view label, std::string& value);
 
-	static bool property(const std::string_view label, int32_t& value, float delta = 1.0f, const std::string_view format = "%d", int32_t min = 0, int32_t max = 0);
-	static bool propertySlider(const std::string_view label, int32_t& value, const std::string_view format = "%d", int32_t min = 0, int32_t max = 0);
+	static bool property(const std::string_view label, int32_t& value, const float delta = 1.0f, const std::string_view format = "%d", const int32_t min = 0, const int32_t max = 0);
+	static bool propertySlider(const std::string_view label, int32_t& value, const std::string_view format = "%d", const int32_t min = 0, const int32_t max = 0);
 
-	static bool property(const std::string_view label, float& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
-	static bool property(const std::string_view label, glm::vec2& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
-	static bool property(const std::string_view label, glm::vec3& value, float delta = 0.1f, const std::string_view format = "%.1f", float min = 0.0f, float max = 0.0f);
+	static bool property(const std::string_view label, float& value, const float delta = 0.1f, const std::string_view format = "%.1f", const float min = 0.0f, const float max = 0.0f);
+	static bool property(const std::string_view label, glm::vec2& value, const float delta = 0.1f, const std::string_view format = "%.1f", const float min = 0.0f, const float max = 0.0f);
+	static bool property(const std::string_view label, glm::vec3& value, const float delta = 0.1f, const std::string_view format = "%.1f", const float min = 0.0f, const float max = 0.0f);
 
 	static bool propertyColorPicker(const std::string_view label, glm::vec4& value);
 
 	static bool propertyButton(const std::string_view label, const std::string_view buttonText);
-	static bool propertyImageButton(const std::string_view label, uint32_t textureRendererID, const glm::vec2& size);
+	static bool propertyImageButton(const std::string_view label, const uint32_t textureRendererID, const glm::vec2& size);
 
 	static bool property(const std::string_view label, bool& value);
 
 	template<typename TEnum>
 	static bool property(const std::string_view label, const std::span<const std::string_view> options, TEnum& selected);
 
-	static void propertyLabel(const std::string_view label);
-
 private:
 	//Item IDs
 	static char* generateItemID();
+	static void propertyLabel(const std::string_view label);
 
 private:
 	static std::unordered_map<ImGuiFontType, uint32_t> s_ImGuiFontsIndexMap;

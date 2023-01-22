@@ -10,20 +10,20 @@ namespace Comet
 class MouseButtonEvent : public Event
 {
 public:
-	MouseButtonEvent(MouseButtonCode mouseCode) : m_mouseCode(mouseCode) {}
+	MouseButtonEvent(const MouseButtonCode mouseCode) : m_mouseCode(mouseCode) {}
 
 	CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_MOUSE_BUTTON | EventCategory::EVENT_CATEGORY_MOUSE| EventCategory::EVENT_CATEGORY_INPUT)
 
 	MouseButtonCode getKeyCode() const { return m_mouseCode; }
 
 protected:
-	MouseButtonCode m_mouseCode;
+	const MouseButtonCode m_mouseCode;
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent
 {
 public:
-	MouseButtonPressedEvent(MouseButtonCode mouseCode, int repeatCount = 0) : MouseButtonEvent(mouseCode), m_repeatCount(repeatCount) {}
+	MouseButtonPressedEvent(const MouseButtonCode mouseCode, const uint32_t repeatCount = 0) : MouseButtonEvent(mouseCode), m_repeatCount(repeatCount) {}
 
 	CMT_EVENT_CLASS_TYPE(MouseButtonPressedEvent)
 
@@ -37,13 +37,13 @@ public:
 	int getRepeatCount() const { return m_repeatCount; }
 
 private:
-	int m_repeatCount;
+	const uint32_t m_repeatCount;
 };
 
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
 public:
-	MouseButtonReleasedEvent(MouseButtonCode mouseCode) : MouseButtonEvent(mouseCode) {}
+	MouseButtonReleasedEvent(const MouseButtonCode mouseCode) : MouseButtonEvent(mouseCode) {}
 
 	CMT_EVENT_CLASS_TYPE(MouseButtonReleasedEvent)
 
@@ -58,7 +58,7 @@ public:
 class MouseMovedEvent : public Event
 {
 public:
-	MouseMovedEvent(float mousePosX, float mousePosY) : m_mousePosX(mousePosX), m_mousePosY(mousePosY) {}
+	MouseMovedEvent(const float mousePosX, const float mousePosY) : m_mousePosX(mousePosX), m_mousePosY(mousePosY) {}
 
 	CMT_EVENT_CLASS_TYPE(MouseMovedEvent)
 	CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_MOUSE | EventCategory::EVENT_CATEGORY_INPUT)
@@ -74,13 +74,13 @@ public:
 	float getMousePosY() const { return m_mousePosY; }
 
 private:
-	float m_mousePosX, m_mousePosY;
+	const float m_mousePosX, m_mousePosY;
 };
 
 class MouseScrolledEvent : public Event
 {
 public:
-	MouseScrolledEvent(float xOffset, float yOffset) : m_xOffset(xOffset), m_yOffset(yOffset) {}
+	MouseScrolledEvent(const float xOffset, const float yOffset) : m_xOffset(xOffset), m_yOffset(yOffset) {}
 
 	CMT_EVENT_CLASS_TYPE(MouseScrolledEvent)
 	CMT_EVENT_CLASS_CATEGORY(EventCategory::EVENT_CATEGORY_MOUSE | EventCategory::EVENT_CATEGORY_INPUT)
@@ -96,7 +96,7 @@ public:
 	float getYOffset() const { return m_yOffset; }
 
 private:
-	float m_xOffset, m_yOffset;
+	const float m_xOffset, m_yOffset;
 };
 
 }

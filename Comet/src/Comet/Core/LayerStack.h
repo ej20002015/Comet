@@ -15,10 +15,10 @@ public:
 
 	//Two seperate parts of the stack - one for overlays (the latter portion) and one for traditional layers (from the start to the start of the overlays)
 	//Overlays will always be after layers
-	void pushLayer(Layer* layer);
-	void popLayer(Layer* layer);
-	void pushOverlay(Layer* overlay);
-	void popOverlay(Layer* overlay);
+	void pushLayer(Layer* const layer);
+	void popLayer(Layer* const layer);
+	void pushOverlay(Layer* const overlay);
+	void popOverlay(Layer* const overlay);
 
 	//Iterators to move forward and backward through the stack
 	std::vector<Layer*>::iterator begin()          { return m_layers.begin(); }

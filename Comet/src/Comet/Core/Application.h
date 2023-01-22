@@ -30,10 +30,10 @@ public:
 
 	void onEvent(Event& e);
 
-	void pushLayer(Layer* layer);
-	void popLayer(Layer* layer);
-	void pushOverlay(Layer* overlay);
-	void popOverlay(Layer* overlay);
+	void pushLayer(Layer* const layer);
+	void popLayer(Layer* const layer);
+	void pushOverlay(Layer* const overlay);
+	void popOverlay(Layer* const overlay);
 
 	void exit() { m_running = false; }
 

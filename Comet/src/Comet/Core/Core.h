@@ -7,7 +7,6 @@
 
 #define CMT_BIT(x) (1 << x)
 
-
 /* 
 This macro creates a lamda function that calls the passed in method. The lamda captures the 'this' pointer in order to call member functions. Its arguments are
 a variadic list of deduced types that are determined by the compiler when the lamda is called. The arguments are simply forwaded onto the appropriate bound function.

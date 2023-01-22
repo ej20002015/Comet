@@ -6,14 +6,14 @@
 namespace Comet
 {
 
-	static GLenum getGLInternalColorTextureFormat(const FramebufferColorAttachmentFormat framebufferFormat)
+	static GLenum getGLInternalColorTextureFormat(const Framebuffer::ColorAttachmentFormat framebufferFormat)
 	{
 		switch (framebufferFormat)
 		{
-		case FramebufferColorAttachmentFormat::RGBA8:              return GL_RGBA8; break;
-		case FramebufferColorAttachmentFormat::RGBA16F:            return GL_RGBA16F; break;
-		case FramebufferColorAttachmentFormat::RGBA32F:            return GL_RGBA32F; break;
-		case FramebufferColorAttachmentFormat::R32I:               return GL_R32I; break;
+		case Framebuffer::ColorAttachmentFormat::RGBA8:              return GL_RGBA8; break;
+		case Framebuffer::ColorAttachmentFormat::RGBA16F:            return GL_RGBA16F; break;
+		case Framebuffer::ColorAttachmentFormat::RGBA32F:            return GL_RGBA32F; break;
+		case Framebuffer::ColorAttachmentFormat::R32I:               return GL_R32I; break;
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer color attachment/texture format");
 			return 0;
@@ -21,11 +21,11 @@ namespace Comet
 		}
 	}
 
-	static GLenum getGLInternalDepthTextureFormat(const FramebufferDepthAttachmentFormat framebufferFormat)
+	static GLenum getGLInternalDepthTextureFormat(const Framebuffer::DepthAttachmentFormat framebufferFormat)
 	{
 		switch (framebufferFormat)
 		{
-		case FramebufferDepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH24_STENCIL8;
+		case Framebuffer::DepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH24_STENCIL8;
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer depth attachment/texture format");
 			return 0;
@@ -33,11 +33,11 @@ namespace Comet
 		}
 	}
 
-	static GLenum getGLDepthAttachmentType(const FramebufferDepthAttachmentFormat framebufferFormat)
+	static GLenum getGLDepthAttachmentType(const Framebuffer::DepthAttachmentFormat framebufferFormat)
 	{
 		switch (framebufferFormat)
 		{
-		case FramebufferDepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH_STENCIL_ATTACHMENT;
+		case Framebuffer::DepthAttachmentFormat::DEPTH24STENCIL8:    return GL_DEPTH_STENCIL_ATTACHMENT;
 		default:
 			CMT_COMET_ASSERT_MESSAGE(false, "Unknown framebuffer depth attachment/texture format");
 			return 0;
@@ -45,7 +45,7 @@ namespace Comet
 		}
 	}
 
-	Comet::OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& specification)
+	Comet::OpenGLFramebuffer::OpenGLFramebuffer(const Specification& specification)
 		: m_specification(specification)
 	{
 		resize(m_specification.width, m_specification.height, true);
@@ -69,13 +69,13 @@ namespace Comet
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void OpenGLFramebuffer::onWindowResize(uint32_t width, uint32_t height)
+	void OpenGLFramebuffer::onWindowResize(const uint32_t width, const uint32_t height)
 	{
 		if (m_specification.resizeOnWindowResize)
 			resize(width, height);
 	}
 
-	void OpenGLFramebuffer::resize(uint32_t width, uint32_t height, bool forceRecreate)
+	void OpenGLFramebuffer::resize(const uint32_t width, const uint32_t height, const bool forceRecreate)
 	{
 		if (m_specification.width == width && m_specification.height == height && !forceRecreate)
 		{
@@ -156,9 +156,9 @@ namespace Comet
 		CMT_COMET_ASSERT_MESSAGE(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is not complete");
 	}
 
-	int32_t OpenGLFramebuffer::readColorAttachmentPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) const
+	int32_t OpenGLFramebuffer::readColorAttachmentPixel(const uint32_t attachmentIndex, const uint32_t x, const uint32_t y) const
 	{
-		if (m_specification.colorAttachments.attachments[attachmentIndex] != FramebufferColorAttachmentFormat::R32I)
+		if (m_specification.colorAttachments.attachments[attachmentIndex] != ColorAttachmentFormat::R32I)
 		{
 			Log::cometError("Attempting to read integer from framebuffer color attachment with format that is not R32I");
 			CMT_COMET_ASSERT(false);
@@ -192,9 +192,9 @@ namespace Comet
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
-	void OpenGLFramebuffer::clearColorAttachment(uint32_t attachmentIndex, int32_t value)
+	void OpenGLFramebuffer::clearColorAttachment(const uint32_t attachmentIndex, const int32_t value)
 	{
-		if (m_specification.colorAttachments.attachments[attachmentIndex] != FramebufferColorAttachmentFormat::R32I)
+		if (m_specification.colorAttachments.attachments[attachmentIndex] != ColorAttachmentFormat::R32I)
 		{
 			Log::cometError("Attempting to clear framebuffer color attachment to integer that does not have a format of R32I");
 			CMT_COMET_ASSERT(false);
@@ -211,7 +211,7 @@ namespace Comet
 		glClearTexImage(m_colorAttachmentsRendererID[attachmentIndex], 0, GL_RED_INTEGER, GL_INT, &value);
 	}
 
-	void OpenGLFramebuffer::bindColorTexture(uint32_t attachmentIndex, uint32_t slot) const
+	void OpenGLFramebuffer::bindColorTexture(const uint32_t attachmentIndex, const uint32_t slot) const
 	{
 		if (attachmentIndex >= m_specification.colorAttachments.attachments.size())
 		{
@@ -223,7 +223,7 @@ namespace Comet
 		glBindTextureUnit(slot, m_colorAttachmentsRendererID[attachmentIndex]);
 	}
 
-	void OpenGLFramebuffer::bindDepthTexture(uint32_t slot) const
+	void OpenGLFramebuffer::bindDepthTexture(const uint32_t slot) const
 	{
 		glBindTextureUnit(slot, m_depthAttachmentRendererID);
 	}

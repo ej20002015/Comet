@@ -21,7 +21,7 @@ enum class MouseButtonCode : uint16_t
 	MOUSE_BUTTON_MIDDLE =   MOUSE_BUTTON_3
 };
 
-inline std::ostream& operator <<(std::ostream& os, MouseButtonCode mouseCode)
+inline std::ostream& operator <<(std::ostream& os, const MouseButtonCode mouseCode)
 {
 	os << static_cast<uint16_t>(mouseCode);
 	return os;

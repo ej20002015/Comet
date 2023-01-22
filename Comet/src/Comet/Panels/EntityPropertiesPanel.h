@@ -29,11 +29,11 @@ public:
 
 private:
 	template<typename T, typename ComponentUIFunction>
-	void componentImGuiRender(const std::string_view headerName, ComponentUIFunction componentUIFunction, ComponentOptionsFlags optionsFlags = ComponentOptionsFlags::CAN_DELETE_COMPONENT);
+	void componentImGuiRender(const std::string_view headerName, const ComponentUIFunction& componentUIFunction, const ComponentOptionsFlags optionsFlags = ComponentOptionsFlags::CAN_DELETE_COMPONENT);
 	template<typename T, typename ComponentUIFunction>
-	void renderStandardComponent(const std::string_view headerName, ComponentUIFunction componentUIFunction);
+	void renderStandardComponent(const std::string_view headerName, const ComponentUIFunction& componentUIFunction);
 	template<typename T, typename ComponentUIFunction>
-	void renderComponentWithOptions(const std::string_view headerName, ComponentUIFunction componentUIFunction, ComponentOptionsFlags optionsFlags);
+	void renderComponentWithOptions(const std::string_view headerName, const ComponentUIFunction& componentUIFunction, const ComponentOptionsFlags optionsFlags);
 
 private:
 	constexpr static ImGuiTreeNodeFlags NODE_FLAGS = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
