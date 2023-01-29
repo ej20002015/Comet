@@ -31,12 +31,12 @@ namespace Comet
 	class SpirvTools
 	{
 	public:
-		static SpirvShaderInformation compileAndReflect(const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
-		static std::vector<uint32_t> compile(const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
+		static SpirvShaderInformation compileAndReflect(const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
+		static std::vector<uint32_t> compile(const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
 		static std::string getOpenGLFromBinary(const std::vector<uint32_t> binary);
 
 	private:
-		static void compileOrRetrieveBinary(std::vector<uint32_t>& binary, const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
+		static void compileOrRetrieveBinary(std::vector<uint32_t>& binary, const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise = false);
 		static void reflect(SpirvShaderInformation& shaderInfo);
 	};
 

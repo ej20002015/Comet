@@ -6,50 +6,50 @@
 namespace Comet
 {
 
-	static GLenum getOpenGLUsage(VertexBufferUsage usage)
+static GLenum getOpenGLUsage(VertexBuffer::Usage usage)
+{
+	switch (usage)
 	{
-		switch (usage)
-		{
-			case VertexBufferUsage::STATIC:    return GL_STATIC_DRAW; break;
-			case VertexBufferUsage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
-		}
-
-		CMT_COMET_ASSERT_MESSAGE(false, "Unknown vertex buffer usage");
-		return 0;
+	case VertexBuffer::Usage::STATIC:    return GL_STATIC_DRAW; break;
+	case VertexBuffer::Usage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
 	}
 
+	CMT_COMET_ASSERT_MESSAGE(false, "Unknown vertex buffer usage");
+	return 0;
+}
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(void* data, uint32_t size, VertexBufferUsage usage)
-		: m_size(size), m_usage(usage)
-	{
-		m_localData = Buffer::create(data, size);
 
-		glCreateBuffers(1, &m_rendererID);
-		glNamedBufferData(m_rendererID, m_size, m_localData->getData(), getOpenGLUsage(m_usage));
-	}
+OpenGLVertexBuffer::OpenGLVertexBuffer(const void* const data, const uint32_t size, const Usage usage)
+	: m_size(size), m_usage(usage)
+{
+	m_localData = Buffer::create(data, size);
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size, VertexBufferUsage usage)
-		: m_localData(nullptr), m_size(size), m_usage(usage)
-	{
-		glCreateBuffers(1, &m_rendererID);
-		glNamedBufferData(m_rendererID, m_size, nullptr, getOpenGLUsage(m_usage));
-	}
+	glCreateBuffers(1, &m_rendererID);
+	glNamedBufferData(m_rendererID, m_size, m_localData->getData(), getOpenGLUsage(m_usage));
+}
 
-	OpenGLVertexBuffer::~OpenGLVertexBuffer()
-	{
-		glDeleteBuffers(1, &m_rendererID);
-	}
+OpenGLVertexBuffer::OpenGLVertexBuffer(const uint32_t size, const Usage usage)
+	: m_localData(nullptr), m_size(size), m_usage(usage)
+{
+	glCreateBuffers(1, &m_rendererID);
+	glNamedBufferData(m_rendererID, m_size, nullptr, getOpenGLUsage(m_usage));
+}
 
-	void OpenGLVertexBuffer::bind() const
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
-	}
+OpenGLVertexBuffer::~OpenGLVertexBuffer()
+{
+	glDeleteBuffers(1, &m_rendererID);
+}
 
-	void OpenGLVertexBuffer::setData(void* data, uint32_t size, uint32_t offset)
-	{
-		m_localData = Buffer::create(data, size);
+void OpenGLVertexBuffer::bind() const
+{
+	glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
+}
 
-		glNamedBufferSubData(m_rendererID, offset, size, m_localData->getData());
-	}
+void OpenGLVertexBuffer::setData(const void* const data, const uint32_t size, const uint32_t offset)
+{
+	m_localData = Buffer::create(data, size);
+
+	glNamedBufferSubData(m_rendererID, offset, size, m_localData->getData());
+}
 
 }

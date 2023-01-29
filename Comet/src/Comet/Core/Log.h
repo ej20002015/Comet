@@ -43,7 +43,7 @@ public:
 	inline static void clientError(Args&&... args)    { s_clientLogger->error(std::forward<Args>(args)...); }
 	template<typename... Args>
 	inline static void clientCritical(Args&&... args) { s_clientLogger->critical(std::forward<Args>(args)...); }
-	
+
 private:
 	static Reference<spdlog::logger> s_cometLogger, s_clientLogger;
 };

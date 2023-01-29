@@ -6,9 +6,15 @@
 namespace Comet
 {
 
-    using RendererID = uint32_t;
+using RendererID = uint32_t;
 
-    enum class RendererAPIType
+//For use by renderer class - not direct use by clients
+
+class RendererAPI
+{
+public:
+
+    enum class Type
     {
         NONE,
         OPENGL
@@ -19,7 +25,7 @@ namespace Comet
         NONE, TRIANGLES, LINES
     };
 
-    struct RendererAPICapabilities
+    struct Capabilities
     {
         std::string vendor;
         std::string renderer;
@@ -30,48 +36,45 @@ namespace Comet
         int maxTextureUnits = 0;
     };
 
-    //For use by renderer class - not direct use by clients
+public:
+    RendererAPI(const RendererAPI&) = delete;
+    virtual ~RendererAPI() = default;
 
-    class RendererAPI
-    {
-    public:
-        RendererAPI(const RendererAPI&) = delete;
+    static void init();
+    static void shutdown();
 
-        static void init();
-        static void shutdown();
+    static void drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest = true);
 
-        static void drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = true);
+    static void setClearColor(const glm::vec4& color);
+    static void clear();
 
-        static void setClearColor(const glm::vec4& color);
-        static void clear();
+    static bool getBackfaceCulling();
+    static void setBackfaceCulling(const bool culling);
 
-        static bool getBackfaceCulling();
-        static void setBackfaceCulling(bool culling);
+    static const Capabilities& getCapabilities();
 
-        static const RendererAPICapabilities& getCapabilities();
+    static Type getCurrrentRendererAPIType() { return s_currentRendererAPIType; }
 
-        static RendererAPIType getCurrrentRendererAPIType() { return s_currentRendererAPIType; }
+protected:
+    RendererAPI() = default;
 
-    protected:
-        RendererAPI() = default;
+    virtual void i_init() = 0;
+    virtual void i_shutdown() = 0;
 
-        virtual void i_init() = 0;
-        virtual void i_shutdown() = 0;
+    virtual void i_drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest = true) = 0;
 
-        virtual void i_drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = true) = 0;
+    virtual void i_setClearColor(const glm::vec4& color) = 0;
+    virtual void i_clear() = 0;
 
-        virtual void i_setClearColor(const glm::vec4& color) = 0;
-        virtual void i_clear() = 0;
+    virtual bool i_getBackfaceCulling() const = 0;
+    virtual void i_setBackfaceCulling(const bool culling) = 0;
 
-        virtual bool i_getBackfaceCulling() const = 0;
-        virtual void i_setBackfaceCulling(bool culling) = 0;
+protected:
+    static Capabilities s_rendererAPICapabilities;
 
-    protected:
-        static RendererAPICapabilities s_rendererAPICapabilities;
-
-    private:
-        static Unique<RendererAPI> s_instance;
-        static RendererAPIType s_currentRendererAPIType;
-    };
+private:
+    static Unique<RendererAPI> s_instance;
+    static Type s_currentRendererAPIType;
+};
 
 }

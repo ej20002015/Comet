@@ -119,7 +119,7 @@ namespace Comet
 		}
 	}
 
-	SpirvShaderInformation SpirvTools::compileAndReflect(const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
+	SpirvShaderInformation SpirvTools::compileAndReflect(const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
     {
 		CMT_COMET_ASSERT_MESSAGE(type != ShaderType::COMPUTE, "Compute shaders not yet supported");
 
@@ -131,7 +131,7 @@ namespace Comet
 		return shaderInfo;
     }
 
-	std::vector<uint32_t> SpirvTools::compile(const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
+	std::vector<uint32_t> SpirvTools::compile(const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
 	{
 		CMT_COMET_ASSERT_MESSAGE(type != ShaderType::COMPUTE, "Compute shaders not yet supported");
 		std::vector<uint32_t> binary;
@@ -150,18 +150,16 @@ namespace Comet
 		return compiler.compile();
 	}
 
-	void SpirvTools::compileOrRetrieveBinary(std::vector<uint32_t>& binary, const std::string& shaderSource, const std::string& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
+	void SpirvTools::compileOrRetrieveBinary(std::vector<uint32_t>& binary, const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
 	{
 		//See if spirv binaries have already been generated for this shader, and if so retrieve them
 
-		std::filesystem::path path = sourcePath;
-		path = path.parent_path() / "cached" / (name + getShaderEnvironmentExtension(shaderEnvironment) + getShaderTypeExtension(type));
-		std::string cachedBinaryPath = path.string();
+		const std::filesystem::path cachedBinaryPath = sourcePath.parent_path() / "cached" / (name + getShaderEnvironmentExtension(shaderEnvironment) + getShaderTypeExtension(type));
 
 		std::ifstream input(cachedBinaryPath, std::ios::binary);
 		if (input)
 		{
-			Log::cometInfo("Retrieving cached shader at {0}", cachedBinaryPath);
+			Log::cometInfo("Retrieving cached shader at {0}", cachedBinaryPath.string());
 			input.seekg(0, input.end);
 			uint64_t size = static_cast<uint64_t>(input.tellg());
 			input.seekg(0, input.beg);
@@ -208,13 +206,13 @@ namespace Comet
 			//Cache compiled binary
 
 			//Create 'cached' directory if it does not exist
-			std::filesystem::path cachedDirectoryPath = path.parent_path();
+			std::filesystem::path cachedDirectoryPath = sourcePath.parent_path();
 			std::filesystem::create_directory(cachedDirectoryPath);
 
 			std::ofstream output(cachedBinaryPath, std::ios::binary);
 			if (!output)
 			{
-				Log::cometError("Cannot create file to cache shader binary at {0}", cachedBinaryPath);
+				Log::cometError("Cannot create file to cache shader binary at {0}", cachedDirectoryPath.string());
 				CMT_COMET_ASSERT(false);
 			}
 

@@ -6,12 +6,12 @@
 namespace Comet
 {
 
-	static GLenum getGLPrimitveType(PrimitiveType primitive)
+	static GLenum getGLPrimitveType(RendererAPI::PrimitiveType primitive)
 	{
 		switch (primitive)
 		{
-			case Comet::PrimitiveType::TRIANGLES:   return GL_TRIANGLES; break;
-			case Comet::PrimitiveType::LINES:       return GL_LINES; break;
+			case Comet::RendererAPI::PrimitiveType::TRIANGLES:   return GL_TRIANGLES; break;
+			case Comet::RendererAPI::PrimitiveType::LINES:       return GL_LINES; break;
 			default:
 				CMT_COMET_ASSERT_MESSAGE(false, "Unknown primitive type");
 				return 0;
@@ -76,7 +76,7 @@ namespace Comet
 	{
 	}
 
-	void OpenGLRendererAPI::i_drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest)
+	void OpenGLRendererAPI::i_drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest)
 	{
 		if (!depthTest)
 			glDisable(GL_DEPTH_TEST);
@@ -99,7 +99,7 @@ namespace Comet
 		return culling;
 	}
 
-	void OpenGLRendererAPI::i_setBackfaceCulling(bool culling)
+	void OpenGLRendererAPI::i_setBackfaceCulling(const bool culling)
 	{
 		culling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	}

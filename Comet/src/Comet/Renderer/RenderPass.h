@@ -6,18 +6,20 @@
 namespace Comet
 {
 	
-	struct RenderPassSpecification
+class RenderPass
+{
+public:
+
+	struct Specification
 	{
 		Reference<Framebuffer> targetFramebuffer;
 	};
 
-	class RenderPass
-	{
-	public:
-		static Reference<RenderPass> create(const RenderPassSpecification& specification);
-		virtual ~RenderPass() = default;
+public:
+	static Reference<RenderPass> create(const Specification& specification);
+	virtual ~RenderPass() = default;
 
-		virtual const RenderPassSpecification& getSpecification() const = 0;
-	};
+	virtual const Specification& getSpecification() const = 0;
+};
 
 }

@@ -21,12 +21,10 @@ namespace Comet
 		}
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::filesystem::path& filepath)
 		: m_filepath(filepath)
 	{
-		//Set name of shader from the filepath (all file suffixes are stripped)
-		std::filesystem::path path = filepath;
-		std::filesystem::path name = path.stem();
+		std::filesystem::path name = m_filepath.stem();
 
 		while (name.string().find(".") != std::string::npos)
 			name = name.stem();
@@ -61,7 +59,7 @@ namespace Comet
 		std::ifstream input(m_filepath, std::ios::in | std::ios::binary);
 		if (!input)
 		{
-			Log::cometError("Cannot open shader file");
+			Log::cometError("Cannot open shader file '{0}'", m_filepath.string());
 			CMT_COMET_ASSERT(false);
 			return "";
 		}
@@ -83,9 +81,9 @@ namespace Comet
 		std::array<std::vector<uint32_t>, 2> binaries;
 
 		//All shaders are written in vulkan so compile vulkan and get reflection info
-		SpirvShaderInformation vertexShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::VULKAN, optimisation);
+		SpirvShaderInformation vertexShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_VERTEX_SHADER), m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::VULKAN, OPTIMISATION);
 		m_shaderInformationVulkan.push_back(vertexShaderInfoVulkan);
-		SpirvShaderInformation fragmentShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::VULKAN, optimisation);
+		SpirvShaderInformation fragmentShaderInfoVulkan = SpirvTools::compileAndReflect(m_shaderSources.at(GL_FRAGMENT_SHADER), m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::VULKAN, OPTIMISATION);
 		m_shaderInformationVulkan.push_back(fragmentShaderInfoVulkan);
 
 		//Get OpenGL source version of the shader code
@@ -93,8 +91,8 @@ namespace Comet
 		std::string fragmentShaderSourceOpenGL = SpirvTools::getOpenGLFromBinary(fragmentShaderInfoVulkan.binary);
 
 		//Get spirv OpenGL code
-		binaries[0] = SpirvTools::compile(vertexShaderSourceOpenGL, m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, optimisation);
-		binaries[1] = SpirvTools::compile(fragmentShaderSourceOpenGL, m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, optimisation);
+		binaries[0] = SpirvTools::compile(vertexShaderSourceOpenGL, m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, OPTIMISATION);
+		binaries[1] = SpirvTools::compile(fragmentShaderSourceOpenGL, m_filepath, m_name, ShaderType::FRAGMENT, ShaderEnvironment::OPENGL, OPTIMISATION);
 
 		if (m_rendererID)
 			glDeleteProgram(m_rendererID);
@@ -123,7 +121,7 @@ namespace Comet
 			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(m_rendererID, maxLength, &maxLength, &infoLog[0]);
-			Log::cometError("Shader compilation failed ({0}):\n{1}", m_filepath, &infoLog[0]);
+			Log::cometError("Shader compilation failed ({0}):\n{1}", m_filepath.string(), &infoLog[0]);
 
 			// We don't need the program anymore.
 			glDeleteProgram(m_rendererID);
@@ -200,7 +198,7 @@ namespace Comet
 			for (UniformStructDescriptor uniformStructDescriptor : shaderInfoVulkan.uniformStructs)
 			{
 				OpenGLUniformStruct uniformStruct(uniformStructDescriptor, m_rendererID);
-				m_uniformStructs[uniformStructDescriptor.getName()] = uniformStruct;
+				m_uniformStructs[static_cast<std::string>(uniformStructDescriptor.getName())] = uniformStruct;
 			}
 
 			//Set up shader resources
@@ -208,7 +206,7 @@ namespace Comet
 			for (UniformResourceDescriptor uniformResourceDescriptor : shaderInfoVulkan.uniformResources)
 			{
 				OpenGLUniformResource uniformResource(uniformResourceDescriptor, m_rendererID);
-				m_resources[uniformResourceDescriptor.getName()] = uniformResource;
+				m_resources[static_cast<std::string>(uniformResourceDescriptor.getName())] = uniformResource;
 			}
 		}
 	}

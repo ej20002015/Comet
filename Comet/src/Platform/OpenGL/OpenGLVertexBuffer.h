@@ -9,25 +9,25 @@
 namespace Comet
 {
 
-	class OpenGLVertexBuffer : public VertexBuffer
-	{
-	public:
-		OpenGLVertexBuffer(void* data, uint32_t size, VertexBufferUsage usage = VertexBufferUsage::STATIC);
-		OpenGLVertexBuffer(uint32_t size, VertexBufferUsage usage = VertexBufferUsage::DYNAMIC);
-		~OpenGLVertexBuffer() override;
+class OpenGLVertexBuffer : public VertexBuffer
+{
+public:
+	OpenGLVertexBuffer(const void* const data, const uint32_t size, const Usage usage = Usage::STATIC);
+	OpenGLVertexBuffer(const uint32_t size, const Usage usage = Usage::DYNAMIC);
+	~OpenGLVertexBuffer() override;
 
-		void bind() const override;
+	void bind() const override;
 
-		void setData(void* data, uint32_t size, uint32_t offset = 0) override;
+	void setData(const void* const data, const uint32_t size, const uint32_t offset = 0) override;
 
-		uint32_t getSize() const override { return m_size; }
-		RendererID getRendererID() const override { return m_rendererID; }
+	uint32_t getSize() const override { return m_size; }
+	RendererID getRendererID() const override { return m_rendererID; }
 
-	private:
-		RendererID m_rendererID = 0;
-		uint32_t m_size;
-		VertexBufferUsage m_usage;
-		Unique<Buffer> m_localData;
-	};
+private:
+	RendererID m_rendererID = 0;
+	uint32_t m_size;
+	Usage m_usage;
+	Unique<Buffer> m_localData;
+};
 
 }

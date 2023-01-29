@@ -6,37 +6,37 @@
 namespace Comet
 {
 
-    Reference<VertexBuffer> VertexBuffer::create(void* data, uint32_t size, VertexBufferUsage usage)
+Reference<VertexBuffer> VertexBuffer::create(const void* const data, const uint32_t size, const Usage usage)
+{
+
+    CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
+
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
+    case RendererAPI::Type::OPENGL:
+        return createReference<OpenGLVertexBuffer>(data, size, usage);
+        break;
 
-        CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
-
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-            case RendererAPIType::OPENGL:
-                return createReference<OpenGLVertexBuffer>(data, size, usage);
-                break;
-
-            default:
-                CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-                return nullptr;
-                break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
-    Reference<VertexBuffer> VertexBuffer::create(uint32_t size, VertexBufferUsage usage)
+Reference<VertexBuffer> VertexBuffer::create(const uint32_t size, const Usage usage)
+{
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-        case RendererAPIType::OPENGL:
-            return createReference<OpenGLVertexBuffer>(size, usage);
-            break;
+    case RendererAPI::Type::OPENGL:
+        return createReference<OpenGLVertexBuffer>(size, usage);
+        break;
 
-        default:
-            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-            return nullptr;
-            break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
 }

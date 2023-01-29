@@ -6,36 +6,36 @@
 namespace Comet
 {
 
-    Reference<IndexBuffer> IndexBuffer::create(void* data, uint32_t count, IndexBufferUsage indexBufferUsage)
+Reference<IndexBuffer> IndexBuffer::create(const void* const data, const uint32_t count, const Usage indexBufferUsage)
+{
+    CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
+
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
+    case RendererAPI::Type::OPENGL:
+        return createReference<OpenGLIndexBuffer>(data, count);
+        break;
 
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-        case RendererAPIType::OPENGL:
-            return createReference<OpenGLIndexBuffer>(data, count);
-            break;
-
-        default:
-            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-            return nullptr;
-            break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
-    Reference<IndexBuffer> IndexBuffer::create(uint32_t count, IndexBufferUsage indexBufferUsage)
+Reference<IndexBuffer> IndexBuffer::create(const uint32_t count, const Usage indexBufferUsage)
+{
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-        case RendererAPIType::OPENGL:
-            return createReference<OpenGLIndexBuffer>(count);
-            break;
+    case RendererAPI::Type::OPENGL:
+        return createReference<OpenGLIndexBuffer>(count);
+        break;
 
-        default:
-            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-            return nullptr;
-            break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
 }

@@ -7,71 +7,71 @@
 namespace Comet
 {
 
-	class OpenGLTexture2D : public Texture2D
-	{
-	public:
-		OpenGLTexture2D(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, TextureWrap wrap = TextureWrap::CLAMP_TO_EDGE);
-		OpenGLTexture2D(const std::string& filepath, const bool SRGB = false, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
-		~OpenGLTexture2D() override;
+class OpenGLTexture2D : public Texture2D
+{
+public:
+	OpenGLTexture2D(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_EDGE);
+	OpenGLTexture2D(const std::filesystem::path& filepath, const bool SRGB = false, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_BORDER);
+	~OpenGLTexture2D() override;
 
-		void bind(const uint32_t slot = 0) const override;
+	void bind(const uint32_t slot = 0) const override;
 
-		void setData(void* data, uint32_t size) override;
+	void setData(const void* const data, const uint32_t size) override;
 
-		TextureFormat getTextureFormat() const override { return m_textureFormat; }
-		uint32_t getWidth() const override { return m_width; }
-		uint32_t getHeight() const override { return m_height; }
-		uint32_t getMipMapLevels() const override { return m_mipMapLevels; }
-		RendererID getRendererID() const override { return m_rendererID; }
-		const std::string& getFilepath() const override { return m_filepath; }
-		TextureWrap getTextureWrap() const override { return m_textureWrap; }
-		TextureFilter getTextureMagFilter() const override { return m_textureMagFilter; }
-		TextureFilter getTextureMinFilter() const override { return m_textureMinFilter; }
-		virtual bool getSRGB() const override { return m_SRGB; }
-		virtual bool getHDR() const override { return m_HDR; }
+	Format getTextureFormat() const override { return m_textureFormat; }
+	uint32_t getWidth() const override { return m_width; }
+	uint32_t getHeight() const override { return m_height; }
+	uint32_t getMipMapLevels() const override { return m_mipMapLevels; }
+	RendererID getRendererID() const override { return m_rendererID; }
+	const std::filesystem::path& getFilepath() const override { return m_filepath; }
+	Wrap getTextureWrap() const override { return m_textureWrap; }
+	Filter getTextureMagFilter() const override { return m_textureMagFilter; }
+	Filter getTextureMinFilter() const override { return m_textureMinFilter; }
+	virtual bool getSRGB() const override { return m_SRGB; }
+	virtual bool getHDR() const override { return m_HDR; }
 
-	private:
-		RendererID m_rendererID = 0;
-		TextureFormat m_textureFormat;
-		TextureFilter m_textureMagFilter, m_textureMinFilter;
-		TextureWrap m_textureWrap;
-		uint32_t m_width, m_height;
-		uint32_t m_mipMapLevels;
-		std::string m_filepath;
-		bool m_SRGB;
-		bool m_HDR;
+private:
+	RendererID m_rendererID = 0;
+	Format m_textureFormat;
+	Filter m_textureMagFilter, m_textureMinFilter;
+	Wrap m_textureWrap;
+	uint32_t m_width, m_height;
+	uint32_t m_mipMapLevels;
+	std::filesystem::path m_filepath;
+	bool m_SRGB;
+	bool m_HDR;
 		
-		Unique<Buffer> m_localData;
-	};
+	Unique<Buffer> m_localData;
+};
 
-	class OpenGLTextureCube : public TextureCube
-	{
-	public:
-		OpenGLTextureCube(const TextureFormat textureFormat, const uint32_t width, const uint32_t height);
-		OpenGLTextureCube(const std::string& filepath, const bool SRGB = false);
-		~OpenGLTextureCube() override;
+class OpenGLTextureCube : public TextureCube
+{
+public:
+	OpenGLTextureCube(const Format textureFormat, const uint32_t width, const uint32_t height);
+	OpenGLTextureCube(const std::filesystem::path& filepath, const bool SRGB = false);
+	~OpenGLTextureCube() override;
 
-		void bind(const uint32_t slot = 0) const override;
+	void bind(const uint32_t slot = 0) const override;
 
-		TextureFormat getTextureFormat() const override { return m_textureFormat; }
-		uint32_t getWidth() const override { return m_width; }
-		uint32_t getHeight() const override { return m_height; }
-		uint32_t getMipMapLevels() const override { return m_mipMapLevels; }
-		RendererID getRendererID() const override { return m_rendererID; }
-		const std::string& getFilepath() const override { return m_filepath; }
-		virtual bool getSRGB() const override { return m_SRGB; }
-		virtual bool getHDR() const override { return m_HDR; }
+	Format getTextureFormat() const override { return m_textureFormat; }
+	uint32_t getWidth() const override { return m_width; }
+	uint32_t getHeight() const override { return m_height; }
+	uint32_t getMipMapLevels() const override { return m_mipMapLevels; }
+	RendererID getRendererID() const override { return m_rendererID; }
+	const std::filesystem::path& getFilepath() const override { return m_filepath; }
+	virtual bool getSRGB() const override { return m_SRGB; }
+	virtual bool getHDR() const override { return m_HDR; }
 
-	private:
-		RendererID m_rendererID = 0;
-		TextureFormat m_textureFormat;
-		uint32_t m_width, m_height;
-		uint32_t m_mipMapLevels;
-		std::string m_filepath;
-		bool m_SRGB;
-		bool m_HDR;
+private:
+	RendererID m_rendererID = 0;
+	Format m_textureFormat;
+	uint32_t m_width, m_height;
+	uint32_t m_mipMapLevels;
+	std::filesystem::path m_filepath;
+	bool m_SRGB;
+	bool m_HDR;
 
-		Unique<Buffer> m_localData;
-	};
+	Unique<Buffer> m_localData;
+};
 
 }

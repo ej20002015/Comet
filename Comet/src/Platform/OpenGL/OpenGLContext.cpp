@@ -5,7 +5,7 @@
 
 namespace Comet
 {
-	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
+	OpenGLContext::OpenGLContext(GLFWwindow* const windowHandle)
 		: m_windowHandle(windowHandle)
 	{
 		glfwMakeContextCurrent(windowHandle);
@@ -18,7 +18,7 @@ namespace Comet
 		glfwSwapBuffers(m_windowHandle);
 	}
 
-	void OpenGLContext::onResize(uint32_t width, uint32_t height) const
+	void OpenGLContext::onResize(const uint32_t width, const uint32_t height) const
 	{
 		glViewport(0, 0, width, height);
 	}

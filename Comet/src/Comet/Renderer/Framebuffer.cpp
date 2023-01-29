@@ -10,7 +10,7 @@ Reference<Framebuffer> Framebuffer::create(const Specification& specification)
 {
     switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        case RendererAPIType::OPENGL:
+    case RendererAPI::Type::OPENGL:
         {
             Reference<OpenGLFramebuffer> framebuffer = createReference<OpenGLFramebuffer>(specification);
             FramebufferPool::addToGlobalPool(framebuffer);

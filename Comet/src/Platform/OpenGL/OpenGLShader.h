@@ -14,30 +14,30 @@ namespace Comet
 	class OpenGLShader : public Shader
 	{
 	public:
-		OpenGLShader(const std::string& filepath);
+		OpenGLShader(const std::filesystem::path& filepath);
 		~OpenGLShader() override;
 
 		void reload() override;
 
 		void bind() override;
 
-		void setUniformData(const std::string& uniformName, float data) override      { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::vec2 data) override  { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::vec3 data) override  { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::vec4 data) override  { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const float data) override       { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::vec2& data) override  { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::vec3& data) override  { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::vec4& data) override  { setUniformDataTemplate(uniformName, data); }
 
-		void setUniformData(const std::string& uniformName, glm::mat3 data) override  { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::mat4 data) override  { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::mat3& data) override  { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::mat4& data) override  { setUniformDataTemplate(uniformName, data); }
 
-		void setUniformData(const std::string& uniformName, int32_t data) override    { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::ivec2 data) override { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::ivec3 data) override { setUniformDataTemplate(uniformName, data); }
-		void setUniformData(const std::string& uniformName, glm::ivec4 data) override { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const int32_t data) override     { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::ivec2& data) override { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::ivec3& data) override { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const glm::ivec4& data) override { setUniformDataTemplate(uniformName, data); }
 
-		void setUniformData(const std::string& uniformName, bool data) override       { setUniformDataTemplate(uniformName, data); }
+		void setUniformData(const std::string_view uniformName, const bool data) override        { setUniformDataTemplate(uniformName, data); }
 		
 		const std::string& getName() const override { return m_name; }
-		const std::string& getFilepath() const override { return m_filepath; }
+		const std::filesystem::path& getFilepath() const override { return m_filepath; }
 		RendererID getRendererID() const override { return m_rendererID; }
 
 	private:
@@ -48,13 +48,13 @@ namespace Comet
 		
 		//TODO: Support 'nested' structs
 		template<typename T>
-		void setUniformDataTemplate(const std::string& uniformName, T data)
+		void setUniformDataTemplate(const std::string_view uniformName, const T& data)
 		{
-			size_t dotOperatorIndex = uniformName.find_first_of(".");
-			std::string uniformStructName = uniformName.substr(0, dotOperatorIndex);
-			std::string uniformStructMemberName = uniformName.substr(dotOperatorIndex + 1);
-			if (m_uniformStructs.find(uniformStructName) != m_uniformStructs.end())
-				m_uniformStructs.at(uniformStructName).setMemberData(uniformStructMemberName, data);
+			const size_t dotOperatorIndex = uniformName.find_first_of(".");
+			const std::string_view uniformStructName = uniformName.substr(0, dotOperatorIndex);
+			const std::string_view uniformStructMemberName = uniformName.substr(dotOperatorIndex + 1);
+			if (m_uniformStructs.find(static_cast<std::string>(uniformStructName)) != m_uniformStructs.end())
+				m_uniformStructs.at(static_cast<std::string>(uniformStructName)).setMemberData(uniformStructMemberName, data);
 			else
 			{
 				Log::cometError("Cannot find uniform struct '{0}' in shader '{1}' - value cannot be set", uniformStructName, m_name);
@@ -65,7 +65,7 @@ namespace Comet
 	private:
 		RendererID m_rendererID = 0;
 		std::string m_name;
-		std::string m_filepath;
+		std::filesystem::path m_filepath;
 		std::unordered_map<GLenum, std::string> m_shaderSources;
 		bool m_isCompute = false;
 

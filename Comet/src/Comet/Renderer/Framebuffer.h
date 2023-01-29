@@ -102,4 +102,5 @@ private:
 
 	static Unique<FramebufferPool> s_instance;
 };
+
 }

@@ -7,6 +7,23 @@ namespace YAML
 {
 
 	template<>
+	struct convert<std::filesystem::path>
+	{
+		static Node encode(const std::filesystem::path rhs)
+		{
+			Node node;
+			node.push_back(static_cast<std::string>(rhs.string()));
+			return node;
+		}
+
+		static bool decode(const Node& node, std::filesystem::path& rhs)
+		{
+			rhs = node.as<std::string>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<Comet::UUID>
 	{
 		static Node encode(const Comet::UUID rhs)
@@ -146,35 +163,35 @@ namespace YAML
 	};
 
 	template<>
-	struct convert<Comet::TextureFilter>
+	struct convert<Comet::Texture::Filter>
 	{
-		static Node encode(const Comet::TextureFilter rhs)
+		static Node encode(const Comet::Texture::Filter rhs)
 		{
 			Node node;
 			node.push_back(static_cast<uint32_t>(rhs));
 			return node;
 		}
 
-		static bool decode(const Node& node, Comet::TextureFilter& rhs)
+		static bool decode(const Node& node, Comet::Texture::Filter& rhs)
 		{
-			rhs = static_cast<Comet::TextureFilter>(node.as<uint32_t>());
+			rhs = static_cast<Comet::Texture::Filter>(node.as<uint32_t>());
 			return true;
 		}
 	};
 
 	template<>
-	struct convert<Comet::TextureWrap>
+	struct convert<Comet::Texture::Wrap>
 	{
-		static Node encode(const Comet::TextureWrap rhs)
+		static Node encode(const Comet::Texture::Wrap rhs)
 		{
 			Node node;
 			node.push_back(static_cast<uint32_t>(rhs));
 			return node;
 		}
 
-		static bool decode(const Node& node, Comet::TextureWrap& rhs)
+		static bool decode(const Node& node, Comet::Texture::Wrap& rhs)
 		{
-			rhs = static_cast<Comet::TextureWrap>(node.as<uint32_t>());
+			rhs = static_cast<Comet::Texture::Wrap>(node.as<uint32_t>());
 			return true;
 		}
 	};
@@ -199,6 +216,12 @@ namespace YAML
 
 namespace Comet
 {
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const std::filesystem::path path)
+	{
+		out << path.string();
+		return out;
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const UUID uuid)
 	{
@@ -240,13 +263,13 @@ namespace Comet
 		return out;
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const TextureFilter& textureFilter)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Texture::Filter& textureFilter)
 	{
 		out << static_cast<uint32_t>(textureFilter);
 		return out;
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const TextureWrap& textureWrap)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Texture::Wrap& textureWrap)
 	{
 		out << static_cast<uint32_t>(textureWrap);
 		return out;
@@ -544,9 +567,9 @@ namespace Comet
 		{
 			std::string filepath = textureNode["Filepath"].as<std::string>();
 			bool SRGB = textureNode["SRGB"].as<bool>();
-			TextureFilter textureMagFilter = textureNode["Texture Mag Filter"].as<TextureFilter>();
-			TextureFilter textureMinFilter = textureNode["Texture Min Filter"].as<TextureFilter>();
-			TextureWrap textureWrap = textureNode["Texture Wrap"].as<TextureWrap>();
+			Texture::Filter textureMagFilter = textureNode["Texture Mag Filter"].as<Texture::Filter>();
+			Texture::Filter textureMinFilter = textureNode["Texture Min Filter"].as<Texture::Filter>();
+			Texture::Wrap textureWrap = textureNode["Texture Wrap"].as<Texture::Wrap>();
 
 			texture = Texture2D::create(filepath, SRGB, textureMagFilter, textureMinFilter, textureWrap);
 		}

@@ -30,7 +30,7 @@ namespace Comet
 	}
 
 
-	OpenGLPipeline::OpenGLPipeline(const PipelineSpecification& spec)
+	OpenGLPipeline::OpenGLPipeline(const Pipeline::Specification& spec)
 		: m_spec(spec)
 	{
 		glCreateVertexArrays(1, &m_vertexArrayRendererID);
@@ -46,7 +46,7 @@ namespace Comet
 		glBindVertexArray(m_vertexArrayRendererID);
 
 		uint32_t attributeIndex = 0;
-		uint32_t stride = m_spec.layout.getStride();
+		const uint32_t stride = m_spec.layout.getStride();
 		for (const auto& element : m_spec.layout)
 		{
 			GLenum openGLType = shaderDataTypeToOpenGLBaseType(element.type);

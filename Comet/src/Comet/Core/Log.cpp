@@ -14,7 +14,7 @@ void Log::init()
 	std::vector<spdlog::sink_ptr> logSinks;
 	logSinks.emplace_back(createReference<spdlog::sinks::stdout_color_sink_mt>());
 	logSinks.emplace_back(createReference<spdlog::sinks::basic_file_sink_mt>("Comet.log", true));
-
+	
 	//Set logger format for each sink (file sink format contains no colour information)
 	logSinks[0]->set_pattern("%^[%T] [%l] %n: %v%$");  //For console
 	logSinks[1]->set_pattern("[%T] [%l] %n: %v");      //For file
