@@ -8,21 +8,23 @@
 namespace Comet
 {
 
-	class SceneSerializer
-	{
-	public:
-		static void serialize(const std::string& filepath, Reference<Scene> scene);
-		static void deserialize(const std::string& filepath, Reference<Scene> scene);
+class SceneSerializer
+{
+public:
+	static constexpr const char* const FILE_EXTENSION = ".cmtscn";
 
-	private:
-		static void serializeEntity(YAML::Emitter& out, Entity entity);
-		static void deserializeEntityNode(const YAML::Node& entityNode, const Reference<Scene>& scene);
+	static void serialize(const std::filesystem::path& filepath, Reference<Scene> scene);
+	static void deserialize(const std::filesystem::path& filepath, Reference<Scene> scene);
 
-		template<typename T, typename SerializeComponentFunction>
-		static void serializeComponent(YAML::Emitter& out, Entity entity, SerializeComponentFunction serializeFunction);
+private:
+	static void serializeEntity(YAML::Emitter& out, Entity entity);
+	static void deserializeEntityNode(const YAML::Node& entityNode, const Reference<Scene>& scene);
 
-		template<typename T, typename DeserializeComponentFunction>
-		static void deserializeComponent(const YAML::Node& entityNode, Entity deserializedEntity, DeserializeComponentFunction deserializeFunction);
-	};
+	template<typename T, typename SerializeComponentFunction>
+	static void serializeComponent(YAML::Emitter& out, Entity entity, SerializeComponentFunction serializeFunction);
+
+	template<typename T, typename DeserializeComponentFunction>
+	static void deserializeComponent(const YAML::Node& entityNode, Entity deserializedEntity, DeserializeComponentFunction deserializeFunction);
+};
 
 }

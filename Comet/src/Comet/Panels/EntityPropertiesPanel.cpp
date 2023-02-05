@@ -246,7 +246,7 @@ void EntityPropertiesPanel::onImGuiRender()
 
 			ImGuiUtilities::property("Texture Type", textureTypes, textureType);
 
-			if (spriteComponent.spriteTextureType == SpriteComponent::SpriteTextureType::SUB_TEXTURE)
+			if (spriteComponent.spriteTextureType == SpriteComponent::TextureType::SUB_TEXTURE)
 			{
 				Texture2DSubTexture& subTexture = spriteComponent.subTexture;
 

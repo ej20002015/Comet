@@ -62,4 +62,13 @@ namespace Comet
 
 		return "";
 	}
+
+	std::string PlatformUtilities::getFilterForExtension(const std::string_view extension, const std::string_view fileType)
+	{
+		std::stringstream ss;
+		ss << fileType << ' ';
+		ss << "(*" << extension << ")\0";
+		ss << '*' << extension << "\0\0";
+		return ss.str();
+	}
 }

@@ -15,6 +15,8 @@ namespace Comet
 
 	void CometEditorLayer::onAttach()
 	{
+        m_sceneFileFilter = PlatformUtilities::getFilterForExtension(SceneSerializer::FILE_EXTENSION, "Comet Scene");
+
         Comet::Renderer::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 
         m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
@@ -367,7 +369,7 @@ namespace Comet
             if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::isKeyPressed(KeyCode::KEY_LEFT_ALT))
             {
                 int32_t pixelValue = m_framebuffer->readColorAttachmentPixel(1, static_cast<uint32_t>(m_mousePositionRelativeToViewport.x), static_cast<uint32_t>(m_mousePositionRelativeToViewport.y));
-                Entity clickedEntity = (pixelValue == -1) ? Entity() : Entity(m_scene.get(), static_cast<entt::entity>(pixelValue));
+                Entity clickedEntity = (pixelValue == -1) ? Entity() : Entity(m_scene.get(), static_cast<Entity::Handle>(pixelValue));
                 m_sceneHierarchyPanel.setSelectedEntity(clickedEntity);
             }
 
@@ -387,14 +389,14 @@ namespace Comet
 
     void CometEditorLayer::saveScene()
     {
-        std::string filepath = PlatformUtilities::saveFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0)", "cmtscn");
+        const std::string filepath = PlatformUtilities::saveFile(m_sceneFileFilter.c_str(), SceneSerializer::FILE_EXTENSION);
         if (!filepath.empty())
             SceneSerializer::serialize(filepath, m_scene);
     }
 
     void CometEditorLayer::openScene()
     {
-        std::string filepath = PlatformUtilities::openFile("Comet Scene (*.cmtscn)\0*.cmtscn\0\0");
+        std::string filepath = PlatformUtilities::openFile(m_sceneFileFilter.c_str());
         if (!filepath.empty())
         {
             m_guizmoOperation = -1;

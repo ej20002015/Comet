@@ -6,35 +6,35 @@
 namespace Comet
 {
 
-	class EntityNativeScript
+class EntityNativeScript
+{
+public:
+	EntityNativeScript() = default;
+	virtual ~EntityNativeScript() = default;
+
+protected:
+	virtual void onStart() {}
+	virtual void onUpdate(Timestep ts) {}
+	virtual void onEnd() {}
+
+	template<typename T>
+	bool hasComponent() const
 	{
-	public:
-		EntityNativeScript() = default;
-		virtual ~EntityNativeScript() = default;
+		return m_entity.hasComponent<T>();
+	}
 
-	protected:
-		virtual void onStart() {}
-		virtual void onUpdate(Timestep ts) {}
-		virtual void onEnd() {}
+	template<typename T>
+	T& getComponent()
+	{
+		return m_entity.getComponent<T>();
+	}
 
-		template<typename T>
-		bool hasComponent()
-		{
-			return m_entity.hasComponent<T>();
-		}
+private:
+	Entity m_entity;
 
-		template<typename T>
-		T& getComponent()
-		{
-			return m_entity.getComponent<T>();
-		}
+	friend class Scene;
+};
 
-	private:
-		Entity m_entity;
-
-		friend class Scene;
-	};
-
-	//TODO: static library that keeps track of these types of scripts? Then the user can select one from the Editor Component Panel?
+//TODO: static library that keeps track of these types of scripts? Then the user can select one from the Editor Component Panel?
 
 }

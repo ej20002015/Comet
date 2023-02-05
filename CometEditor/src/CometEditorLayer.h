@@ -44,6 +44,7 @@ namespace Comet
 		SceneState m_sceneState = SceneState::EDIT;
 		Reference<Scene> m_scene;
 		EditorCamera m_editorCamera;
+		std::string m_sceneFileFilter;
 
 		//Panels
 		SceneHierarchyPanel m_sceneHierarchyPanel;
