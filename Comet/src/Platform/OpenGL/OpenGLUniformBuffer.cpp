@@ -39,184 +39,109 @@ OpenGLUniformStruct::OpenGLUniformStruct(const UniformStructDescriptor& descript
 	{
 		std::string memberFullName = getMemberFullName(member.getName());
 		GLint location = glGetUniformLocation(programID, memberFullName.c_str());
-		if (location == -1)
-		{
-			Log::cometError("Cannot get location of uniform {0}", m_descriptor.getName());
-			CMT_COMET_ASSERT(false);
-		}
+		CMT_COMET_ASSERT_MESSAGE(location != -1, fmt::format("Cannot get location of uniform {0}", m_descriptor.getName()))
 		m_locations[memberFullName] = location;
 	}
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const float data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::FLOAT)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'FLOAT' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT))
 
 	glUniform1f(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec2& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 
-	if (uniformDescriptor.getType() != ShaderDataType::FLOAT2)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'FLOAT2' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
-
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT2, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT2))
 	glUniform2f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec3& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::FLOAT3)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'FLOAT3' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT3))
 
 	glUniform3f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec4& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::FLOAT4)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'FLOAT4' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT4))
 
 	glUniform4f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z, data.w);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::mat3& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::MAT3)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'MAT3' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::MAT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::MAT3))
 
 	glUniform3fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, &data[0][0]);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::mat4& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::MAT4)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'MAT4' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::MAT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::MAT4))
 
 	glUniform4fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, &data[0][0]);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const int32_t data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::INT)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'INT' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT))
 
 	glUniform1i(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec2& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::INT2)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'INT2' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT2, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT2))
 
 	glUniform2i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec3& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::INT3)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'INT3' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT3))
 
 	glUniform3i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec4& data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::INT4)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'INT4' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT4))
 
 	glUniform4i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z, data.w);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const bool data)
 {
-	UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
-
-	if (uniformDescriptor.getType() != ShaderDataType::BOOL)
-	{
-		Log::cometError("member '{0}' in uniform struct '{1}' is not of type 'BOOL' - value cannot be set", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return;
-	}
+	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::BOOL, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::BOOL))
 
 	glUniform1i(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
 }
 
 UniformDescriptor OpenGLUniformStruct::getMemberDescriptor(const std::string_view memberName)
 {
-	std::vector<UniformDescriptor>::const_iterator it = std::find_if(m_descriptor.begin(), m_descriptor.end(), [=](const UniformDescriptor& uniformDescriptor)
+	std::vector<UniformDescriptor>::const_iterator it = std::find_if(m_descriptor.begin(), m_descriptor.end(), [memberName](const UniformDescriptor& uniformDescriptor)
 	{
 		return uniformDescriptor.getName() == memberName;
 	});
 
-	if (it != m_descriptor.end())
-		return *it;
-	else
-	{
-		Log::cometError("No member '{0}' exists in the uniform struct '{1}'", memberName, m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-		return UniformDescriptor("INVALID", ShaderDataType::BOOL, 0);
-	}
+	CMT_COMET_ASSERT_MESSAGE(it != m_descriptor.end(), fmt::format("No member '{0}' exists in the uniform struct '{1}'", memberName, m_descriptor.getName()));
+
+	return *it;
 }
 
 std::string OpenGLUniformStruct::getMemberFullName(const std::string_view memberName)
@@ -229,17 +154,11 @@ std::string OpenGLUniformStruct::getMemberFullName(const std::string_view member
 OpenGLUniformResource::OpenGLUniformResource(const UniformResourceDescriptor& descriptor, RendererID programID)
 	: m_descriptor(descriptor)
 {
-	GLint location = glGetUniformLocation(programID, m_descriptor.getName().data());
-	if (location == -1)
-	{
-		Log::cometError("Cannot get location of uniform {0}", m_descriptor.getName());
-		CMT_COMET_ASSERT(false);
-	}
-	else
-	{
-		glUseProgram(programID);
-		glUniform1i(location, m_descriptor.getBindingPoint());
-	}
+	const GLint location = glGetUniformLocation(programID, m_descriptor.getName().data());
+	CMT_COMET_ASSERT_MESSAGE(location != -1, fmt::format("Cannot get location of uniform {0}", m_descriptor.getName()));
+
+	glUseProgram(programID);
+	glUniform1i(location, m_descriptor.getBindingPoint());
 }
 
 }

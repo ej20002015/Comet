@@ -24,7 +24,7 @@ namespace Comet
 			return s_textures.at(textureName);
 		else
 		{
-			CMT_COMET_ASSERT_MESSAGE(false, "No Comet Editor Resource Texture called " + textureName);
+			CMT_COMET_ASSERT_MESSAGE(false, fmt::format("No Comet Editor Resource Texture called {0}"));
 			return nullptr;
 		}
 	}

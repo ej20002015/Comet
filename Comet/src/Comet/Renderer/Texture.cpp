@@ -53,11 +53,7 @@ Reference<Texture2D> Texture2D::create(const Format format, const uint32_t width
 Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, const bool SRGB, const Filter magFilter, const Filter minFilter, const Wrap wrap)
 {
     if (filepath.empty())
-    {
-        Log::cometError("Texture2D filepath is empty");
-        CMT_COMET_ASSERT(false);
-        return nullptr;
-    }
+        throw CometException() << "Texture2D filepath cannot be empty";
 
     Reference<Texture> texture = TextureManager::getTexture(filepath);
     if (texture)
@@ -97,11 +93,7 @@ Reference<TextureCube> TextureCube::create(const Format textureFormat, const uin
 Reference<TextureCube> TextureCube::create(const std::filesystem::path& filepath, const bool SRGB)
 {
     if (filepath.empty())
-    {
-        Log::cometError("Texture Cube filepath is empty");
-        CMT_COMET_ASSERT(false);
-        return nullptr;
-    }
+        throw CometException() << "Texture Cube filepath cannot be empty";
 
     Reference<Texture> texture = TextureManager::getTexture(filepath);
     if (texture)

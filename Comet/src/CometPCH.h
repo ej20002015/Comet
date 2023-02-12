@@ -16,6 +16,7 @@
 #include <typeinfo>
 #include <stdexcept>
 #include <ranges>
+#include <format>
 
 //STL Data structures
 #include <string>

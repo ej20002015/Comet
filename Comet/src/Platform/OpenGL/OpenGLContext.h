@@ -8,16 +8,16 @@
 namespace Comet
 {
 
-	class OpenGLContext : public RenderingContext
-	{
-	public:
-		OpenGLContext(GLFWwindow* const windowHandle);
+class OpenGLContext : public RenderingContext
+{
+public:
+	OpenGLContext(GLFWwindow* const windowHandle);
 		
-		void swapBuffers() const override;
-		void onResize(const uint32_t width, const uint32_t height) const override;
+	void swapBuffers() const override;
+	void onResize(const uint32_t width, const uint32_t height) const override;
 
-	private:
-		GLFWwindow* const m_windowHandle;
-	};
+private:
+	GLFWwindow* const m_windowHandle;
+};
 
 }

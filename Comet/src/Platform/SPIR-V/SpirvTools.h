@@ -2,6 +2,7 @@
 #include "CometPCH.h"
 
 #include "Comet/Renderer/UniformBufferDescriptor.h"
+#include "Comet/Renderer/ShaderType.h"
 
 namespace Comet
 {
@@ -10,13 +11,6 @@ namespace Comet
 	{
 		OPENGL,
 		VULKAN
-	};
-
-	enum class ShaderType
-	{
-		VERTEX,
-		FRAGMENT,
-		COMPUTE
 	};
 
 	struct SpirvShaderInformation

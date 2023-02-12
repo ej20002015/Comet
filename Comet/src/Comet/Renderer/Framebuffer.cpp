@@ -36,12 +36,7 @@ FramebufferPool::FramebufferPool(const uint32_t maxPoolSize)
 
 void FramebufferPool::add(const Reference<Framebuffer>& framebuffer)
 {
-    if (m_pool.size() == m_maxPoolSize)
-    {
-        Log::cometError("Max pool size will be exceeded - Frambuffer not added");
-        CMT_COMET_ASSERT(false);
-        return;
-    }
+    CMT_COMET_ASSERT_MESSAGE(m_pool.size() != m_maxPoolSize, "Max pool size will be exceeded");
 
     m_pool.push_back(framebuffer);
 }

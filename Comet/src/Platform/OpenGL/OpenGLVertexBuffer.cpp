@@ -12,10 +12,10 @@ static GLenum getOpenGLUsage(VertexBuffer::Usage usage)
 	{
 	case VertexBuffer::Usage::STATIC:    return GL_STATIC_DRAW; break;
 	case VertexBuffer::Usage::DYNAMIC:   return GL_DYNAMIC_DRAW; break;
+	default:
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown vertex buffer usage");
+		return 0;
 	}
-
-	CMT_COMET_ASSERT_MESSAGE(false, "Unknown vertex buffer usage");
-	return 0;
 }
 
 

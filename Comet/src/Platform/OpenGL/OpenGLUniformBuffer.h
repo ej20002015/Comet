@@ -69,6 +69,8 @@ private:
 	std::string getMemberFullName(const std::string_view memberName);
 
 private:
+	static constexpr std::string_view TYPE_ERROR_STR = "member '{0}' in uniform struct '{1} is not of type '{2}' - value cannot be set";
+
 	UniformStructDescriptor m_descriptor;
 	std::unordered_map<std::string, GLint> m_locations;
 };

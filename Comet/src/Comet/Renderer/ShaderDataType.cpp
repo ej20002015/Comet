@@ -4,7 +4,7 @@
 namespace Comet
 {
 
-uint32_t getShaderDataTypeSize(ShaderDataType type)
+uint32_t getShaderDataTypeSize(const ShaderDataType type)
 {
 	switch (type)
 	{
@@ -27,7 +27,7 @@ uint32_t getShaderDataTypeSize(ShaderDataType type)
 	}
 }
 
-uint32_t getShaderDataTypeComponentCount(ShaderDataType type)
+uint32_t getShaderDataTypeComponentCount(const ShaderDataType type)
 {
 	switch (type)
 	{
@@ -50,7 +50,7 @@ uint32_t getShaderDataTypeComponentCount(ShaderDataType type)
 	}
 }
 
-std::string getShaderDataTypeString(ShaderDataType type)
+std::string getShaderDataTypeString(const ShaderDataType type)
 {
 	switch (type)
 	{

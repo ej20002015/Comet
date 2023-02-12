@@ -27,8 +27,8 @@ public:
 	Wrap getTextureWrap() const override { return m_textureWrap; }
 	Filter getTextureMagFilter() const override { return m_textureMagFilter; }
 	Filter getTextureMinFilter() const override { return m_textureMinFilter; }
-	virtual bool getSRGB() const override { return m_SRGB; }
-	virtual bool getHDR() const override { return m_HDR; }
+	virtual bool getSRGB() const override { return m_isSRGB; }
+	virtual bool getHDR() const override { return m_isHDR; }
 
 private:
 	RendererID m_rendererID = 0;
@@ -38,8 +38,8 @@ private:
 	uint32_t m_width, m_height;
 	uint32_t m_mipMapLevels;
 	std::filesystem::path m_filepath;
-	bool m_SRGB;
-	bool m_HDR;
+	bool m_isSRGB;
+	bool m_isHDR;
 		
 	Unique<Buffer> m_localData;
 };
@@ -59,8 +59,8 @@ public:
 	uint32_t getMipMapLevels() const override { return m_mipMapLevels; }
 	RendererID getRendererID() const override { return m_rendererID; }
 	const std::filesystem::path& getFilepath() const override { return m_filepath; }
-	virtual bool getSRGB() const override { return m_SRGB; }
-	virtual bool getHDR() const override { return m_HDR; }
+	virtual bool getSRGB() const override { return m_isSRGB; }
+	virtual bool getHDR() const override { return m_isHDR; }
 
 private:
 	RendererID m_rendererID = 0;
@@ -68,8 +68,8 @@ private:
 	uint32_t m_width, m_height;
 	uint32_t m_mipMapLevels;
 	std::filesystem::path m_filepath;
-	bool m_SRGB;
-	bool m_HDR;
+	bool m_isSRGB;
+	bool m_isHDR;
 
 	Unique<Buffer> m_localData;
 };

@@ -4,16 +4,16 @@
 namespace Comet
 {
 
-	class OpenGLRenderPass : public RenderPass
-	{
-	public:
-		OpenGLRenderPass(const Specification& specification) : specification(specification) {}
-		~OpenGLRenderPass() = default;
+class OpenGLRenderPass : public RenderPass
+{
+public:
+	OpenGLRenderPass(const Specification& specification) : specification(specification) {}
+	~OpenGLRenderPass() = default;
 
-		const Specification& getSpecification() const override { return specification; }
+	const Specification& getSpecification() const override { return specification; }
 
-	private:
-		const Specification specification;
-	};
+private:
+	const Specification specification;
+};
 
 }

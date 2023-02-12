@@ -48,4 +48,15 @@ private:
 	static Reference<spdlog::logger> s_cometLogger, s_clientLogger;
 };
 
+template<typename T>
+std::string containerToStr(const T& container)
+{
+	std::stringstream ss;
+
+	for (const auto& item : container)
+		ss << item;
+
+	return ss.str();
+}
+
 }

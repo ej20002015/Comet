@@ -16,8 +16,7 @@ namespace Comet
 		case ShaderEnvironment::VULKAN:   return ".VulkanBinary";  break;
 		case ShaderEnvironment::OPENGL:   return ".OpenGLBinary"; break;
 		default:
-			Log::cometError("Unkown shader environment");
-			CMT_COMET_ASSERT(false);
+			CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader environment");
 			return "UNKNOWN";
 			break;
 		}
@@ -31,8 +30,7 @@ namespace Comet
 			case ShaderType::FRAGMENT:   return ".frag"; break;
 			case ShaderType::COMPUTE:    return ".comp"; break;
 			default:
-				Log::cometError("Unkown shader type");
-				CMT_COMET_ASSERT(false);
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader type");
 				return "UNKNOWN";
 				break;
 		}
@@ -46,8 +44,7 @@ namespace Comet
 			case ShaderType::FRAGMENT:   return shaderc_shader_kind::shaderc_fragment_shader;  break;
 			case ShaderType::COMPUTE:    return shaderc_shader_kind::shaderc_compute_shader;  break;
 			default:
-				Log::cometError("Unkown shader type");
-				CMT_COMET_ASSERT(false);
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader type");
 				return shaderc_glsl_infer_from_source;
 				break;
 		}
@@ -61,8 +58,7 @@ namespace Comet
 			case ShaderType::FRAGMENT:  return "FRAGMENT"; break;
 			case ShaderType::COMPUTE:   return "COMPUTE"; break;
 			default:
-				Log::cometError("Unkown shader type");
-				CMT_COMET_ASSERT(false);
+				CMT_COMET_ASSERT_MESSAGE(false, "Unknown shader type");
 				return "UNKNOWN";
 				break;
 		}
@@ -134,6 +130,7 @@ namespace Comet
 	std::vector<uint32_t> SpirvTools::compile(const std::string& shaderSource, const std::filesystem::path& sourcePath, const std::string& name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimise)
 	{
 		CMT_COMET_ASSERT_MESSAGE(type != ShaderType::COMPUTE, "Compute shaders not yet supported");
+
 		std::vector<uint32_t> binary;
 		compileOrRetrieveBinary(binary, shaderSource, sourcePath, name, type, shaderEnvironment, optimise);
 		return binary;
@@ -179,7 +176,7 @@ namespace Comet
 			switch (shaderEnvironment)
 			{
 				case ShaderEnvironment::OPENGL:
-					options.SetTargetEnvironment(shaderc_target_env_opengl_compat, shaderc_env_version_opengl_4_5);
+					options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
 					break;
 				case ShaderEnvironment::VULKAN:
 					options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
@@ -196,10 +193,7 @@ namespace Comet
 			shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(shaderSource, getShadercType(type), spirvName.c_str(), options);
 
 			if (result.GetCompilationStatus() != shaderc_compilation_status_success)
-			{
-				Log::cometError(result.GetErrorMessage());
-				CMT_COMET_ASSERT(false);
-			}
+				throw CometException() << fmt::format("Compilation Error: {0}", result.GetErrorMessage());
 
 			binary = std::vector<uint32_t>(result.cbegin(), result.cend());
 
@@ -211,10 +205,7 @@ namespace Comet
 
 			std::ofstream output(cachedBinaryPath, std::ios::binary);
 			if (!output)
-			{
-				Log::cometError("Cannot create file to cache shader binary at {0}", cachedDirectoryPath.string());
-				CMT_COMET_ASSERT(false);
-			}
+				throw CometException() << fmt::format("Cannot create file to cache shader binary at '{0}'", cachedDirectoryPath.string());
 
 			output.write((char*)binary.data(), binary.size() * sizeof(uint32_t));
 			output.close();

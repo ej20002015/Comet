@@ -61,11 +61,9 @@ void Scene::renderSprites()
 		const glm::mat4& transform = group.get<TransformComponent>(entity).getTransform();
 
 		if (spriteComponent.spriteTextureType == SpriteComponent::TextureType::NORMAL)
-			Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor);
+			Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
 		else
-		{
-			Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor);
-		}
+			Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
 	}
 }
 
