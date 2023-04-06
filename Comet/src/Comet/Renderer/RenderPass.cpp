@@ -6,19 +6,19 @@
 namespace Comet
 {
 
-    Reference<RenderPass> RenderPass::create(const RenderPassSpecification& specification)
+Reference<RenderPass> RenderPass::create(const Specification& specification)
+{
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-        case RendererAPIType::OPENGL:
-            return createReference<OpenGLRenderPass>(specification);
-            break;
+    case RendererAPI::Type::OPENGL:
+        return createReference<OpenGLRenderPass>(specification);
+        break;
 
-        default:
-            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-            return nullptr;
-            break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
 }

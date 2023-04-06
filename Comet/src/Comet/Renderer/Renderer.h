@@ -8,21 +8,21 @@
 namespace Comet
 {
 
-	class Renderer
-	{
-	public:
-		Renderer() = delete;
+class Renderer
+{
+public:
+	Renderer() = delete;
 
-		static void init();
-		static void shutdown();
+	static void init();
+	static void shutdown();
 
-		static void setClearColor(const glm::vec4& color);
-		static void clear();
+	static void setClearColor(const glm::vec4& color);
+	static void clear();
 
-		static bool getBackfaceCulling();
-		static void setBackfaceCulling(bool culling);
+	static bool getBackfaceCulling();
+	static void setBackfaceCulling(const bool culling);
 
-		static void drawIndexed(uint32_t count, PrimitiveType primitive, bool depthTest = true);
-	};
+	static void drawIndexed(const uint32_t count, const RendererAPI::PrimitiveType primitive, const bool depthTest = true);
+};
 
 }

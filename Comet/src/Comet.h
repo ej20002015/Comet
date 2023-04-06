@@ -20,6 +20,8 @@
 #include "Comet/Renderer/Renderer.h"
 #include "Comet/Renderer/Renderer2D.h"
 #include "Comet/Renderer/EditorCamera.h"
+#include "Comet/Renderer/Framebuffer.h"
+#include "Comet/Renderer/Camera.h"
 
 //Scene System
 #include "Comet/Scene/Scene.h"
@@ -31,10 +33,6 @@
 //Panels
 #include "Comet/Panels/EntityPropertiesPanel.h"
 #include "Comet/Panels/SceneHierarchyPanel.h"
-
-//maybe temp?
-#include "Comet/Renderer/Framebuffer.h"
-#include "Comet/Renderer/Camera.h"
 
 //ImGui
 #include "Comet/ImGui/ImGuiUtilities.h"

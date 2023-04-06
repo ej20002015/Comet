@@ -9,21 +9,21 @@
 namespace Comet
 {
 
-    Unique<RenderingContext> RenderingContext::create(void* implementationWindowHandle)
+Unique<RenderingContext> RenderingContext::create(void* const implementationWindowHandle)
+{
+    CMT_COMET_ASSERT_MESSAGE(implementationWindowHandle, "Window handle is null")
+
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        CMT_COMET_ASSERT_MESSAGE(implementationWindowHandle, "Window handle is null")
+    case RendererAPI::Type::OPENGL:
+        return createUnique<OpenGLContext>(reinterpret_cast<GLFWwindow* const>(implementationWindowHandle));
+        break;
 
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-            case RendererAPIType::OPENGL:
-                return createUnique<OpenGLContext>(static_cast<GLFWwindow*>(implementationWindowHandle));
-                break;
-
-            default:
-                CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-                return nullptr;
-                break;
-        }
+    default:
+        CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+        return nullptr;
+        break;
     }
+}
 
 }

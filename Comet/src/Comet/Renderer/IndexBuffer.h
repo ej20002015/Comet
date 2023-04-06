@@ -6,26 +6,28 @@
 namespace Comet
 {
 
-	enum class IndexBufferUsage
+class IndexBuffer
+{
+public:
+
+	enum class Usage
 	{
 		STATIC, DYNAMIC
 	};
 
-	class IndexBuffer
-	{
-	public:
-		static Reference<IndexBuffer> create(void* data, uint32_t count, IndexBufferUsage usage = IndexBufferUsage::STATIC);
-		static Reference<IndexBuffer> create(uint32_t count, IndexBufferUsage usage = IndexBufferUsage::DYNAMIC);
+public:
+	static Reference<IndexBuffer> create(const void* const data, const uint32_t count, const Usage usage = Usage::STATIC);
+	static Reference<IndexBuffer> create(const uint32_t count, const Usage usage = Usage::DYNAMIC);
 
-		virtual ~IndexBuffer() = default;
+	virtual ~IndexBuffer() = default;
 
-		virtual void bind() const = 0;
+	virtual void bind() const = 0;
 
-		virtual void setData(void* data, uint32_t count, uint32_t offset = 0) = 0;
+	virtual void setData(const void* const data, const uint32_t count, const uint32_t offset = 0) = 0;
 
-		virtual uint32_t getSize() const = 0;
-		virtual uint32_t getCount() const = 0;
-		virtual RendererID getRendererID() const = 0;
-	};
+	virtual uint32_t getSize() const = 0;
+	virtual uint32_t getCount() const = 0;
+	virtual RendererID getRendererID() const = 0;
+};
 
 }

@@ -9,8 +9,8 @@ Scene:
           Tag: spriteEntity1
         TransformComponent:
           Translation: [-3.3482666, -0.481121391, 3.55941105]
-          Rotation: [0, 0.389471382, 0, 0.921038568]
-          Scale: [3.30322146, 2.51127863, 5.90708399]
+          Rotation: [0, 0.0689078867, 0, 0.997623026]
+          Scale: [3.30322313, 2.51127863, 5.90707111]
         SpriteComponent:
           Texture:
             Filepath: assets/textures/container2.png
@@ -326,12 +326,12 @@ Scene:
         CameraComponent:
           Camera:
             Projection Type: 1
-            Aspect Ratio: 0.934911251
+            Aspect Ratio: 1.4481982
             Fixed Aspect Ratio: false
             Perspective FOV: 45
             Perspective Near Plane: 0.00100000005
             Perspective Far Plane: 1000
             Orthographic Size: 20.1000004
-            Orthographic Near Plane: -1
+            Orthographic Near Plane: -8.30000019
             Orthographic Far Plane: 1
           Primary: true

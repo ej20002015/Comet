@@ -6,22 +6,24 @@
 namespace Comet
 {
 
-	struct PipelineSpecification
+class Pipeline
+{
+public:
+
+	struct Specification
 	{
 		VertexBufferLayout layout;
 	};
 
-	class Pipeline
-	{
-	public:
-		virtual ~Pipeline() = default;
+public:
+	virtual ~Pipeline() = default;
 
-		static Reference<Pipeline> create(const PipelineSpecification& spec);
+	static Reference<Pipeline> create(const Specification& spec);
 
-		//TODO: Remove when render command buffers are eventually added
-		virtual void bind() = 0;
+	//TODO: Remove when render command buffers are eventually added
+	virtual void bind() = 0;
 
-		virtual const PipelineSpecification& getPipelineSpecification() const = 0;
-	};
+	virtual const Specification& getPipelineSpecification() const = 0;
+};
 
 }

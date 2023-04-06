@@ -6,112 +6,116 @@
 namespace Comet
 {
 
-	enum class TextureFormat
+class Texture
+{
+public:
+
+	enum class Format
 	{
 		RGB, RGBA, FLOAT16
 	};
 
-	enum class TextureWrap
+	enum class Wrap
 	{
 		CLAMP_TO_BORDER, CLAMP_TO_EDGE, REPEAT
 	};
 
-	enum class TextureFilter
+	enum class Filter
 	{
 		NEAREST, LINEAR
 	};
 
-	class Texture
-	{
-	public:
-		virtual ~Texture() = default;
+public:
+	static const UnorderedStrSet SUPPORTED_IMG_FILE_TYPES;
 
-		virtual void bind(uint32_t slot = 0) const = 0;
+	virtual ~Texture() = default;
 
-		virtual TextureFormat getTextureFormat() const = 0;
-		virtual uint32_t getWidth() const = 0;
-		virtual uint32_t getHeight() const = 0;
-		virtual uint32_t getMipMapLevels() const = 0;
-		virtual RendererID getRendererID() const = 0;
-		virtual bool getSRGB() const = 0;
-		virtual bool getHDR() const = 0;
-		virtual const std::string& getFilepath() const = 0;
+	virtual void bind(const uint32_t slot = 0) const = 0;
 
-		bool operator==(const Texture& other) const { return getRendererID() == other.getRendererID(); }
+	virtual Format getTextureFormat() const = 0;
+	virtual uint32_t getWidth() const = 0;
+	virtual uint32_t getHeight() const = 0;
+	virtual uint32_t getMipMapLevels() const = 0;
+	virtual RendererID getRendererID() const = 0;
+	virtual bool getSRGB() const = 0;
+	virtual bool getHDR() const = 0;
+	virtual const std::filesystem::path& getFilepath() const = 0;
 
-		static const std::string s_noFilepathName;
+	bool operator==(const Texture& other) const { return getRendererID() == other.getRendererID(); }
 
-		static uint32_t calculateMipMapLevelsNeeded(const uint32_t width, const uint32_t height);
-		static uint32_t getBPP(const TextureFormat format);
-	};
+	const static std::filesystem::path NO_FILEPATH_NAME;
 
-	class Texture2D : public Texture
-	{
-	public:
-		virtual ~Texture2D() = default;
+	static uint32_t calculateMipMapLevelsNeeded(const uint32_t width, const uint32_t height);
+	static uint32_t getBPP(const Format format);
+};
 
-		static Reference<Texture2D> create(TextureFormat format, uint32_t width, uint32_t height, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, TextureWrap wrap = TextureWrap::CLAMP_TO_EDGE);
-		static Reference<Texture2D> create(const std::string& filepath, const bool SRGB = false, TextureFilter magFilter = TextureFilter::LINEAR, TextureFilter minFilter = TextureFilter::LINEAR, const TextureWrap wrap = TextureWrap::CLAMP_TO_BORDER);
+class Texture2D : public Texture
+{
+public:
+	virtual ~Texture2D() = default;
 
-		virtual void setData(void* data, uint32_t size) = 0;
+	static Reference<Texture2D> create(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_EDGE);
+	static Reference<Texture2D> create(const std::filesystem::path& filepath, const bool SRGB = false, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_BORDER);
 
-		virtual TextureWrap getTextureWrap() const = 0;
-		virtual TextureFilter getTextureMagFilter() const = 0;
-		virtual TextureFilter getTextureMinFilter() const = 0;
-	};
+	virtual void setData(const void* const data, const uint32_t size) = 0;
 
-	class TextureCube : public Texture
-	{
-	public:
-		virtual ~TextureCube() = default;
+	virtual Wrap getTextureWrap() const = 0;
+	virtual Filter getTextureMagFilter() const = 0;
+	virtual Filter getTextureMinFilter() const = 0;
+};
 
-		static Reference<TextureCube> create(const TextureFormat textureFormat, const uint32_t width, const uint32_t height);
-		static Reference<TextureCube> create(const std::string& filepath, const bool SRGB = false);
-	};
+class TextureCube : public Texture
+{
+public:
+	virtual ~TextureCube() = default;
 
-	class Texture2DSubTexture
-	{
-	public:
-		Texture2DSubTexture() = default;
-		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas)
-			: m_textureAtlas(textureAtlas) {}
-		Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& textureScale = glm::vec2(1.0f));
-		~Texture2DSubTexture() = default;
+	static Reference<TextureCube> create(const Format textureFormat, const uint32_t width, const uint32_t height);
+	static Reference<TextureCube> create(const std::filesystem::path& filepath, const bool SRGB = false);
+};
 
-		Reference<Texture2D> getTextureAtlas() const { return m_textureAtlas; }
-		void setTextureAtlas(const Reference<Texture2D> textureAtlas) { m_textureAtlas = textureAtlas; }
+class Texture2DSubTexture
+{
+public:
+	Texture2DSubTexture() = default;
+	Texture2DSubTexture(const Reference<Texture2D>& textureAtlas)
+		: m_textureAtlas(textureAtlas) {}
+	Texture2DSubTexture(const Reference<Texture2D>& textureAtlas, const uint32_t textureAtlasCellSize, const glm::vec2& textureAtlasIndex, const glm::vec2& textureScale = glm::vec2(1.0f));
+	~Texture2DSubTexture() = default;
 
-		uint32_t getCellSize() const { return m_textureAtlasCellSize; }
-		void setCellSize(uint32_t textureAtlasCellSize) { m_textureAtlasCellSize = textureAtlasCellSize; calculateTextureAtlasCoordinates(); }
+	Reference<Texture2D> getTextureAtlas() const { return m_textureAtlas; }
+	void setTextureAtlas(const Reference<Texture2D> textureAtlas) { m_textureAtlas = textureAtlas; }
 
-		const glm::vec2& getTextureAtlasIndex() const { return m_textureAtlasIndex; }
-		void setTextureAtlasIndex(const glm::vec2& textureAtlasIndex) { m_textureAtlasIndex = textureAtlasIndex; calculateTextureAtlasCoordinates(); }
+	uint32_t getCellSize() const { return m_textureAtlasCellSize; }
+	void setCellSize(const uint32_t textureAtlasCellSize) { m_textureAtlasCellSize = textureAtlasCellSize; calculateTextureAtlasCoordinates(); }
 
-		const glm::vec2& getTextureScale() const { return m_textureScale; }
-		void setTextureScale(const glm::vec2 textureScale) { m_textureScale = textureScale; calculateTextureAtlasCoordinates(); }
+	const glm::vec2& getTextureAtlasIndex() const { return m_textureAtlasIndex; }
+	void setTextureAtlasIndex(const glm::vec2& textureAtlasIndex) { m_textureAtlasIndex = textureAtlasIndex; calculateTextureAtlasCoordinates(); }
 
-		const glm::mat4x2& getTextureAtlasCoordinates() const { return m_textureAtlasCoordinates; }
+	const glm::vec2& getTextureScale() const { return m_textureScale; }
+	void setTextureScale(const glm::vec2 textureScale) { m_textureScale = textureScale; calculateTextureAtlasCoordinates(); }
 
-	private:
-		void calculateTextureAtlasCoordinates();
+	const glm::mat4x2& getTextureAtlasCoordinates() const { return m_textureAtlasCoordinates; }
 
-	private:
-		Reference<Texture2D> m_textureAtlas = nullptr;
-		uint32_t m_textureAtlasCellSize = 0;
-		glm::vec2 m_textureAtlasIndex = { 0.0f, 0.0f };
-		glm::vec2 m_textureScale = { 0.0f, 0.0f };
-		glm::mat4x2 m_textureAtlasCoordinates = glm::mat2x4(0.0f);
-	};
+private:
+	void calculateTextureAtlasCoordinates();
 
-	class TextureManager
-	{
-	public:
-		static void addTexture(const Reference<Texture>& texture);
+private:
+	Reference<Texture2D> m_textureAtlas = nullptr;
+	uint32_t m_textureAtlasCellSize = 0;
+	glm::vec2 m_textureAtlasIndex = { 0.0f, 0.0f };
+	glm::vec2 m_textureScale = { 0.0f, 0.0f };
+	glm::mat4x2 m_textureAtlasCoordinates = glm::mat2x4(0.0f);
+};
 
-		static Reference<Texture> getTexture(const std::string& filepath);
+class TextureManager
+{
+public:
+	static void addTexture(const Reference<Texture>& texture);
 
-	private:
-		static std::unordered_map<std::string, Reference<Texture>> s_texturePool;
-	};
+	static Reference<Texture> getTexture(const std::filesystem::path& filepath);
+
+private:
+	static std::unordered_map<std::filesystem::path, Reference<Texture>> s_texturePool;
+};
 
 }

@@ -8,22 +8,21 @@
 namespace Comet
 {
 
-    Reference<Pipeline> Pipeline::create(const PipelineSpecification& spec)
+Reference<Pipeline> Pipeline::create(const Specification& spec)
+{
+    CMT_COMET_ASSERT_MESSAGE(spec.layout.getElements().size(), "Layout is empty");
+
+    switch (RendererAPI::getCurrrentRendererAPIType())
     {
-        CMT_COMET_ASSERT_MESSAGE(spec.layout.getElements().size(), "Layout is empty");
+        case RendererAPI::Type::OPENGL:
+            return createReference<OpenGLPipeline>(spec);
+            break;
 
-        switch (RendererAPI::getCurrrentRendererAPIType())
-        {
-            case RendererAPIType::OPENGL:
-                return createReference<OpenGLPipeline>(spec);
-                break;
-
-            default:
-                CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
-                return nullptr;
-                break;
-        }
-
+        default:
+            CMT_COMET_ASSERT_MESSAGE(false, "Unknown GraphicsAPI");
+            return nullptr;
+            break;
     }
+}
 
 }

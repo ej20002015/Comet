@@ -10,67 +10,69 @@
 namespace Comet
 {
 
-	class OpenGLUniformBuffer : public UniformBuffer
-	{
-	public:
-		static Reference<OpenGLUniformBuffer> create(const UniformBufferDescriptor& uniformBufferDescriptor);
-		OpenGLUniformBuffer(const UniformBufferDescriptor& descriptor);
-		OpenGLUniformBuffer() = default;
-		~OpenGLUniformBuffer() override;
+class OpenGLUniformBuffer : public UniformBuffer
+{
+public:
+	static Reference<OpenGLUniformBuffer> create(const UniformBufferDescriptor& uniformBufferDescriptor);
+	OpenGLUniformBuffer(const UniformBufferDescriptor& descriptor);
+	OpenGLUniformBuffer() = default;
+	~OpenGLUniformBuffer() override;
 
-		void setData(void* data, uint32_t size, uint32_t offset = 0) override;
+	void setData(const void* const data, const uint32_t size, const uint32_t offset = 0) override;
 
-		RendererID getRendererID() const override { return m_rendererID; }
-		const UniformBufferDescriptor& getDescriptor() const override { return m_descriptor; }
+	RendererID getRendererID() const override { return m_rendererID; }
+	const UniformBufferDescriptor& getDescriptor() const override { return m_descriptor; }
 
-	private:
-		RendererID m_rendererID = 0;
-		UniformBufferDescriptor m_descriptor;
-		Unique<Buffer> m_localData;
-	};
+private:
+	RendererID m_rendererID = 0;
+	UniformBufferDescriptor m_descriptor;
+	Buffer m_localData;
+};
 
-	class OpenGLUniformResource : public UniformResource
-	{
-	public:
-		OpenGLUniformResource(const UniformResourceDescriptor& descriptor, RendererID programID);
-		OpenGLUniformResource() = default;
+class OpenGLUniformResource : public UniformResource
+{
+public:
+	OpenGLUniformResource(const UniformResourceDescriptor& descriptor, RendererID programID);
+	OpenGLUniformResource() = default;
 
-		const UniformResourceDescriptor& getDescriptor() const override { return m_descriptor; }
+	const UniformResourceDescriptor& getDescriptor() const override { return m_descriptor; }
 
-	private:
-		UniformResourceDescriptor m_descriptor;
-	};
+private:
+	UniformResourceDescriptor m_descriptor;
+};
 
-	class OpenGLUniformStruct : public UniformStruct
-	{
-	public:
-		OpenGLUniformStruct(const UniformStructDescriptor& descriptor, const RendererID programID);
-		OpenGLUniformStruct() = default;
+class OpenGLUniformStruct : public UniformStruct
+{
+public:
+	OpenGLUniformStruct(const UniformStructDescriptor& descriptor, const RendererID programID);
+	OpenGLUniformStruct() = default;
 
-		void setMemberData(const std::string& memberName, float data) override;
-		void setMemberData(const std::string& memberName, glm::vec2 data) override;
-		void setMemberData(const std::string& memberName, glm::vec3 data) override;
-		void setMemberData(const std::string& memberName, glm::vec4 data) override;
+	void setMemberData(const std::string_view memberName, const float data) override;
+	void setMemberData(const std::string_view memberName, const glm::vec2& data) override;
+	void setMemberData(const std::string_view memberName, const glm::vec3& data) override;
+	void setMemberData(const std::string_view memberName, const glm::vec4& data) override;
 
-		void setMemberData(const std::string& memberName, glm::mat3 data) override;
-		void setMemberData(const std::string& memberName, glm::mat4 data) override;
+	void setMemberData(const std::string_view memberName, const glm::mat3& data) override;
+	void setMemberData(const std::string_view memberName, const glm::mat4& data) override;
 
-		void setMemberData(const std::string& memberName, int32_t data) override;
-		void setMemberData(const std::string& memberName, glm::ivec2 data) override;
-		void setMemberData(const std::string& memberName, glm::ivec3 data) override;
-		void setMemberData(const std::string& memberName, glm::ivec4 data) override;
+	void setMemberData(const std::string_view memberName, const int32_t data) override;
+	void setMemberData(const std::string_view memberName, const glm::ivec2& data) override;
+	void setMemberData(const std::string_view memberName, const glm::ivec3& data) override;
+	void setMemberData(const std::string_view memberName, const glm::ivec4& data) override;
 
-		void setMemberData(const std::string& memberName, bool data) override;
+	void setMemberData(const std::string_view memberName, const bool data) override;
 
-		const UniformStructDescriptor& getDescriptor() const override { return m_descriptor; }
+	const UniformStructDescriptor& getDescriptor() const override { return m_descriptor; }
 
-	private:
-		UniformDescriptor getMemberDescriptor(const std::string& memberName);
-		std::string getMemberFullName(const std::string& memberName);
+private:
+	UniformDescriptor getMemberDescriptor(const std::string_view memberName);
+	std::string getMemberFullName(const std::string_view memberName);
 
-	private:
-		UniformStructDescriptor m_descriptor;
-		std::unordered_map<std::string, GLint> m_locations;
-	};
+private:
+	static constexpr std::string_view TYPE_ERROR_STR = "member '{0}' in uniform struct '{1} is not of type '{2}' - value cannot be set";
+
+	UniformStructDescriptor m_descriptor;
+	std::unordered_map<std::string, GLint> m_locations;
+};
 
 }

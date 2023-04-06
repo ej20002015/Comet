@@ -2,16 +2,18 @@
 #include "CometPCH.h"
 
 #include <memory>
+#include <exception>
+#include <sstream>
 
 #define CMT_BIT(x) (1 << x)
-
 
 /* 
 This macro creates a lamda function that calls the passed in method. The lamda captures the 'this' pointer in order to call member functions. Its arguments are
 a variadic list of deduced types that are determined by the compiler when the lamda is called. The arguments are simply forwaded onto the appropriate bound function.
 In the instance of the dispatcher class, the argument(s) would become a one reference to a Event subclass (e.g. key pressed event). The decltype(auto) return type
-tells the compiler to deduce the return type of the lamda at compile time, when the bound member function is known and thus the return type is known. When passed
-to a function, the lamda is sent as a compiler generated struct type. Therefore templates can be used to take in the lamda (see the 'Dispatcher.dispatch()' method).
+tells the compiler to deduce the return type of the lamda at compile time (auto on it's own won't be sufficient because it could be const or/and a reference),
+when the bound member function is known and thus the return type is known. When passed to a function, the lamda is sent as a compiler generated struct type. Therefore
+templates can be used to take in the lamda (see the 'Dispatcher.dispatch()' method).
 
 The ellipsis after the auto&& argument type declaration indicates that args is a pack of arguments. decltype(args) explicitly gets the types of the arguments. The elipsis
 after (args) unpacks the arguments and passes them to the function.
@@ -49,22 +51,57 @@ after (args) unpacks the arguments and passes them to the function.
 namespace Comet
 {
 
-	using byte = uint8_t;
+using byte = uint8_t;
 
-	template<typename T>
-	using Reference = std::shared_ptr<T>;
-	template<typename T, typename... Args>
-	constexpr Reference<T> createReference(Args&&... args)
+template<typename T>
+using Reference = std::shared_ptr<T>;
+template<typename T, typename... Args>
+constexpr Reference<T> createReference(Args&&... args)
+{
+	return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template<typename T>
+using Unique = std::unique_ptr<T>;
+template<typename T, typename... Args>
+constexpr Unique<T> createUnique(Args&&... args)
+{
+	return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+class CometException : public std::exception
+{
+public:
+	CometException() = default;
+
+	CometException(const CometException& other)
 	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
+		m_ss << other.m_ss.rdbuf();
+		m_str = other.m_str;
+	}
+
+	CometException(CometException&& other) noexcept
+	{
+		m_ss = std::move(other.m_ss);
+		m_str = std::move(other.m_str);
 	}
 
 	template<typename T>
-	using Unique = std::unique_ptr<T>;
-	template<typename T, typename... Args>
-	constexpr Unique<T> createUnique(Args&&... args)
+	CometException& operator<<(T&& output)
 	{
-		return std::make_unique<T>(std::forward<Args>(args)...);
+		m_ss << std::forward<T>(output);
+		m_str = m_ss.str();
+		return *this;
 	}
+
+	char const* what() const override
+	{
+		return m_str.c_str();
+	}
+
+private:
+	std::stringstream m_ss;
+	std::string m_str;
+};
 
 }

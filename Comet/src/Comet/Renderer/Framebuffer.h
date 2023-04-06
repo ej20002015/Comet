@@ -7,7 +7,11 @@
 namespace Comet
 {
 
-	enum class FramebufferColorAttachmentFormat
+class Framebuffer
+{
+public:
+
+	enum class ColorAttachmentFormat
 	{
 		RGBA8,
 		RGBA16F,
@@ -15,36 +19,34 @@ namespace Comet
 		R32I
 	};
 
-	enum class FramebufferDepthAttachmentFormat
+	enum class DepthAttachmentFormat
 	{
 		DEPTH24STENCIL8
 	};
 
-	struct FramebufferColorAttachmentsSpecification
+	struct ColorAttachmentsSpecification
 	{
-		FramebufferColorAttachmentsSpecification() = default;
-		FramebufferColorAttachmentsSpecification(const std::initializer_list<FramebufferColorAttachmentFormat>& attachments) : attachments(attachments) {}
+		ColorAttachmentsSpecification() = default;
+		ColorAttachmentsSpecification(const std::initializer_list<ColorAttachmentFormat>& attachments) : attachments(attachments) {}
 
-		std::vector<FramebufferColorAttachmentFormat> attachments;
+		std::vector<ColorAttachmentFormat> attachments;
 	};
 
-	struct FramebufferDepthAttachmentSpecification
+	struct DepthAttachmentSpecification
 	{
-		FramebufferDepthAttachmentSpecification() = default;
-		FramebufferDepthAttachmentSpecification(FramebufferDepthAttachmentFormat attachment) : attachment(attachment) {}
+		DepthAttachmentSpecification() = default;
+		DepthAttachmentSpecification(DepthAttachmentFormat attachment) : attachment(attachment) {}
 
-		FramebufferDepthAttachmentSpecification& operator= (const FramebufferDepthAttachmentFormat& attachment);
-
-		FramebufferDepthAttachmentFormat attachment;
+		const DepthAttachmentFormat attachment;
 	};
 
-	struct FramebufferSpecification
+	struct Specification
 	{
 		uint32_t width = 1280;
 		uint32_t height = 720;
 		glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-		FramebufferColorAttachmentsSpecification colorAttachments = { FramebufferColorAttachmentFormat::RGBA16F };
-		FramebufferDepthAttachmentSpecification depthAttachment = FramebufferDepthAttachmentFormat::DEPTH24STENCIL8;
+		ColorAttachmentsSpecification colorAttachments = { ColorAttachmentFormat::RGBA16F };
+		DepthAttachmentSpecification depthAttachment = DepthAttachmentFormat::DEPTH24STENCIL8;
 		uint32_t samples = 1;
 
 		//TODO: Change to ratio
@@ -52,54 +54,53 @@ namespace Comet
 		bool resizeOnWindowResize = true;
 	};
 
-	class Framebuffer
-	{
-	public:
-		static Reference<Framebuffer> create(const FramebufferSpecification& specification = FramebufferSpecification());
+public:
+	static Reference<Framebuffer> create(const Specification& specification = Specification());
 
-		virtual ~Framebuffer() = default;
+	virtual ~Framebuffer() = default;
 
-		virtual void bind() const = 0;
-		virtual void unbind() const = 0;
+	virtual void bind() const = 0;
+	virtual void unbind() const = 0;
 
-		//Called specifically when wanting to resize framebuffers on window resize events
-		//Has no affect when m_specification.resizeOnWindowResize = false
-		virtual void onWindowResize(uint32_t width, uint32_t height) = 0;
-		//Directly resize framebuffer - does not care what the value of m_specification.resizeOnWindowResize is
-		virtual void resize(uint32_t width, uint32_t height, bool forceRecreate = false) = 0;
+	//Called specifically when wanting to resize framebuffers on window resize events
+	//Has no affect when m_specification.resizeOnWindowResize = false
+	virtual void onWindowResize(const uint32_t width, const uint32_t height) = 0;
+	//Directly resize framebuffer - does not care what the value of m_specification.resizeOnWindowResize is
+	virtual void resize(const uint32_t width, const uint32_t height, const bool forceRecreate = false) = 0;
 
-		virtual int32_t readColorAttachmentPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) const = 0;
+	virtual int32_t readColorAttachmentPixel(const uint32_t attachmentIndex, const uint32_t x, const uint32_t y) const = 0;
 
-		//Clear depth buffer and any color attachments to the value specified by m_specification.clearColor
-		virtual void clear() = 0;
-		virtual void clearColorAttachment(uint32_t attachmentIndex, int32_t value) = 0;
+	//Clear depth buffer and any color attachments to the value specified by m_specification.clearColor
+	virtual void clear() = 0;
+	virtual void clearColorAttachment(const uint32_t attachmentIndex, const int32_t value) = 0;
 
-		virtual void bindColorTexture(uint32_t attachmentIndex = 0, uint32_t slot = 0) const = 0;
-		virtual void bindDepthTexture(uint32_t slot = 0) const = 0;
+	virtual void bindColorTexture(const uint32_t attachmentIndex = 0, const uint32_t slot = 0) const = 0;
+	virtual void bindDepthTexture(const uint32_t slot = 0) const = 0;
 
-		virtual RendererID getRendererID() const = 0;
+	virtual RendererID getRendererID() const = 0;
 
-		virtual RendererID getColorAttachmentRendererID(uint32_t attachmentIndex = 0) const = 0;
-		virtual RendererID getDepthAttachmentRendererID() const = 0;
+	virtual RendererID getColorAttachmentRendererID(const uint32_t attachmentIndex = 0) const = 0;
+	virtual RendererID getDepthAttachmentRendererID() const = 0;
 
-		virtual const FramebufferSpecification& getSpecification() const = 0;
-	};
+	virtual const Specification& getSpecification() const = 0;
+};
 
-	class FramebufferPool
-	{
-	public:
-		FramebufferPool(uint32_t maxPoolSize = 32);
+class FramebufferPool
+{
+public:
+	FramebufferPool(const uint32_t maxPoolSize = 32);
 
-		void add(const Reference<Framebuffer>& framebuffer);
-		static void addToGlobalPool(const Reference<Framebuffer>& framebuffer);
+	void add(const Reference<Framebuffer>& framebuffer);
+	static void addToGlobalPool(const Reference<Framebuffer>& framebuffer);
 
-		const std::vector<Reference<Framebuffer>>& getPool() const { return m_pool; }
-		static const std::vector<Reference<Framebuffer>>& getGlobalPool() { return s_instance->getPool(); }
+	const std::vector<Reference<Framebuffer>>& getPool() const { return m_pool; }
+	static const std::vector<Reference<Framebuffer>>& getGlobalPool() { return s_instance->getPool(); }
 		
-	private:
-		std::vector<Reference<Framebuffer>> m_pool;
-		const uint32_t m_maxPoolSize;
+private:
+	std::vector<Reference<Framebuffer>> m_pool;
+	const uint32_t m_maxPoolSize;
 
-		static Unique<FramebufferPool> s_instance;
-	};
+	static Unique<FramebufferPool> s_instance;
+};
+
 }

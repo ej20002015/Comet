@@ -6,17 +6,17 @@
 namespace Comet
 {
 
-	class CometEditorResourceManager
-	{
-	public:
-		CometEditorResourceManager() = delete;
+class CometEditorResourceManager
+{
+public:
+	CometEditorResourceManager() = delete;
 
-		static void init();
+	static void init();
 
-		static Reference<Texture2D> getTexture(const std::string& textureName);
+	static Reference<Texture2D> getTexture(const std::string_view textureName);
 
-	private:
-		static std::unordered_map<std::string, Reference<Texture2D>> s_textures;
-	};
+private:
+	static MapStr2T<Reference<Texture2D>> s_textures;
+};
 
 }

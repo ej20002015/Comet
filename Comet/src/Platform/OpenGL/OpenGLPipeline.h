@@ -7,19 +7,19 @@
 namespace Comet
 {
 
-	class OpenGLPipeline : public Pipeline
-	{
-	public:
-		OpenGLPipeline(const PipelineSpecification& spec);
-		~OpenGLPipeline() override;
+class OpenGLPipeline : public Pipeline
+{
+public:
+	OpenGLPipeline(const Specification& spec);
+	~OpenGLPipeline() override;
 
-		virtual void bind() override;
+	void bind() override;
 
-		virtual const PipelineSpecification& getPipelineSpecification() const override { return m_spec; }
+	const Specification& getPipelineSpecification() const override { return m_spec; }
 
-	private:
-		PipelineSpecification m_spec;
-		RendererID m_vertexArrayRendererID = 0;
-	};
+private:
+	Specification m_spec;
+	RendererID m_vertexArrayRendererID = 0;
+};
 
 }
