@@ -7,7 +7,7 @@ namespace Comet
 {
 
 const std::filesystem::path Texture::NO_FILEPATH_NAME= "NONE";
-
+const UnorderedStrSet Texture::SUPPORTED_IMG_FILE_TYPES = { ".png", ".jpg" };
 std::unordered_map<std::filesystem::path, Reference<Texture>> TextureManager::s_texturePool;
 
 //Calculate how many times the largest dimension of the texture can be divided in two to calculate the required number of mip maps
@@ -55,6 +55,10 @@ Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, co
     if (filepath.empty())
         throw CometException() << "Texture2D filepath cannot be empty";
 
+    const std::string extension = filepath.extension().string();
+    if (SUPPORTED_IMG_FILE_TYPES.find(extension) == SUPPORTED_IMG_FILE_TYPES.end())
+        throw CometException() << "Image file extension " << extension << " is not supported by Texture2D";
+
     Reference<Texture> texture = TextureManager::getTexture(filepath);
     if (texture)
         return std::static_pointer_cast<Texture2D>(texture);
@@ -94,6 +98,10 @@ Reference<TextureCube> TextureCube::create(const std::filesystem::path& filepath
 {
     if (filepath.empty())
         throw CometException() << "Texture Cube filepath cannot be empty";
+
+    const std::string extension = filepath.extension().string();
+    if (SUPPORTED_IMG_FILE_TYPES.find(extension) == SUPPORTED_IMG_FILE_TYPES.end())
+        throw CometException() << "Image file extension " << extension << " is not supported by TextureCube";
 
     Reference<Texture> texture = TextureManager::getTexture(filepath);
     if (texture)

@@ -6,7 +6,7 @@
 	url = https://github.com/ej20002015/glfw
 [submodule "Comet/Vendor/imgui"]
 	path = Comet/Vendor/imgui
-	url = https://github.com/ej20002015/imgui
+	url = git@github.com:ej20002015/imgui.git
 [submodule "Comet/Vendor/GLM"]
 	path = Comet/Vendor/GLM
 	url = https://github.com/g-truc/glm

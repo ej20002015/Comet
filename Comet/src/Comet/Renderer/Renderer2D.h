@@ -34,27 +34,12 @@ public:
 
 	static void endScene();
 
-	static void drawColoredQuad(const glm::vec2& centerCoordinates, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& color = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawColoredQuad(const glm::vec3& centerCoordinates, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& color = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedColoredQuad(const glm::vec2& centerCoordinates, const float radians, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& color = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedColoredQuad(const glm::vec3& centerCoordinates, const float radians, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& color = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-
-	static void drawTexturedQuad(const glm::vec2& centerCoordinates, const Reference<Texture2D>& texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawTexturedQuad(const glm::vec3& centerCoordinates, const Reference<Texture2D>& texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedTexturedQuad(const glm::vec2& centerCoordinates, const float radians, const Reference<Texture2D>& texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedTexturedQuad(const glm::vec3& centerCoordinates, const float radians, const Reference<Texture2D>& texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-
-	static void drawSubTexturedQuad(const glm::vec2& centerCoordinates, const Texture2DSubTexture& texture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawSubTexturedQuad(const glm::vec3& centerCoordinates, const Texture2DSubTexture& subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, const float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-	static void drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, const float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale = glm::vec3(1.0f), const glm::vec4& colorTint = glm::vec4(1.0f), const float tilingFactor = 1.0f);
-
 	static void drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, const float tilingFactor = 1.0f, const int32_t entityID = -1);
 	static void drawSubQuad(const glm::mat4& transform, const glm::vec4& color, const Texture2DSubTexture& subTexture, const float tilingFactor = 1.0f, const int32_t entityID = -1);
 
 	static void resetStats();
 
-	static Statistics getRenderer2DStats() { return s_stats; }
+	static Statistics& getRenderer2DStats() { return s_stats; }
 private:
 	static void setInitialBatchData();
 	static void nextBatch();

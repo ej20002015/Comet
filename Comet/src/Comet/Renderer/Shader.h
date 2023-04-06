@@ -41,7 +41,7 @@ public:
 	virtual RendererID getRendererID() const = 0;
 
 protected:
-	constexpr static bool OPTIMISATION = false;
+	constexpr static bool OPTIMISATION = true;
 	static std::unordered_map<uint32_t, Reference<UniformBuffer>> s_uniformBuffers;
 };
 

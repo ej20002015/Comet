@@ -1,437 +1,272 @@
 #include "CometEditorLayer.h"
 
-//TEMP
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include "Panels/ContentBrowserPanel.h"
+#include "Panels/SceneStateToolbarPanel.h"
+#include "Panels/WindowMenuPanel.h"
+#include "Panels/RenderingDeviceInfoPanel.h"
+#include "Panels/RendererStatsPanel.h"
+#include "Panels/SceneViewportPanels.h"
 
 #include "ImGuizmo.h"
 
 namespace Comet
 {
 
-	Comet::CometEditorLayer::~CometEditorLayer()
-	{
-	}
+const std::unordered_map<std::string, std::string> CometEditorLayer::SCENE_FILE_FILTER_MAP = { { "Comet Scene", fmt::format("*{0}", SceneSerializer::FILE_EXTENSION) } };
 
-	void CometEditorLayer::onAttach()
-	{
-        m_sceneFileFilter = PlatformUtilities::getFilterForExtension(SceneSerializer::FILE_EXTENSION, "Comet Scene");
+void CometEditorLayer::onAttach()
+{
+    m_sceneFileFilter = PlatformUtilities::constructFilter(SCENE_FILE_FILTER_MAP);
+    m_scene = Scene::create();
 
-        Comet::Renderer::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+    Log::cometInfo(SceneHierarchyPanel::s_registered);
 
-        m_viewportSize = { m_initialFramebufferSize.x, m_initialFramebufferSize.y };
+    initRendererItems();
+    initPanels();
+    initImGuiStyle();
+}
+    
+void CometEditorLayer::onUpdate(const Timestep ts)
+{
+    //Resize framebuffer and set camera projection if viewport size has changed
+    const glm::vec2 viewportSize = m_panelManager.get<ViewportPanel>().getSize();
 
-        Framebuffer::Specification framebufferSpecification;
-        framebufferSpecification.colorAttachments =
-        {
+    const bool isViewportSizeChanged = !(viewportSize.x < 1.0f || viewportSize.y < 1.0f) && (
+        static_cast<float>(m_framebuffer->getSpecification().width) != viewportSize.x ||
+        static_cast<float>(m_framebuffer->getSpecification().height) != viewportSize.y
+    );                           
+    if (isViewportSizeChanged)
+    {
+        m_framebuffer->resize(static_cast<uint32_t>(viewportSize.x), static_cast<uint32_t>(viewportSize.y));
+        m_editorCamera.setViewportSize(viewportSize);
+        m_scene->onViewportResized(static_cast<uint32_t>(viewportSize.x), static_cast<uint32_t>(viewportSize.y));
+    }
+
+    m_framebuffer->bind();
+    m_framebuffer->clear();
+    //Clear entityID color attachment specifically to -1
+    m_framebuffer->clearColorAttachment(1, -1);
+
+    switch (m_sceneState)
+    {
+        case SceneState::EDIT:
+            m_editorCamera.onUpdate(ts);
+            m_scene->onEditorUpdate(ts, m_editorCamera);
+            break;
+
+        case SceneState::PLAY:
+            m_scene->onRuntimeUpdate(ts);
+            break;
+    }
+
+    m_framebuffer->unbind();
+}
+
+void CometEditorLayer::onImGuiRender()
+{
+    //TODO: MOVE TOWARDS AN API FOR SETTING THE MINIMUM SIZE OF EACH WINDOW INDIVIDUALLY RATHER THAN GLOBALLY
+
+    // Pass data to specific panels
+
+    Entity selectedEntity = m_panelManager.get<SceneHierarchyPanel>().getSelectedEntity();
+
+    m_panelManager.get<EntityPropertiesPanel>().setEntity(selectedEntity);
+
+    m_panelManager.get<ViewportPanel>().setEntity(selectedEntity);
+    m_panelManager.get<ViewportPanel>().setMatrices(m_editorCamera.getProjectionMatrix(), m_editorCamera.getViewMatrix());
+    m_panelManager.get<ViewportPanel>().setGuizmoOperation(m_guizmoOperation);
+
+    // Render
+
+    ImGuiUtilities::beginDockspace();
+    m_panelManager.render();
+    ImGuiUtilities::endDockspace();
+
+    // Read data from specific panels
+
+    m_guizmoOperationChangeLocked = m_panelManager.get<ViewportPanel>().getGuizmoOperationChangeLocked();
+}
+
+void CometEditorLayer::onEvent(Event& e)
+{
+    EventDispatcher dispatcher(e);
+    dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onKeyPressedEvent));
+    dispatcher.dispatch<MouseButtonPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onMouseButtonPressedEvent));
+
+    m_editorCamera.onEvent(e);
+}
+
+void CometEditorLayer::initRendererItems()
+{
+    Comet::Renderer::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+
+    Framebuffer::Specification framebufferSpecification = {
+        .width = static_cast<uint32_t>(ViewportPanel::INITIAL_SIZE.x),
+        .height = static_cast<uint32_t>(ViewportPanel::INITIAL_SIZE.y),
+        .clearColor = { 0.1f, 0.1f, 0.1f, 1.0f },
+        .colorAttachments = {
             Framebuffer::ColorAttachmentFormat::RGBA16F,
             Framebuffer::ColorAttachmentFormat::R32I
-        };
-        framebufferSpecification.width = static_cast<uint32_t>(m_initialFramebufferSize.x);
-        framebufferSpecification.height = static_cast<uint32_t>(m_initialFramebufferSize.y);
-        framebufferSpecification.clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-        //Since this will be the scene viewport, it should be resized in accordance with the ImGui image's size - not the whole window
-        framebufferSpecification.resizeOnWindowResize = false;
-       
-        m_framebuffer = Framebuffer::create(framebufferSpecification);
-
-        //SCENE STUFF
-        m_scene = Scene::create();
-
-        m_sceneHierarchyPanel.setScene(m_scene);
-
-        class CameraControllerScript : public EntityNativeScript
-        {
-        protected:
-            void onUpdate(Timestep ts) override
-            {
-                TransformComponent& transformComponent = getComponent<TransformComponent>();
-
-                if (Input::isKeyPressed(KeyCode::KEY_D))
-                    transformComponent.translation.x += m_cameraSpeed * ts;
-                else if (Input::isKeyPressed(KeyCode::KEY_A))
-                    transformComponent.translation.x -= m_cameraSpeed * ts;
-
-                if (Input::isKeyPressed(KeyCode::KEY_W))
-                    transformComponent.translation.y += m_cameraSpeed * ts;
-                else if (Input::isKeyPressed(KeyCode::KEY_S))
-                    transformComponent.translation.y -= m_cameraSpeed * ts;
-            }   
-
-        private:
-            const float m_cameraSpeed = 4.0f;
-        };
-
-        //Set callbacks for scene state panel
-        m_sceneStateToolbarPanel.setScenePlayedCallback(CMT_BIND_METHOD(CometEditorLayer::onScenePlay));
-        m_sceneStateToolbarPanel.setSceneStoppedCallback(CMT_BIND_METHOD(CometEditorLayer::onSceneStop));
-
-        //Set fonts
-        ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Regular.ttf",    16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
-        ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Bold.ttf",       16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD);
-        ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Italic.ttf",     16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL_ITALIC);
-        ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-BoldItalic.ttf", 16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD_ITALIC);
-        ImGuiUtilities::setDefaultFont(ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
-	}
-
-	void CometEditorLayer::onDetach()
-	{
-	}
-    
-	void CometEditorLayer::onUpdate(const Timestep ts)
-	{
-        m_ts = ts;
-
-        //Resize framebuffer and set camera projection if viewport size has changed
-        if (!(m_viewportSize.x < 1.0f || m_viewportSize.y < 1.0f) &&
-           (static_cast<float>(m_framebuffer->getSpecification().width) != m_viewportSize.x || static_cast<float>(m_framebuffer->getSpecification().height) != m_viewportSize.y))
-        {
-            m_framebuffer->resize(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-            m_editorCamera.setViewportSize(m_viewportSize);
-            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-        }
-
-        m_framebuffer->bind();
-        m_framebuffer->clear();
-        //Clear entityID color attachment specifically to -1
-        m_framebuffer->clearColorAttachment(1, -1);
-
-        switch (m_sceneState)
-        {
-            case SceneState::EDIT:
-                m_editorCamera.onUpdate(ts);
-                m_scene->onEditorUpdate(ts, m_editorCamera);
-                break;
-
-            case SceneState::PLAY:
-                m_scene->onRuntimeUpdate(ts);
-                break;
-        }
-
-        m_framebuffer->unbind();
-	}
-
-	void CometEditorLayer::onImGuiRender()
-	{
-        //TODO: MOVE TOWARDS AN API FOR SETTING THE MINIMUM SIZE OF EACH WINDOW INDIVIDUALLY RATHER THAN GLOBALLY
-
-        ImGuiUtilities::beginDockspace();
-
-        ImGuiUtilities::setDarkModeColors();
-
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("New", "Ctrl+N"))
-                    newScene();
-                if (ImGui::MenuItem("Open...", "Ctrl+O"))
-                    openScene();
-                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-                    saveScene();
-                if (ImGui::MenuItem("Exit"))
-                    Application::get().exit();
-
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMenuBar();
-        }
-
-        //Dockable windows lie within dockspace code
-
-        m_sceneStateToolbarPanel.onImGuiRender();
-
-        ImGui::Begin("Rendering Device Information");
-
-        ImGui::Separator();
-
-        ImGui::Text("Renderer Capabilites");
-
-        ImGui::Separator();
-
-        ImGui::Text("Vendor: %s", Comet::RendererAPI::getCapabilities().vendor.c_str());
-        ImGui::Text("Renderer: %s", Comet::RendererAPI::getCapabilities().renderer.c_str());
-        ImGui::Text("Version: %s", Comet::RendererAPI::getCapabilities().version.c_str());
-
-        ImGui::Text("");
-
-        ImGui::Text("Max Samples: %d", Comet::RendererAPI::getCapabilities().maxSamples);
-        ImGui::Text("Max Anisotropy: %f", Comet::RendererAPI::getCapabilities().maxAnisotropy);
-        ImGui::Text("Max Texture Units: %d", Comet::RendererAPI::getCapabilities().maxTextureUnits);
-
-        ImGui::End();
-
-        ImGui::Begin("Renderer2D Statistics");
-
-        ImGui::Text("Frametime");
-
-        ImGui::Separator();
-
-        ImGui::Text("%fms (%.2f fps)", m_ts.getMilliseconds(), 1.0f / m_ts.getSeconds());
-
-        ImGui::Separator();
-
-        auto stats = Comet::Renderer2D::getRenderer2DStats();
-
-        ImGui::Text("%u quads", stats.quads);
-        ImGui::Text("%u vertices", stats.getVertices());
-        ImGui::Text("%u triangles", stats.getTriangles());
-        ImGui::Text("%u draw calls", stats.drawCalls);
-
-        ImGui::End();
-
-        ImGui::Begin("Renderer Options");
-
-        ImGuiUtilities::beginPropertyGrid();
-
-        bool culling = Renderer::getBackfaceCulling();
-        if (ImGuiUtilities::property("Enable back face culling", culling))
-            Renderer::setBackfaceCulling(culling);
-
-        ImGuiUtilities::endPropertyGrid();
-
-        ImGui::End();
-
-        ImGui::Begin("Gizmo Options");
-
-        ImGuiUtilities::beginPropertyGrid();
-
-        ImGuiUtilities::property("Translation and Scale Snap Value", m_translateScaleSnapValue, 0.1f, "%.1f", 0.0f, 100.0f);
-        ImGuiUtilities::property("Rotation Snap Value", m_rotationSnapValue, 0.1f, "%.1f", 0.0f, 180.0f);
-
-        ImGuiUtilities::endPropertyGrid();
-
-        ImGui::End();
-
-        //TODO: MOVE VIEWPORT CODE INTO SEPARATE FILE
-        //Scene Viewport
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-        ImGui::Begin("Scene Viewport");
-
-        //Calculate position of viewport
-
-        ImVec2 imViewportOffsetInWindow = ImGui::GetCursorPos();
-        glm::vec2 viewportOffsetInWindow = { imViewportOffsetInWindow.x, imViewportOffsetInWindow.y };
-        ImVec2 imViewportWindowPosition = ImGui::GetWindowPos();
-        glm::vec2 viewportWindowPosition = { imViewportWindowPosition.x, imViewportWindowPosition.y };
-        m_viewportPosition = viewportWindowPosition + viewportOffsetInWindow;
-
-        //Calculate position of mouse in the viewport
-
-        ImVec2 imMousePosition = ImGui::GetMousePos();
-        glm::vec2 mousePosition = { imMousePosition.x, imMousePosition.y };
-        m_mousePositionRelativeToViewport = mousePosition - m_viewportPosition;
-
-        //Flip y-axis so it matches opengl texture coordinate system
-        m_mousePositionRelativeToViewport.y = m_viewportSize.y - m_mousePositionRelativeToViewport.y;
-
-        //Work out whether ImGui events should not be blocked
-        m_viewportFocused = ImGui::IsWindowFocused();
-        m_viewportHovered = ImGui::IsWindowHovered();
-        Application::get().getImGuiLayer().setBlocking(!m_viewportHovered);
-
-        //Get size available for viewport
-        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-        m_viewportSize = { viewportSize.x, viewportSize.y };
-
-        ImGui::Image(reinterpret_cast<void*>(static_cast<uint64_t>((m_framebuffer->getColorAttachmentRendererID()))), viewportSize, { 0.0f, 1.0f }, { 1.0f, 0.0f });
-
-        //Set drag drop payload target for opening scene files
-        if (ImGui::BeginDragDropTarget())
-        {
-            const ImGuiPayload* dragDropPayload = nullptr;
-            if (dragDropPayload = ImGui::AcceptDragDropPayload("ContentBrowserEntryPathCString"))
-            {
-                const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
-                openScene(std::filesystem::path(directoryEntryPathCString));
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-        //ImGuizmo
-        Entity currentlySelectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
-
-        m_guizmoOperationChangeLocked = false;
-
-        if (currentlySelectedEntity && m_guizmoOperation > -1)
-        {
-            //Editor Camera has a perspective projection
-            ImGuizmo::SetOrthographic(false);
-            ImGuizmo::SetDrawlist();
-            
-            //Set the viewport
-            float windowWidth = static_cast<float>(ImGui::GetWindowWidth());
-            float windowHeight = static_cast<float>(ImGui::GetWindowHeight());
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-            //Get Model and View matrices of Editor Camera
-            glm::mat4 viewMatrix = m_editorCamera.getViewMatrix();
-            const glm::mat4& projectionMatrix = m_editorCamera.getProjectionMatrix();
-
-            //Get selected entity transform
-            TransformComponent& currentlySelectedEntityTransformComponent = currentlySelectedEntity.getComponent<TransformComponent>();
-            glm::mat4 currentlySelectedEntityTransform = currentlySelectedEntityTransformComponent.getTransform();
-
-            //Determine snap value
-            float snap = 0.0f;
-            if (Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL))
-                snap = (m_guizmoOperation == static_cast<int32_t>(ImGuizmo::OPERATION::ROTATE)) ? m_rotationSnapValue : m_translateScaleSnapValue;
-
-            float snapValues[3] = { snap, snap, snap };
-
-            ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), static_cast<ImGuizmo::OPERATION>(m_guizmoOperation), ImGuizmo::MODE::LOCAL, glm::value_ptr(currentlySelectedEntityTransform), nullptr, (snap) ? snapValues : nullptr);
-
-            //Apply changes if gizmo has been used
-            if (ImGuizmo::IsUsing())
-            {
-                //Lock changing of operation during use
-                m_guizmoOperationChangeLocked = true;
-                currentlySelectedEntityTransformComponent.setTransform(currentlySelectedEntityTransform);
-            }
-        }
-
-        ImGui::End();
-        ImGui::PopStyleVar();
-
-        //Scene Hierarchy Panel
-        m_sceneHierarchyPanel.onImGuiRender();
-
-        //Entity Properties Panel
-        Entity selectedEntity = m_sceneHierarchyPanel.getSelectedEntity();
-        m_entityPropertiesPanel.setEntity(selectedEntity);
-        m_entityPropertiesPanel.onImGuiRender();
-
-        //Content Browser Panel
-        m_contentBrowserPanel.onImGuiRender();
-
-        ImGui::End();
-	}
-
-	void CometEditorLayer::onEvent(Event& e)
-	{
-        EventDispatcher dispatcher(e);
-        dispatcher.dispatch<KeyPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onKeyPressedEvent));
-        dispatcher.dispatch<MouseButtonPressedEvent>(CMT_BIND_METHOD(CometEditorLayer::onMouseButtonPressedEvent));
-
-        m_editorCamera.onEvent(e);
-	}
-
-    bool CometEditorLayer::onKeyPressedEvent(KeyPressedEvent& e)
+        },
+        .resizeOnWindowResize = false
+    };
+
+    m_framebuffer = Framebuffer::create(framebufferSpecification);
+}
+
+void CometEditorLayer::initPanels()
+{
+    // Add panels to manager
+
+    m_panelManager.add<SceneHierarchyPanel>();
+    m_panelManager.add<EntityPropertiesPanel>();
+    m_panelManager.add<ContentBrowserPanel>();
+    m_panelManager.add<SceneStateToolbarPanel>();
+    m_panelManager.add<WindowMenuBarPanel>();
+    m_panelManager.add<RenderingDeviceInfoPanel>();
+    m_panelManager.add<RendererStatsPanel>();
+    m_panelManager.add<ViewportPanel>();
+    m_panelManager.add<GuizmoOptionsPanel>();
+
+    // Set context for specific panels where necessary
+
+    m_panelManager.get<SceneHierarchyPanel>().setScene(m_scene);
+
+    m_panelManager.get<SceneStateToolbarPanel>().setScenePlayedCallback(CMT_BIND_METHOD(CometEditorLayer::onScenePlay));
+    m_panelManager.get<SceneStateToolbarPanel>().setSceneStoppedCallback(CMT_BIND_METHOD(CometEditorLayer::onSceneStop));
+
+    m_panelManager.get<WindowMenuBarPanel>().setMenuEntries({
+        { "File", {
+            { "New", "Ctrl+N", CMT_BIND_METHOD(newScene) },
+            { "Open...", "Ctrl+O", CMT_BIND_METHOD(openScene) },
+            { "Save As...", "Ctrl+Shift+S", CMT_BIND_METHOD(saveScene) },
+            { "Exit", std::nullopt, CMT_BIND_METHOD(exitApplication) }
+        }}
+    });
+
+    m_panelManager.get<ViewportPanel>().setOnFilepathDropCallback(CMT_BIND_METHOD(openScene));
+    m_panelManager.get<ViewportPanel>().setFramebufferID(m_framebuffer->getColorAttachmentRendererID());
+}
+
+void CometEditorLayer::initImGuiStyle()
+{
+    ImGuiUtilities::setDarkModeColors();
+
+    ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Regular.ttf", 16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
+    ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Bold.ttf", 16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD);
+    ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-Italic.ttf", 16.0f, ImGuiUtilities::ImGuiFontType::FONT_NORMAL_ITALIC);
+    ImGuiUtilities::loadFont("assets/fonts/roboto/Roboto-BoldItalic.ttf", 16.0f, ImGuiUtilities::ImGuiFontType::FONT_BOLD_ITALIC);
+
+    ImGuiUtilities::setDefaultFont(ImGuiUtilities::ImGuiFontType::FONT_NORMAL);
+}
+
+bool CometEditorLayer::onKeyPressedEvent(KeyPressedEvent& e)
+{
+    const KeyCode keyCode = e.getKeyCode();
+
+    const bool controlPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL) || Input::isKeyPressed(KeyCode::KEY_RIGHT_CONTROL);
+    const bool shiftPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) || Input::isKeyPressed(KeyCode::KEY_RIGHT_SHIFT);
+
+    switch (keyCode)
     {
-        KeyCode keyCode = e.getKeyCode();
+    case KeyCode::KEY_Q:
+        if (!m_guizmoOperationChangeLocked)
+            m_guizmoOperation = -1;
+        break;
+    case KeyCode::KEY_W:
+        if (!m_guizmoOperationChangeLocked)
+            m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+        break;
+    case KeyCode::KEY_E:
+        if (!m_guizmoOperationChangeLocked)
+            m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
+        break;
+    case KeyCode::KEY_R:
+        if (!m_guizmoOperationChangeLocked)
+            m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
+        break;
+    case KeyCode::KEY_N:
+        if (controlPressed)
+            newScene();
+        break;
+    case KeyCode::KEY_O:
+        if (controlPressed)
+            openScene();
+        break;
+    case KeyCode::KEY_S:
+        if (controlPressed && shiftPressed)
+            saveScene();
+        break;
+    default:
+        break;
+    }
 
-        bool controlPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL) || Input::isKeyPressed(KeyCode::KEY_RIGHT_CONTROL);
-        bool shiftPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) || Input::isKeyPressed(KeyCode::KEY_RIGHT_SHIFT);
+    return true;
+}
 
-        switch (keyCode)
+bool CometEditorLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
+{
+    if (e.getKeyCode() == MouseButtonCode::MOUSE_BUTTON_LEFT)
+    {
+        const auto[clicked, pixelValue] = m_panelManager.get<ViewportPanel>().checkClick(*m_framebuffer);
+        if (clicked)
         {
-        case KeyCode::KEY_Q:
-            if (!m_guizmoOperationChangeLocked)
-                m_guizmoOperation = -1;
-            break;
-        case KeyCode::KEY_W:
-            if (!m_guizmoOperationChangeLocked)
-                m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-            break;
-        case KeyCode::KEY_E:
-            if (!m_guizmoOperationChangeLocked)
-                m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
-            break;
-        case KeyCode::KEY_R:
-            if (!m_guizmoOperationChangeLocked)
-                m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
-            break;
-        case KeyCode::KEY_N:
-            if (controlPressed)
-                newScene();
-            break;
-        case KeyCode::KEY_O:
-            if (controlPressed)
-                openScene();
-            break;
-        case KeyCode::KEY_S:
-            if (controlPressed && shiftPressed)
-                saveScene();
-            break;
-        default:
-            break;
+            Entity clickedEntity = (pixelValue == -1) ? Entity::Null : Entity(m_scene.get(), pixelValue);
+            m_panelManager.get<SceneHierarchyPanel>().setSelectedEntity(clickedEntity);
         }
 
         return true;
     }
 
-    bool CometEditorLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
+    return false;
+}
+
+void CometEditorLayer::newScene()
+{
+    m_guizmoOperation = -1;
+    m_panelManager.get<EntityPropertiesPanel>().setEntity(Entity::Null);
+    m_scene = Scene::create();
+    m_panelManager.get<SceneHierarchyPanel>().setScene(m_scene);
+    m_scene->onViewportResized(static_cast<uint32_t>(m_panelManager.get<ViewportPanel>().getSize().x), static_cast<uint32_t>(m_panelManager.get<ViewportPanel>().getSize().y));
+}
+
+void CometEditorLayer::saveScene()
+{
+    const std::string filepath = PlatformUtilities::saveFile(m_sceneFileFilter, SceneSerializer::FILE_EXTENSION);
+    if (!filepath.empty())
+        SceneSerializer::serialize(filepath, m_scene);
+}
+
+void CometEditorLayer::openScene()
+{
+    std::string filepath = PlatformUtilities::openFile(m_sceneFileFilter);
+    openScene(filepath);
+}
+
+void CometEditorLayer::openScene(const std::filesystem::path& path)
+{
+    std::string filepath = path.string();
+    if (!filepath.empty())
     {
-        if (e.getKeyCode() == MouseButtonCode::MOUSE_BUTTON_LEFT)
-        {
-            if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::isKeyPressed(KeyCode::KEY_LEFT_ALT))
-            {
-                int32_t pixelValue = m_framebuffer->readColorAttachmentPixel(1, static_cast<uint32_t>(m_mousePositionRelativeToViewport.x), static_cast<uint32_t>(m_mousePositionRelativeToViewport.y));
-                Entity clickedEntity = (pixelValue == -1) ? Entity() : Entity(m_scene.get(), static_cast<Entity::Handle>(pixelValue));
-                m_sceneHierarchyPanel.setSelectedEntity(clickedEntity);
-            }
-
-            return true;
-        }
-
-        return false;
+        newScene();
+        SceneSerializer::deserialize(filepath, m_scene);
     }
+}
 
-    void CometEditorLayer::newScene()
-    {
-        m_entityPropertiesPanel.setEntity(Entity());
-        m_scene = Scene::create();
-        m_sceneHierarchyPanel.setScene(m_scene);
-        m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-    }
+void CometEditorLayer::onScenePlay()
+{
+    m_sceneState = SceneState::PLAY;
+    m_guizmoOperation = -1;
+}
 
-    void CometEditorLayer::saveScene()
-    {
-        const std::string filepath = PlatformUtilities::saveFile(m_sceneFileFilter.c_str(), SceneSerializer::FILE_EXTENSION);
-        if (!filepath.empty())
-            SceneSerializer::serialize(filepath, m_scene);
-    }
+void CometEditorLayer::onSceneStop()
+{
+    m_sceneState = SceneState::EDIT;
+}
 
-    void CometEditorLayer::openScene()
-    {
-        std::string filepath = PlatformUtilities::openFile(m_sceneFileFilter.c_str());
-        if (!filepath.empty())
-        {
-            m_guizmoOperation = -1;
-            m_entityPropertiesPanel.setEntity(Entity());
-            m_scene = Scene::create();
-            m_sceneHierarchyPanel.setScene(m_scene);
-            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-
-            SceneSerializer::deserialize(filepath, m_scene);
-        }
-    }
-
-    void CometEditorLayer::openScene(const std::filesystem::path& path)
-    {
-        std::string filepath = path.string();
-        if (!filepath.empty())
-        {
-            m_guizmoOperation = -1;
-            m_entityPropertiesPanel.setEntity(Entity());
-            m_scene = Scene::create();
-            m_sceneHierarchyPanel.setScene(m_scene);
-            m_scene->onViewportResized(static_cast<uint32_t>(m_viewportSize.x), static_cast<uint32_t>(m_viewportSize.y));
-
-            SceneSerializer::deserialize(filepath, m_scene);
-        }
-    }
-
-    void CometEditorLayer::onScenePlay()
-    {
-        m_sceneState = SceneState::PLAY;
-    }
-
-    void CometEditorLayer::onSceneStop()
-    {
-        m_sceneState = SceneState::EDIT;
-    }
+void CometEditorLayer::exitApplication()
+{
+    Application::get().exit();
+}
 
 }

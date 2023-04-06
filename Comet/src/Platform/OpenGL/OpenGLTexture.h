@@ -41,7 +41,7 @@ private:
 	bool m_isSRGB;
 	bool m_isHDR;
 		
-	Unique<Buffer> m_localData;
+	Buffer m_localData;
 };
 
 class OpenGLTextureCube : public TextureCube
@@ -71,7 +71,7 @@ private:
 	bool m_isSRGB;
 	bool m_isHDR;
 
-	Unique<Buffer> m_localData;
+	Buffer m_localData;
 };
 
 }

@@ -38,8 +38,8 @@ public:
 	void exit() { m_running = false; }
 
 	const Window& getWindow() const { return *m_window; }
-
 	ImGuiLayer& getImGuiLayer() { return *m_ImGuiLayer; }
+	Timestep getTs() const { return m_ts; }
 
 private:
 	void run();
@@ -63,6 +63,13 @@ private:
 };
 
 //TO BE DEFINED BY CLIENT PROGRAMS
-Application* getApplicationInstance();
+extern Application* getApplicationInstance();
+
+#define DEF_COMET_APP(applicationClass) \
+Comet::Application* Comet::getApplicationInstance() \
+{ \
+	return new applicationClass; \
+} \
+
 
 }

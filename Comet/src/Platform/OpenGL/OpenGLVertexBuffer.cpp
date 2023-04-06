@@ -20,16 +20,14 @@ static GLenum getOpenGLUsage(VertexBuffer::Usage usage)
 
 
 OpenGLVertexBuffer::OpenGLVertexBuffer(const void* const data, const uint32_t size, const Usage usage)
-	: m_size(size), m_usage(usage)
+	: m_size(size), m_usage(usage), m_localData(data, size)
 {
-	m_localData = Buffer::create(data, size);
-
 	glCreateBuffers(1, &m_rendererID);
-	glNamedBufferData(m_rendererID, m_size, m_localData->getData(), getOpenGLUsage(m_usage));
+	glNamedBufferData(m_rendererID, m_size, m_localData.getData(), getOpenGLUsage(m_usage));
 }
 
 OpenGLVertexBuffer::OpenGLVertexBuffer(const uint32_t size, const Usage usage)
-	: m_localData(nullptr), m_size(size), m_usage(usage)
+	: m_size(size), m_usage(usage)
 {
 	glCreateBuffers(1, &m_rendererID);
 	glNamedBufferData(m_rendererID, m_size, nullptr, getOpenGLUsage(m_usage));
@@ -47,9 +45,9 @@ void OpenGLVertexBuffer::bind() const
 
 void OpenGLVertexBuffer::setData(const void* const data, const uint32_t size, const uint32_t offset)
 {
-	m_localData = Buffer::create(data, size);
+	m_localData = Buffer(data, size);
 
-	glNamedBufferSubData(m_rendererID, offset, size, m_localData->getData());
+	glNamedBufferSubData(m_rendererID, offset, size, m_localData.getData());
 }
 
 }

@@ -27,7 +27,7 @@ private:
 	RendererID m_rendererID = 0;
 	uint32_t m_size;
 	Usage m_usage;
-	Unique<Buffer> m_localData;
+	Buffer m_localData;
 };
 
 }

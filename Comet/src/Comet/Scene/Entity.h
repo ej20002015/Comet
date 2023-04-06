@@ -16,9 +16,10 @@ public:
 	
 	Entity() = default;
 
-
 	Entity(Scene* const scene, const Handle entityHandle)
 		: m_scene(scene), m_entityHandle(entityHandle) {}
+	Entity(Scene* const scene, const int32_t entityHandle)
+		: Entity(scene, static_cast<Handle>(entityHandle)) {}
 
 	Entity(const Entity& other) = default;
 	~Entity() = default;
@@ -44,13 +45,19 @@ public:
 	}
 
 	template<typename T>
-	bool hasComponent()
+	bool hasComponent() const
 	{
 		return m_scene->m_registry.has<T>(m_entityHandle);
 	}
 
 	template<typename T>
 	T& getComponent()
+	{
+		return const_cast<T&>(static_cast<const Entity&>(*this).getComponent<T>());
+	}
+
+	template<typename T>
+	const T& getComponent() const
 	{
 		if (!hasComponent<T>())
 			throw CometException() << "Cannot get '" << ComponentUtils::getComponentName<T>() << "' component - entity does not have component";
@@ -63,6 +70,9 @@ public:
 	bool operator ==(const Entity& other) const { return m_entityHandle == other.m_entityHandle; }
 
 	bool operator !=(const Entity& other) const { return !(*this == other); }
+
+public:
+	static const Entity Null;
 
 private:
 	Scene* m_scene = nullptr;

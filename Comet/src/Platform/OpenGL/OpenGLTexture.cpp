@@ -8,8 +8,8 @@
 namespace Comet
 {
 
-static Unique<Buffer> loadImage(const std::filesystem::path& filepath, const bool isSRGB,
-								int32_t& out_width, int32_t& out_height, int32_t& out_BPP, Texture::Format& out_format, bool& out_isHDR);
+static Buffer loadImage(const std::filesystem::path& filepath, const bool isSRGB,
+						int32_t& out_width, int32_t& out_height, int32_t& out_BPP, Texture::Format& out_format, bool& out_isHDR);
 
 static GLenum getGLTextureFormat(const Texture::Format textureFormat)
 {
@@ -68,8 +68,7 @@ static GLenum getGLTextureWrap(const Texture::Wrap textureWrap)
 
 OpenGLTexture2D::OpenGLTexture2D(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter, const Filter minFilter, const Wrap wrap)
 	: m_textureFormat(format), m_textureWrap(wrap), m_textureMagFilter(magFilter), m_textureMinFilter(minFilter), m_width(width), m_height(height), 
-	  m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_isSRGB(false), m_filepath(Texture::NO_FILEPATH_NAME), m_localData(nullptr),
-	  m_isHDR(m_textureFormat == Format::FLOAT16)
+	  m_mipMapLevels(Texture::calculateMipMapLevelsNeeded(width, height)), m_isSRGB(false), m_filepath(Texture::NO_FILEPATH_NAME), m_isHDR(m_textureFormat == Format::FLOAT16)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
 
@@ -109,13 +108,13 @@ OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& filepath, const bo
 	if (SRGB)
 	{
 		glTextureStorage2D(m_rendererID, m_mipMapLevels, GL_SRGB8, width, height);
-		glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, m_localData->getData());
+		glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, m_localData.getData());
 	}
 	else
 	{
 		GLenum dataType = (m_isHDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 		glTextureStorage2D(m_rendererID, m_mipMapLevels, getGLInternalTextureFormat(m_textureFormat), width, height);
-		glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, getGLTextureFormat(m_textureFormat), dataType, m_localData->getData());
+		glTextureSubImage2D(m_rendererID, 0, 0, 0, width, height, getGLTextureFormat(m_textureFormat), dataType, m_localData.getData());
 	}
 
 	glGenerateTextureMipmap(m_rendererID);
@@ -136,7 +135,7 @@ void OpenGLTexture2D::setData(const void* const data, const uint32_t size)
 	if (size != m_width * m_height * Texture::getBPP(m_textureFormat))
 		throw CometException() << "Data does not fill the whole texture";
 
-	m_localData = Buffer::create(data, size);
+	m_localData = Buffer(data, size);
 
 	GLenum dataType = (m_isHDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, getGLTextureFormat(m_textureFormat), dataType, data);
@@ -179,9 +178,9 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& filepath, cons
 	m_height = faceHeight;
 
 	//Allocate space for each separate face
-	std::array<Unique<Buffer>, 6> faces;
+	std::array<Buffer, 6> faces;
 	for (uint32_t i = 0; i < 6; ++i)
-		faces[i] = Buffer::create(faceWidth * faceHeight * BPP);
+		faces[i] = Buffer(faceWidth * faceHeight * BPP);
 
 	uint32_t faceIndex = 0;
 
@@ -196,8 +195,8 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& filepath, cons
 			{
 				for (int32_t b = 0; b < BPP; ++b)
 				{
-					Buffer& faceData = *faces[faceIndex];
-					faceData[(y * faceWidth) + x + b] = (*m_localData)[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
+					Buffer& faceData = faces[faceIndex];
+					faceData[(y * faceWidth) + x + b] = m_localData[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
 				}
 			}
 		}
@@ -223,8 +222,8 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& filepath, cons
 			{
 				for (int32_t b = 0; b < BPP; ++b)
 				{
-					Buffer& faceData = *faces[faceIndex];
-					faceData[(y * faceWidth) + x + b] = (*m_localData)[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
+					Buffer& faceData = faces[faceIndex];
+					faceData[(y * faceWidth) + x + b] = m_localData[((yTopLeft + y) * faceWidth) + xTopLeft + x + b];
 				}
 			}
 		}
@@ -249,27 +248,27 @@ OpenGLTextureCube::OpenGLTextureCube(const std::filesystem::path& filepath, cons
 
 	if (SRGB)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[2]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[0]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[2].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[0].getData());
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[4]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[5]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[4].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[5].getData());
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[1]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[3]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[1].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_SRGB8, faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, faces[3].getData());
 	}
 	else
 	{
 		GLenum dataType = (m_isHDR) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[2]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[0]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[2].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[0].getData());
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[4]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[5]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[4].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[5].getData());
 
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[1]->getData());
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[3]->getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[1].getData());
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, getGLInternalTextureFormat(m_textureFormat), faceWidth, faceHeight, 0, getGLTextureFormat(m_textureFormat), dataType, faces[3].getData());
 	}
 
 	glGenerateTextureMipmap(m_rendererID);
@@ -287,8 +286,8 @@ void OpenGLTextureCube::bind(const uint32_t slot) const
 	glBindTextureUnit(slot, m_rendererID);
 }
 
-static Unique<Buffer> loadImage(const std::filesystem::path& filepath, const bool isSRGB,
-								int32_t& out_width, int32_t& out_height, int32_t& out_BPP, Texture::Format& out_format, bool& out_isHDR)
+static Buffer loadImage(const std::filesystem::path& filepath, const bool isSRGB,
+						int32_t& out_width, int32_t& out_height, int32_t& out_BPP, Texture::Format& out_format, bool& out_isHDR)
 {
 	void* imageData;
 
@@ -320,7 +319,7 @@ static Unique<Buffer> loadImage(const std::filesystem::path& filepath, const boo
 	if (!imageData)
 		throw CometException() << "'" << filepathStr << "' Texture could not be loaded - " << stbi_failure_reason();
 
-	auto buf = Buffer::create(imageData, out_width * out_height * out_BPP);
+	Buffer buf(imageData, out_width * out_height * out_BPP);
 	stbi_image_free(imageData);
 	return buf;
 }

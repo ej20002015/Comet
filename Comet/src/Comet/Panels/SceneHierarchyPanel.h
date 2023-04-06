@@ -1,22 +1,25 @@
 #pragma once
 #include "CometPCH.h"
 
+#include "Panel.h"
 #include "Comet/Scene/Entity.h"
 #include "Comet/Scene/Scene.h"
 
 namespace Comet
 {
 
-class SceneHierarchyPanel
+class SceneHierarchyPanel : public Panel
 {
 public:
+	DEF_PANEL()
+
 	SceneHierarchyPanel() = default;
 	SceneHierarchyPanel(const Reference<Scene>& scene)
 		: m_scene(scene) {}
 
-	void setScene(const Reference<Scene>& scene) { m_scene = scene; m_selectedEntity = Entity(); }
+	void setScene(const Reference<Scene>& scene) { m_scene = scene; m_selectedEntity = Entity::Null; }
 
-	void onImGuiRender();
+	void onImGuiRender() override;
 
 	void openMenuIfNeeded();
 

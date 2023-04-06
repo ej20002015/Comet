@@ -8,10 +8,10 @@ class PlatformUtilities
 {
 public:
 	//TODO: Determine if filters are going to be platform specific (I suspect they will be), and if so create some sort of platform to filetype/filters mapping
-	static std::string openFile(const char* const filters);
-	static std::string saveFile(const char* const filters, const std::string_view defaultFileExtension = "");
+	static std::string openFile(const Buffer& filters);
+	static std::string saveFile(const Buffer& filters, const std::string_view defaultFileExtension = "");
 
-	static std::string getFilterForExtension(const std::string_view extension, const std::string_view fileType);
+	static Buffer constructFilter(const std::unordered_map<std::string, std::string> fileType2ExtensionsMap, bool includeAllFiles = true);
 };
 
 }

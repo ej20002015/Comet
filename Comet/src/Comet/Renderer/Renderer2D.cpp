@@ -15,15 +15,13 @@ Renderer2D::BatchData Renderer2D::s_batchData;
 
 void Renderer2D::init()
 {
-	Pipeline::Specification quadPipelineSpecification;
-	quadPipelineSpecification.layout =
-	{
-		{ "a_position",           ShaderDataType::FLOAT3 },
-		{ "a_color",              ShaderDataType::FLOAT4 },
-		{ "a_textureCoordinates", ShaderDataType::FLOAT2 },
-		{ "a_textureIndex",       ShaderDataType::UINT },
-		{ "a_tilingFactor",       ShaderDataType::FLOAT },
-		{ "a_entityID",           ShaderDataType::INT }
+	Pipeline::Specification quadPipelineSpecification = {
+		.layout = {{ "a_position",           ShaderDataType::FLOAT3 },
+				   { "a_color",              ShaderDataType::FLOAT4 },
+				   { "a_textureCoordinates", ShaderDataType::FLOAT2 },
+				   { "a_textureIndex",       ShaderDataType::UINT },
+				   { "a_tilingFactor",       ShaderDataType::FLOAT },
+				   { "a_entityID",           ShaderDataType::INT }}
 	};
 
 	s_data.quadPipeline = Pipeline::create(quadPipelineSpecification);
@@ -96,75 +94,6 @@ void Renderer2D::beginScene(const EditorCamera& editorCamera, const bool depthTe
 void Renderer2D::endScene()
 {
 	flush();
-}
-
-void Renderer2D::drawColoredQuad(const glm::vec2& centerCoordinates, const glm::vec2& scale, const glm::vec4& color, const float tilingFactor)
-{
-	drawColoredQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, scale, color, tilingFactor);
-}
-
-void Renderer2D::drawColoredQuad(const glm::vec3& centerCoordinates, const glm::vec2& scale, const glm::vec4& color, const float tilingFactor)
-{
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawQuad(transform, color, nullptr, tilingFactor);
-}
-
-void Renderer2D::drawRotatedColoredQuad(const glm::vec2& centerCoordinates, const float radians, const glm::vec2& scale, const glm::vec4& color, const float tilingFactor)
-{
-	drawRotatedColoredQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, radians, scale, color, tilingFactor);
-}
-
-void Renderer2D::drawRotatedColoredQuad(const glm::vec3& centerCoordinates, const float radians, const glm::vec2& scale, const glm::vec4& color, const float tilingFactor)
-{
-	glm::quat rotation = glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawQuad(transform, color, nullptr, tilingFactor);
-}
-
-void Renderer2D::drawTexturedQuad(const glm::vec2& centerCoordinates, const Reference<Texture2D>& texture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	drawTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, texture, scale, colorTint, tilingFactor);
-}
-
-void Renderer2D::drawTexturedQuad(const glm::vec3& centerCoordinates, const Reference<Texture2D>& texture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawQuad(transform, colorTint, texture, tilingFactor);
-}
-
-void Renderer2D::drawRotatedTexturedQuad(const glm::vec2& centerCoordinates, const float radians, const Reference<Texture2D>& texture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	drawRotatedTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, radians, texture, scale, colorTint, tilingFactor);
-}
-
-void Renderer2D::drawRotatedTexturedQuad(const glm::vec3& centerCoordinates, const float radians, const Reference<Texture2D>& texture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	glm::quat rotation = glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawQuad(transform, colorTint, texture, tilingFactor);
-}
-
-void Renderer2D::drawSubTexturedQuad(const glm::vec2& centerCoordinates, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	drawSubTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, subTexture, scale, colorTint, tilingFactor);
-}
-
-void Renderer2D::drawSubTexturedQuad(const glm::vec3& centerCoordinates, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawSubQuad(transform, colorTint, subTexture, tilingFactor);
-}
-
-void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec2& centerCoordinates, const float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	drawRotatedSubTexturedQuad({ centerCoordinates.x, centerCoordinates.y, 0.0f }, radians, subTexture, scale, colorTint, tilingFactor);
-}
-
-void Renderer2D::drawRotatedSubTexturedQuad(const glm::vec3& centerCoordinates, const float radians, const Texture2DSubTexture& subTexture, const glm::vec2& scale, const glm::vec4& colorTint, const float tilingFactor)
-{
-	glm::quat rotation = glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), centerCoordinates) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-	drawSubQuad(transform, colorTint, subTexture, tilingFactor);
 }
 
 void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color, const Reference<Texture2D>& texture, const float tilingFactor, const int32_t entityID)

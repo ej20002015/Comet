@@ -1,12 +1,15 @@
 #include "CometPCH.h"
 #include "SceneHierarchyPanel.h"
 
+#include "PanelRegistry.h"
 #include "Comet/Scene/Components.h"
 
 #include "imgui.h"
 
 namespace Comet
 {
+
+REG_PANEL(SceneHierarchyPanel)
 
 void SceneHierarchyPanel::onImGuiRender()
 {

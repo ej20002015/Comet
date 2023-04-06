@@ -26,7 +26,7 @@ void OpenGLUniformBuffer::setData(const void* const data, const uint32_t size, c
 {
 	CMT_COMET_ASSERT_MESSAGE(size <= m_descriptor.getSize() - offset, "Uniform Buffer overflow");
 
-	m_localData = Buffer::create(data, size);
+	m_localData = Buffer(data, size);
 
 	glNamedBufferSubData(m_rendererID, 0, size, data);
 }

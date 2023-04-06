@@ -26,7 +26,7 @@ public:
 private:
 	RendererID m_rendererID = 0;
 	UniformBufferDescriptor m_descriptor;
-	Unique<Buffer> m_localData;
+	Buffer m_localData;
 };
 
 class OpenGLUniformResource : public UniformResource

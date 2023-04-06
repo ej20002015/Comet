@@ -21,9 +21,6 @@ namespace Comet
 		~CometEditorApplication() = default;
 	};
 
-	Comet::Application* Comet::getApplicationInstance()
-	{
-		return new CometEditorApplication;
-	}
+	DEF_COMET_APP(CometEditorApplication)
 
 }

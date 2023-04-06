@@ -116,9 +116,7 @@ void Scene::onViewportResized(const uint32_t width, const uint32_t height)
 	{
 		auto& camera = view.get<CameraComponent>(entity).camera;
 		if (!camera.getFixedAspectRatio())
-		{
 			camera.setViewportSize(width, height);
-		}
 	}
 }
 

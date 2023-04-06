@@ -24,8 +24,7 @@ OpenGLShader::OpenGLShader(const std::filesystem::path& filepath)
 	: m_filepath(filepath)
 {
 	std::filesystem::path name = m_filepath.stem();
-	for (; name.string().find(".") != std::string::npos; name = name.stem())
-
+	for (; name.string().find(".") != std::string::npos; name = name.stem());
 	m_name = name.string();
 
 	Log::cometInfo("Creating shader {0}", m_name);
@@ -189,7 +188,6 @@ void OpenGLShader::setUpShaderUniformsAndResources()
 
 	for (const SpirvShaderInformation& shaderInfoVulkan : m_shaderInformationVulkan)
 	{
-
 		//Set up uniform buffers
 
 		for (const UniformBufferDescriptor& uniformBufferDescriptor : shaderInfoVulkan.uniformBuffers)

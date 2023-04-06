@@ -1,6 +1,7 @@
 #include "CometPCH.h"
 #include "EntityPropertiesPanel.h"
 
+#include "PanelRegistry.h"
 #include "Comet/Core/PlatformUtilities.h"
 #include "Comet/ImGui/ImGuiUtilities.h"
 
@@ -14,11 +15,16 @@
 namespace Comet
 {
 
+REG_PANEL(EntityPropertiesPanel)
+
 const float EntityPropertiesPanel::s_labelColumnWidth = 160.0f;
+Buffer EntityPropertiesPanel::s_imgFileFilter;
 
 EntityPropertiesPanel::EntityPropertiesPanel()
 {
 	m_noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityPropertiesPanel/NoTextureIcon.png");
+
+	initImageFileFilter();
 }
 
 void EntityPropertiesPanel::onImGuiRender()
@@ -197,7 +203,7 @@ void EntityPropertiesPanel::onImGuiRender()
 
 		if (ImGuiUtilities::propertyImageButton("Texture", textureRendererID, { 64.0f, 64.0f }))
 		{
-			std::string textureFilepath = PlatformUtilities::openFile("All Picture Files\0*.png;*.jpg\0\0");
+			std::string textureFilepath = PlatformUtilities::openFile(s_imgFileFilter);
 
 			if (!textureFilepath.empty())
 			{
@@ -215,10 +221,10 @@ void EntityPropertiesPanel::onImGuiRender()
 			{
 				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
 				const std::filesystem::path textureFilepathPath(directoryEntryPathCString);
-				const std::filesystem::path extension = textureFilepathPath.extension();
+				const std::string extension = textureFilepathPath.extension().string();
 				if (!extension.empty())
 				{
-					if (extension == ".png" || extension == ".jpg")
+					if (Texture::SUPPORTED_IMG_FILE_TYPES.find(extension) != Texture::SUPPORTED_IMG_FILE_TYPES.end())
 					{
 						auto texture = Texture2D::create(directoryEntryPathCString);
 						spriteComponent.texture = texture;
@@ -272,6 +278,21 @@ void EntityPropertiesPanel::onImGuiRender()
 	ImGui::PopID();
 
 	ImGui::End();
+}
+
+void EntityPropertiesPanel::initImageFileFilter()
+{
+	std::stringstream ss;
+	for (const auto& fileExtension : Texture::SUPPORTED_IMG_FILE_TYPES)
+		ss << "*" << fileExtension << ";";
+
+	std::string fileExtensions = ss.str();
+	//Remove trailing ;
+	fileExtensions.pop_back();
+
+	std::unordered_map<std::string, std::string> imgFilterFilterMap = { { "All Supported Image Files", fileExtensions } };
+
+	s_imgFileFilter = PlatformUtilities::constructFilter(imgFilterFilterMap, false);
 }
 
 template<typename T, typename ComponentUIFunction>

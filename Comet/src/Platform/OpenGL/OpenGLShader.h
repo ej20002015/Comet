@@ -54,10 +54,10 @@ private:
 		const std::string_view uniformStructName = uniformName.substr(0, dotOperatorIndex);
 		const std::string_view uniformStructMemberName = uniformName.substr(dotOperatorIndex + 1);
 
-		CMT_COMET_ASSERT_MESSAGE(m_uniformStructs.find(static_cast<std::string>(uniformStructName)) != m_uniformStructs.end(),
+		CMT_COMET_ASSERT_MESSAGE(m_uniformStructs.find(uniformStructName) != m_uniformStructs.end(),
 			fmt::format("Cannot find uniform struct '{0}' in shader '{1}' - value cannot be set", uniformStructName, m_name));
 
-		m_uniformStructs.at(static_cast<std::string>(uniformStructName)).setMemberData(uniformStructMemberName, data);
+		m_uniformStructs.at(std::string(uniformStructName)).setMemberData(uniformStructMemberName, data);
 	}
 
 private:
@@ -71,8 +71,8 @@ private:
 
 	std::vector<SpirvShaderInformation> m_shaderInformationVulkan;
 
-	std::unordered_map<std::string, OpenGLUniformStruct> m_uniformStructs;
-	std::unordered_map<std::string, OpenGLUniformResource> m_resources;
+	MapStr2T<OpenGLUniformStruct> m_uniformStructs;
+	MapStr2T<OpenGLUniformResource> m_resources;
 };
 
 }

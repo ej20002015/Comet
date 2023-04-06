@@ -26,6 +26,8 @@ public:
 	};
 
 public:
+	static const UnorderedStrSet SUPPORTED_IMG_FILE_TYPES;
+
 	virtual ~Texture() = default;
 
 	virtual void bind(const uint32_t slot = 0) const = 0;
