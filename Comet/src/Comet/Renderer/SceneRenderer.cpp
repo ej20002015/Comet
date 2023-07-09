@@ -4,9 +4,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/matrix_decompose.hpp"
 
-//TODO: Temp - remove when uniform API supports structs as members
-#include <glad/glad.h>
-
 namespace Comet
 {
 
@@ -15,9 +12,9 @@ Reference<Pipeline> SceneRenderer::s_PBRPipeline;
 
 void SceneRenderer::init()
 {
+	// TODO: Remove try-catch when happy with shader?
 	try {
-		//s_PBRShader = Shader::create("assets/shaders/PBR.glsl");
-		s_PBRShader = Shader::create("assets/shaders/BlinnPhong.glsl");
+		s_PBRShader = Shader::create("assets/shaders/PBR.glsl");
 	}
 	catch (const CometException& e)
 	{
@@ -107,7 +104,7 @@ void SceneRenderer::setSceneUB(const PointLightList& pointLights, const glm::vec
 	SceneDataUniformBuffer sceneUB;
 	sceneUB.viewPosition = viewPosition;
 
-	const uint32_t pointLightCount = pointLights.size();
+	const uint32_t pointLightCount = static_cast<uint32_t>(pointLights.size());
 	if (pointLightCount > SceneDataUniformBuffer::MAX_NUM_OF_POINT_LIGHTS)
 		throw CometException() << "Number of point lights given to the scene renderer exceeds the maxiumum supported number of " << SceneDataUniformBuffer::MAX_NUM_OF_POINT_LIGHTS;
 
@@ -123,25 +120,15 @@ void SceneRenderer::setSceneUB(const PointLightList& pointLights, const glm::vec
 		};
 	});
 
-	const auto temp = sizeof PointlightUniformStruct;
-
 	Shader::setUniformBuffer(1, &sceneUB, sizeof(sceneUB));
 }
 
 void SceneRenderer::setMaterialUniforms(const Material& material)
 {
-	// Just hard code some values for now
-	// TODO: Need to enable sub structs in UniformBufferDescriptor stuff
-
-	glUniform4f(glGetUniformLocation(s_PBRShader->getRendererID(), "u_f_pushConstants.u_material.diffuseColor"), 0.0f, 1.0f, 0.5f, 1.0f);
-	glUniform3f(glGetUniformLocation(s_PBRShader->getRendererID(), "u_f_pushConstants.u_material.specularColor"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(glGetUniformLocation(s_PBRShader->getRendererID(), "u_f_pushConstants.u_material.shininess"), 32.0f);
-	glUniform1i(glGetUniformLocation(s_PBRShader->getRendererID(), "u_f_pushConstants.u_material.useNormalMap"), false);
-
-	/*s_PBRShader->setUniformData("u_f_pushConstants.u_material.diffuseColor", glm::vec3(0.0f, 1.0f, 0.5f));
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.specularColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.shininess", 32.0f);
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.useNormalMap", false);*/
+	s_PBRShader->setUniformData("u_f_pushConstants.u_material.baseColor", glm::vec4(0.0f, 1.0f, 0.5f, 1.0f));
+	s_PBRShader->setUniformData("u_f_pushConstants.u_material.roughness", 1.0f);
+	s_PBRShader->setUniformData("u_f_pushConstants.u_material.metalness", 0.0f);
+	//s_PBRShader->setUniformData("u_f_pushConstants.u_material.useNormalMap", false);
 }
 
 }

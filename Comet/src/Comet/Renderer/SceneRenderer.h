@@ -46,7 +46,7 @@ private:
 
 	struct SceneDataUniformBuffer
 	{
-		static constexpr uint32_t MAX_NUM_OF_POINT_LIGHTS = 2;
+		static constexpr uint32_t MAX_NUM_OF_POINT_LIGHTS = 128;
 
 		glm::vec3 viewPosition;
 		int32_t __PADDING__; // JUST FOR PADDING

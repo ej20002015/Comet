@@ -80,7 +80,7 @@ struct PointLight
     float lightRadius;
 };
 
-const uint MAX_NUM_OF_POINT_LIGHTS = 2;
+const uint MAX_NUM_OF_POINT_LIGHTS = 128;
 
 // Scene data
 
