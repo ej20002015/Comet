@@ -43,13 +43,17 @@ public:
     static void init();
     static void shutdown();
 
-    static void drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest = true);
+    static void drawIndexed(const uint32_t count, const PrimitiveType primitive);
+    static void drawIndexedFromVertexOffset(uint32_t count, const void* startOfIndices, uint32_t vertexOffset);
 
     static void setClearColor(const glm::vec4& color);
     static void clear();
 
     static bool getBackfaceCulling();
     static void setBackfaceCulling(const bool culling);
+
+    static bool getDepthTesting();
+    static void setDepthTesting(const bool isDepthTestingEnabled);
 
     static const Capabilities& getCapabilities();
 
@@ -61,13 +65,17 @@ protected:
     virtual void i_init() = 0;
     virtual void i_shutdown() = 0;
 
-    virtual void i_drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest = true) = 0;
+    virtual void i_drawIndexed(const uint32_t count, const PrimitiveType primitive) = 0;
+    virtual void i_drawIndexedFromVertexOffset(uint32_t count, const void* startOfIndices, uint32_t vertexOffset) = 0;
 
     virtual void i_setClearColor(const glm::vec4& color) = 0;
     virtual void i_clear() = 0;
 
     virtual bool i_getBackfaceCulling() const = 0;
     virtual void i_setBackfaceCulling(const bool culling) = 0;
+
+    virtual bool i_getDepthTesting() const = 0;
+    virtual void i_setDepthTesting(const bool isDepthTestingEnabled) = 0;
 
 protected:
     static Capabilities s_rendererAPICapabilities;

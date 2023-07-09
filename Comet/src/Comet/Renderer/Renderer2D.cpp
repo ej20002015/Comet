@@ -16,12 +16,14 @@ Renderer2D::BatchData Renderer2D::s_batchData;
 void Renderer2D::init()
 {
 	Pipeline::Specification quadPipelineSpecification = {
-		.layout = {{ "a_position",           ShaderDataType::FLOAT3 },
-				   { "a_color",              ShaderDataType::FLOAT4 },
-				   { "a_textureCoordinates", ShaderDataType::FLOAT2 },
-				   { "a_textureIndex",       ShaderDataType::UINT },
-				   { "a_tilingFactor",       ShaderDataType::FLOAT },
-				   { "a_entityID",           ShaderDataType::INT }}
+		{
+			{ "a_position",           ShaderDataType::FLOAT3 },
+			{ "a_color",              ShaderDataType::FLOAT4 },
+			{ "a_textureCoordinates", ShaderDataType::FLOAT2 },
+			{ "a_textureIndex",       ShaderDataType::UINT },
+			{ "a_tilingFactor",       ShaderDataType::FLOAT },
+			{ "a_entityID",           ShaderDataType::INT }
+		}
 	};
 
 	s_data.quadPipeline = Pipeline::create(quadPipelineSpecification);
@@ -73,22 +75,22 @@ void Renderer2D::shutdown()
 	delete[] s_data.quadVertexBufferBase;
 }
 
-void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest)
+void Renderer2D::beginScene(const glm::mat4& viewProjectionMatrix, const bool depthTest)
 {
 	s_batchData.depthTest = depthTest;
-	glm::mat4 viewProjectionMatrix = camera.getProjectionMatrix() * glm::inverse(cameraTransform);
 	Shader::setUniformBuffer(0, &viewProjectionMatrix[0][0]);
 	setInitialBatchData();
 	resetStats();
 }
 
+void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest)
+{
+	beginScene(camera.getProjectionMatrix() * glm::inverse(cameraTransform), depthTest);
+}
+
 void Renderer2D::beginScene(const EditorCamera& editorCamera, const bool depthTest)
 {
-	s_batchData.depthTest = depthTest;
-	glm::mat4 viewProjectionMatrix = editorCamera.getViewProjectionMatrix();
-	Shader::setUniformBuffer(0, &viewProjectionMatrix[0][0]);
-	setInitialBatchData();
-	resetStats();
+	beginScene(editorCamera.getViewProjectionMatrix(), depthTest);
 }
 
 void Renderer2D::endScene()
@@ -222,8 +224,11 @@ void Renderer2D::flush()
 
 	s_data.quadShader->bind();
 
+	if (RendererAPI::getDepthTesting() != s_batchData.depthTest)
+		RendererAPI::setDepthTesting(s_batchData.depthTest);
+
 	//Draw call
-	RendererAPI::drawIndexed(s_batchData.quadCount * 6, RendererAPI::PrimitiveType::TRIANGLES, s_batchData.depthTest);
+	RendererAPI::drawIndexed(s_batchData.quadCount * 6, RendererAPI::PrimitiveType::TRIANGLES);
 
 	s_stats.drawCalls++;
 }

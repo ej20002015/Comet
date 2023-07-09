@@ -3,8 +3,11 @@
 
 #include "entt.hpp"
 
+#include "glm/glm.hpp"
+
 #include "Comet/Core/Dispatcher.h"
 #include "Comet/Renderer/EditorCamera.h"
+#include "Comet/Renderer/SceneRenderer.h"
 
 namespace Comet
 {
@@ -12,6 +15,7 @@ class Entity;
 class SceneHierarchyPanel;
 struct CameraComponent;
 struct TagComponent;
+struct PointLightComponent;
 class SceneSerializer;
 
 class Scene
@@ -77,7 +81,10 @@ private:
 	void onCameraComponentConstruction(Entity entity, CameraComponent& cameraComponent);
 	void onTagComponentCreation(Entity entity, TagComponent& tagComponent);
 
+	void renderModels();
 	void renderSprites();
+
+	SceneRenderer::PointLightList getPointLights();
 
 private:
 	entt::registry m_registry;

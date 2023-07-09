@@ -48,18 +48,16 @@ void EntityPropertiesPanel::onImGuiRender()
 	char textBuffer[256];
 	strcpy_s(textBuffer, sizeof(textBuffer), tag.c_str());
 	if (ImGui::InputText("##Tag", textBuffer, sizeof(textBuffer)))
-	{
 		tag = std::string(textBuffer);
-	}
 
 	const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 	const ImVec2 textSize = ImGui::CalcTextSize("Add Component");
 
 	ImGui::SameLine(contentRegion.x + GImGui->Style.FramePadding.x - textSize.x);
 	if (ImGui::Button("Add Component"))
-	{
 		ImGui::OpenPopup("ComponentMenu");
-	}
+
+	// TODO: clean up
 
 	if (ImGui::BeginPopup("ComponentMenu"))
 	{
@@ -77,6 +75,24 @@ void EntityPropertiesPanel::onImGuiRender()
 			if (ImGui::MenuItem("Sprite Component"))
 			{
 				m_entity.addComponent<SpriteComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!m_entity.hasComponent<ModelComponent>())
+		{
+			if (ImGui::MenuItem("Model Component"))
+			{
+				m_entity.addComponent<ModelComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!m_entity.hasComponent<PointLightComponent>())
+		{
+			if (ImGui::MenuItem("Point Light Component"))
+			{
+				m_entity.addComponent<PointLightComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -271,6 +287,26 @@ void EntityPropertiesPanel::onImGuiRender()
 					subTexture.setTextureScale(textureScale);
 			}
 		}
+
+		ImGuiUtilities::endPropertyGrid();
+	});
+
+	componentImGuiRender<ModelComponent>("Model Component", [this](ModelComponent& modelComponent)
+	{
+
+	});
+
+	componentImGuiRender<PointLightComponent>("Point Light Component", [this](PointLightComponent& pointLightComponent)
+	{
+		PointLight& pointLight = *pointLightComponent.pointLight;
+
+		ImGuiUtilities::beginPropertyGrid();
+
+		ImGuiUtilities::propertyColorPicker("Color", pointLight.lightColor);
+
+		ImGuiUtilities::property("Radius", pointLight.lightRadius);
+
+		ImGuiUtilities::property("Luminous Power", pointLight.luminousPower);
 
 		ImGuiUtilities::endPropertyGrid();
 	});

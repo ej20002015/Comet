@@ -81,6 +81,7 @@ public:
 	static bool property(const std::string_view label, glm::vec3& value, const float delta = 0.1f, const std::string_view format = "%.1f", const float min = 0.0f, const float max = 0.0f);
 
 	static bool propertyColorPicker(const std::string_view label, glm::vec4& value);
+	static bool propertyColorPicker(const std::string_view label, glm::vec3 & value);
 
 	static bool propertyButton(const std::string_view label, const std::string_view buttonText);
 	static bool propertyImageButton(const std::string_view label, const uint32_t textureRendererID, const glm::vec2& size);

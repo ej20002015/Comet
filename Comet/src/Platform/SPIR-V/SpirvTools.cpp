@@ -1,10 +1,13 @@
 #include "CometPCH.h"
 #include "SpirvTools.h"
 
-#include "spvc/spvc.hpp"
+#include <regex>
 
 namespace Comet
 {
+
+using namespace std::string_view_literals;
+using namespace std::string_literals;
 
 static std::string getShaderEnvironmentExtension(const ShaderEnvironment type)
 {
@@ -66,24 +69,23 @@ static ShaderDataType getShaderDataTypeFromSPIRType(const spirv_cross::SPIRType&
 	switch (SPIRType.basetype)
 	{
 	case spirv_cross::SPIRType::Float:
-		if (SPIRType.vecsize == 1)
-			return ShaderDataType::FLOAT;
-		else if (SPIRType.vecsize == 2)
-			return ShaderDataType::FLOAT2;
-		else if (SPIRType.vecsize == 3)
-			return ShaderDataType::FLOAT3;
-		else if (SPIRType.vecsize == 4)
-			return ShaderDataType::FLOAT4;
+		if (SPIRType.columns == 1)
+		{
+			switch (SPIRType.vecsize)
+			{
+			case 1: return ShaderDataType::FLOAT;
+			case 2: return ShaderDataType::FLOAT2;
+			case 3: return ShaderDataType::FLOAT3;
+			case 4: return ShaderDataType::FLOAT4;
+			}
+		}
 		else if (SPIRType.columns == 3)
 			return ShaderDataType::MAT3;
 		else if (SPIRType.columns == 4)
 			return ShaderDataType::MAT4;
-		else
-		{
-			CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
-			return ShaderDataType::NONE;
-		}
-		break;
+			
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
+		return ShaderDataType::NONE;
 
 	case spirv_cross::SPIRType::Int:
 		if (SPIRType.vecsize == 1)
@@ -94,21 +96,24 @@ static ShaderDataType getShaderDataTypeFromSPIRType(const spirv_cross::SPIRType&
 			return ShaderDataType::INT3; 
 		else if (SPIRType.vecsize == 4)
 			return ShaderDataType::INT4;
-		else
-		{
-			CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
-			return ShaderDataType::NONE;
-		}
+
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
+		return ShaderDataType::NONE;
+
+	case spirv_cross::SPIRType::UInt:
+		if (SPIRType.vecsize == 1)
+			return ShaderDataType::UINT;
+
+		CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
+		return ShaderDataType::NONE;
 		break;
 
 	case spirv_cross::SPIRType::Boolean:
 		return ShaderDataType::BOOL;
-		break;
 
 	default:
 		CMT_COMET_ASSERT_MESSAGE(false, "Unknown SPIRType");
 		return ShaderDataType::NONE;
-		break;
 	}
 }
 
@@ -133,15 +138,16 @@ std::vector<uint32_t> SpirvTools::compile(const std::string_view shaderSource, c
 	return binary;
 }
 
-std::string SpirvTools::getOpenGLFromBinary(const std::vector<uint32_t> binary)
+std::pair<std::string, uint32_t> SpirvTools::getOpenGLFromBinary(const std::vector<uint32_t> binary, const bool autoSetUniformLocations, const uint32_t locationBase)
 {
 	spirv_cross::CompilerGLSL compiler(binary);
 	spirv_cross::CompilerGLSL::Options options;
-	options.version = 450;
-	options.es = false;
-	compiler.set_common_options(options);
+	const std::string source = compiler.compile();
 
-	return compiler.compile();
+	if (autoSetUniformLocations)
+		return insertUniformLocations(source, locationBase);
+
+	return { source, 0 };
 }
 
 void SpirvTools::compileOrRetrieveBinary(std::vector<uint32_t>& binary, const std::string_view shaderSource, const std::filesystem::path& sourcePath, const std::string_view name, const ShaderType type, const ShaderEnvironment shaderEnvironment, const bool optimisation)
@@ -172,7 +178,7 @@ void SpirvTools::compileOrRetrieveBinary(std::vector<uint32_t>& binary, const st
 	Log::cometInfo("Compiling and caching shader {0}", name);
 	const shaderc::Compiler compiler;
 	const shaderc::CompileOptions options = getCompileOptions(shaderEnvironment);
-	std::string spirvName = fmt::format("{0} [{1}]", name, shaderTypeToString(type));
+	const std::string spirvName = fmt::format("{0} [{1}]", name, shaderTypeToString(type));
 	shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(shaderSource.data(), getShadercType(type), spirvName.c_str(), options);
 
 	if (result.GetCompilationStatus() != shaderc_compilation_status_success)
@@ -182,7 +188,7 @@ void SpirvTools::compileOrRetrieveBinary(std::vector<uint32_t>& binary, const st
 
 	//Cache compiled binary
 
-	std::filesystem::path cachedDirectoryPath = sourcePath.parent_path();
+	const std::filesystem::path cachedDirectoryPath = sourcePath.parent_path();
 	std::filesystem::create_directory(cachedDirectoryPath);
 
 	std::ofstream output(cachedBinaryPath, std::ios::binary);
@@ -253,22 +259,9 @@ void SpirvTools::reflectUniformBuffers(SpirvShaderInformation& shaderInfo, const
 
 		Log::cometInfo("Created uniform buffer declaration with name '{0}', size {1} bytes, bindingPoint {2}", bufferName, bufferSize, bufferBindingPoint);
 
-		//Populate uniform buffer with uniforms
-		uint32_t elementCount = static_cast<uint32_t>(bufferType.member_types.size());
-		uniformBuffer.reserve(elementCount);
-		for (uint32_t i = 0; i < elementCount; ++i)
-		{
-			const spirv_cross::SPIRType& uniformType = compiler.get_type(bufferType.member_types[i]);
-			std::string uniformName = compiler.get_member_name(bufferType.self, i);
-			ShaderDataType shaderUniformType = getShaderDataTypeFromSPIRType(uniformType);
-			uint32_t uniformSize = static_cast<uint32_t>(compiler.get_declared_struct_member_size(bufferType, i));
-			uint32_t uniformOffset = compiler.type_struct_member_offset(bufferType, i);
-
-			UniformBufferElementDescriptor element(uniformName, shaderUniformType, uniformSize, uniformOffset);
-			uniformBuffer.push(element);
-
-			Log::cometInfo("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
-		}
+		//Populate uniform struct with uniforms
+		std::vector<UniformBufferElementDescriptor> members = reflectMembers(compiler, bufferType);
+		std::ranges::for_each(members, [&uniformBuffer](const UniformBufferElementDescriptor& desc) { uniformBuffer.push(desc); });
 	}
 }
 
@@ -285,21 +278,8 @@ void SpirvTools::reflectPushConstants(SpirvShaderInformation& shaderInfo, const 
 		Log::cometInfo("Created uniform struct declaration with name '{0}', size {1} bytes", structName, structSize);
 
 		//Populate uniform struct with uniforms
-		uint32_t elementCount = static_cast<uint32_t>(structType.member_types.size());
-		uniformStruct.reserve(elementCount);
-		for (uint32_t i = 0; i < elementCount; ++i)
-		{
-			const spirv_cross::SPIRType& uniformType = compiler.get_type(structType.member_types[i]);
-			std::string uniformName = compiler.get_member_name(structType.self, i);
-			ShaderDataType shaderUniformType = getShaderDataTypeFromSPIRType(uniformType);
-			uint32_t uniformSize = static_cast<uint32_t>(compiler.get_declared_struct_member_size(structType, i));
-			uint32_t uniformOffset = compiler.type_struct_member_offset(structType, i);
-
-			UniformDescriptor element(uniformName, shaderUniformType, uniformSize);
-			uniformStruct.push(element);
-
-			Log::cometInfo("Created uniform buffer element declaration with name '{0}', type '{1}', size {2}, offset {3}", uniformName, getShaderDataTypeString(shaderUniformType), uniformSize, uniformOffset);
-		}
+		std::vector<UniformBufferElementDescriptor> members = reflectMembers(compiler, structType);
+		std::ranges::for_each(members, [&uniformStruct](const UniformBufferElementDescriptor& desc) { uniformStruct.push(static_cast<UniformElementDescriptor>(desc)); });
 	}
 }
 
@@ -313,6 +293,50 @@ void SpirvTools::reflectSamplers(SpirvShaderInformation& shaderInfo, const spirv
 		uint32_t samplerBindingPoint = compiler.get_decoration(resource.id, spv::DecorationBinding);
 		shaderInfo.uniformResources.emplace_back(samplerName, ShaderDataType::INT, 4, samplerBindingPoint);
 	}
+}
+
+std::vector<UniformBufferElementDescriptor> SpirvTools::reflectMembers(const spirv_cross::CompilerGLSL& compiler, spirv_cross::SPIRType structType, const std::string_view namePrefix, const uint32_t offsetStart)
+{
+	std::vector<UniformBufferElementDescriptor> members;
+
+	const uint32_t memberCount = static_cast<uint32_t>(structType.member_types.size());
+	for (uint32_t i = 0; i < memberCount; ++i)
+	{
+		const spirv_cross::SPIRType& memberType = compiler.get_type(structType.member_types[i]);
+		const std::string memberName = (namePrefix.size() ? std::string(namePrefix) + "."s : "") + compiler.get_member_name(structType.self, i);
+		const uint32_t memberOffset = offsetStart + compiler.type_struct_member_offset(structType, i);
+		if (memberType.basetype == spirv_cross::SPIRType::Struct)
+		{
+			// Recursively get UnformDescriptors for members of nested structs
+			const uint32_t nestedStructOffsetStart = offsetStart + memberOffset;
+			const std::vector<UniformBufferElementDescriptor> nestedStructMembers = reflectMembers(compiler, memberType, memberName, nestedStructOffsetStart);
+			members.insert(members.end(), nestedStructMembers.begin(), nestedStructMembers.end());
+			continue;
+		}
+
+		const ShaderDataType memberShaderDataType = getShaderDataTypeFromSPIRType(memberType);
+		const uint32_t memberSize = static_cast<uint32_t>(compiler.get_declared_struct_member_size(structType, i));
+
+		const UniformBufferElementDescriptor element(memberName, memberShaderDataType, memberSize, memberOffset);
+		members.push_back(element);
+
+		Log::cometInfo("Created uniform element (member) declaration with name '{0}', type '{1}', size {2}, offset {3}", memberName, getShaderDataTypeString(memberShaderDataType), memberSize, memberOffset);
+	}
+
+	return members;
+}
+
+std::pair<std::string, uint32_t> SpirvTools::insertUniformLocations(std::string shaderSource, const uint32_t locationBase)
+{
+	static constexpr std::string_view freeFloatingUniformRegex = "^(?!.*layout.*uniform).*uniform"sv;
+
+	uint32_t location = locationBase;
+	const std::regex regex(freeFloatingUniformRegex.data());
+	
+	for (std::smatch match; std::regex_search(shaderSource, match, regex); )
+		shaderSource.insert(match.position(), fmt::format("layout(location = {}) ", location++));
+
+	return { shaderSource, location };
 }
 
 }

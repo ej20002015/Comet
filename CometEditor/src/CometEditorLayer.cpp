@@ -98,7 +98,7 @@ void CometEditorLayer::onEvent(Event& e)
 
 void CometEditorLayer::initRendererItems()
 {
-    Comet::Renderer::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+    Comet::RendererAPI::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 
     Framebuffer::Specification framebufferSpecification = {
         .width = static_cast<uint32_t>(ViewportPanel::INITIAL_SIZE.x),

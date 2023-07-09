@@ -65,7 +65,7 @@ public:
 	const UniformStructDescriptor& getDescriptor() const override { return m_descriptor; }
 
 private:
-	UniformDescriptor getMemberDescriptor(const std::string_view memberName);
+	UniformElementDescriptor getMemberDescriptor(const std::string_view memberName);
 	std::string getMemberFullName(const std::string_view memberName);
 
 private:

@@ -50,7 +50,7 @@ void Application::run()
 	{
 		updateTimestep();
 
-		Renderer::clear();
+		RendererAPI::clear();
 		updateLayers();
 		renderImGui();
 			

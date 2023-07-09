@@ -12,7 +12,11 @@
 #include "SceneCamera.h"
 #include "EntityNativeScript.h"
 
+#include "Comet/Renderer/Material.h"
 #include "Comet/Renderer/Texture.h"
+#include "Comet/Renderer/Model.h"
+#include "Comet/Renderer/ModelFactory.h"
+#include "Comet/Renderer/PointLight.h"
 
 namespace Comet
 {
@@ -147,6 +151,24 @@ struct SpriteComponent
 
 	SpriteComponent(const SpriteComponent& other) = default;
 	~SpriteComponent() = default;
+};
+
+struct ModelComponent
+{
+	Reference<Model> model = ModelFactory::create(ModelFactory::MeshType::CUBE, createReference<Material>());
+
+	ModelComponent() = default;
+	ModelComponent(const Reference<Model>& model)
+		: model(model) {}
+};
+
+struct PointLightComponent
+{
+	Reference<PointLight> pointLight = PointLight::create();
+
+	PointLightComponent() = default;
+	PointLightComponent(const Reference<PointLight>& pointLight)
+		: pointLight(pointLight) {}
 };
 
 }

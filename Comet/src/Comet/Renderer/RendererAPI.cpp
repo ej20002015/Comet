@@ -33,10 +33,16 @@ void RendererAPI::shutdown()
 	s_instance->i_shutdown();
 }
 
-void RendererAPI::drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest)
+void RendererAPI::drawIndexed(const uint32_t count, const PrimitiveType primitive)
 {
 	CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
-	s_instance->i_drawIndexed(count, primitive, depthTest);
+	s_instance->i_drawIndexed(count, primitive);
+}
+
+void RendererAPI::drawIndexedFromVertexOffset(uint32_t count, const void* startOfIndices, uint32_t vertexOffset)
+{
+	CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+	s_instance->i_drawIndexedFromVertexOffset(count, startOfIndices, vertexOffset);
 }
 
 void RendererAPI::setClearColor(const glm::vec4& color)
@@ -61,6 +67,18 @@ void RendererAPI::setBackfaceCulling(const bool culling)
 {
 	CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
 	s_instance->i_setBackfaceCulling(culling);
+}
+
+bool RendererAPI::getDepthTesting()
+{
+	CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+	return s_instance->i_getDepthTesting();
+}
+
+void RendererAPI::setDepthTesting(const bool isDepthTestingEnabled)
+{
+	CMT_COMET_ASSERT_MESSAGE(s_instance, "Need to initialise the RendererAPI class first by calling init()");
+	s_instance->i_setDepthTesting(isDepthTestingEnabled);
 }
 
 const RendererAPI::Capabilities& RendererAPI::getCapabilities()

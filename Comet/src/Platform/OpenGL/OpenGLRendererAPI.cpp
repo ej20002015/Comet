@@ -76,15 +76,14 @@ void OpenGLRendererAPI::i_shutdown()
 {
 }
 
-void OpenGLRendererAPI::i_drawIndexed(const uint32_t count, const PrimitiveType primitive, const bool depthTest)
+void OpenGLRendererAPI::i_drawIndexed(const uint32_t count, const PrimitiveType primitive)
 {
-	if (!depthTest)
-		glDisable(GL_DEPTH_TEST);
-
 	glDrawElements(getGLPrimitveType(primitive), count, GL_UNSIGNED_INT, nullptr);
+}
 
-	if (!depthTest)
-		glEnable(GL_DEPTH_TEST);
+void OpenGLRendererAPI::i_drawIndexedFromVertexOffset(uint32_t count, const void* startOfIndices, uint32_t vertexOffset)
+{
+	glDrawElementsBaseVertex(GL_TRIANGLES, count, GL_UNSIGNED_INT, startOfIndices, static_cast<int32_t>(vertexOffset));
 }
 
 void OpenGLRendererAPI::i_clear()
@@ -102,6 +101,21 @@ bool OpenGLRendererAPI::i_getBackfaceCulling() const
 void OpenGLRendererAPI::i_setBackfaceCulling(const bool culling)
 {
 	culling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+}
+
+bool OpenGLRendererAPI::i_getDepthTesting() const
+{
+	bool depthTesting;
+	glGetBooleanv(GL_DEPTH_TEST, reinterpret_cast<GLboolean*>(&depthTesting));
+	return depthTesting;
+}
+
+void OpenGLRendererAPI::i_setDepthTesting(const bool isDepthTestingEnabled)
+{
+	if (isDepthTestingEnabled)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
 }
 
 void OpenGLRendererAPI::i_setClearColor(const glm::vec4& color)

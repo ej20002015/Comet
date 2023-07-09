@@ -83,8 +83,8 @@ void OpenGLShader::load()
 	m_shaderInformationVulkan.push_back(fragmentShaderInfoVulkan);
 
 	//Get OpenGL source version of the shader code
-	const std::string vertexShaderSourceOpenGL = SpirvTools::getOpenGLFromBinary(vertexShaderInfoVulkan.binary);
-	const std::string fragmentShaderSourceOpenGL = SpirvTools::getOpenGLFromBinary(fragmentShaderInfoVulkan.binary);
+	const auto [vertexShaderSourceOpenGL, locationOffsetV] = SpirvTools::getOpenGLFromBinary(vertexShaderInfoVulkan.binary);
+	const auto [fragmentShaderSourceOpenGL, locationOffsetF] = SpirvTools::getOpenGLFromBinary(fragmentShaderInfoVulkan.binary, true, locationOffsetV);
 
 	//Get spirv OpenGL code
 	binaries[0] = SpirvTools::compile(vertexShaderSourceOpenGL, m_filepath, m_name, ShaderType::VERTEX, ShaderEnvironment::OPENGL, OPTIMISATION);
@@ -124,6 +124,7 @@ void OpenGLShader::load()
 		// Don't leak shaders either.
 		glDeleteShader(vertexShaderID);
 		glDeleteShader(fragmentShaderID);
+		return;
 	}
 
 	glDetachShader(m_rendererID, vertexShaderID);

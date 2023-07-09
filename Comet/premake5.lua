@@ -41,7 +41,8 @@ project "Comet"
         "%{includeDirectories.stb}",
         "%{includeDirectories.ImGuizmo}",
         "%{includeDirectories.EnTT}",
-        "%{includeDirectories.yaml_cpp}"
+        "%{includeDirectories.yaml_cpp}",
+        "%{includeDirectories.assimp}"
     }
 
     links
@@ -49,7 +50,8 @@ project "Comet"
         "GLFW",
         "Glad",
         "ImGui",
-        "yaml-cpp"
+        "yaml-cpp",
+        "assimp"
     }
 
     defines

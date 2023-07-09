@@ -65,7 +65,7 @@ public:
 		return m_scene->m_registry.get<T>(m_entityHandle);
 	}
 
-	operator bool() { return (m_entityHandle != entt::null) && m_scene; }
+	operator const bool() const { return (m_entityHandle != entt::null) && m_scene; }
 
 	bool operator ==(const Entity& other) const { return m_entityHandle == other.m_entityHandle; }
 

@@ -16,3 +16,6 @@
 [submodule "Comet/Vendor/yaml-cpp"]
 	path = Comet/Vendor/yaml-cpp
 	url = https://github.com/ej20002015/yaml-cpp.git
+[submodule "Comet/Vendor/assimp"]
+	path = Comet/Vendor/assimp
+	url = git@github.com:ej20002015/assimp.git

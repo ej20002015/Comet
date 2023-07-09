@@ -29,6 +29,7 @@ public:
 	static void init();
 	static void shutdown();
 
+	static void beginScene(const glm::mat4& viewProjectionMatrix, const bool depthTest = true);
 	static void beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest = true);
 	static void beginScene(const EditorCamera& editorCamera, const bool depthTest = true);
 
