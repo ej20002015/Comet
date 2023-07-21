@@ -93,20 +93,25 @@ layout (binding = 1) uniform SceneData
 
 // UNIFORMS
 
-struct Material
+struct MaterialGlobal
 {
     vec4 baseColor;
     float roughness;
     float metalness;
 
-    //bool useNormalMap;
+    bool useNormalMap;
 };
 
 layout (push_constant) uniform u_PushConstants
 {
 	layout (offset = 64) int u_entityID;
-    Material u_material;
+    MaterialGlobal u_matGlobal;
 } u_f_pushConstants;
+
+layout (binding = 2) uniform sampler2D u_matBaseColorMap;
+layout (binding = 3) uniform sampler2D u_matRoughnessMap;
+layout (binding = 4) uniform sampler2D u_matMetalnessMap;
+layout (binding = 5) uniform sampler2D u_matNormalMap;
 
 // OUTPUTS
 
@@ -192,17 +197,15 @@ float calculateGGXDistribution(float nDotH)
 
 vec3 getNormalisedSurfaceNormal()
 {
-    // if (u_material.useNormalMap)
-    // {
-    //     vec4 sampleFromNormalMap = texture(u_material.normalMap, vertexInput.textureCoordinates);
-    //     vec3 sampledNormal = (sampleFromNormalMap.rgb * 2.0f) - 1.0f;
-    //     vec3 sampledNormalInWorldSpace = vertexInput.TBN * sampledNormal;
-    //     return normalize(sampledNormalInWorldSpace);
-    // }
-    // else
-    //     return normalize(vertexInput.normal);
-
-    return normalize(vertexInput.normal);
+    if (u_f_pushConstants.u_matGlobal.useNormalMap)
+    {
+        vec4 sampleFromNormalMap = texture(u_matNormalMap, vertexInput.textureCoordinates);
+        vec3 sampledNormal = (sampleFromNormalMap.rgb * 2.0f) - 1.0f;
+        vec3 sampledNormalInWorldSpace = vertexInput.TBN * sampledNormal;
+        return normalize(sampledNormalInWorldSpace);
+    }
+    else
+        return normalize(vertexInput.normal);
 }
 
 float calculatePointLightAttenuationFactor(float lightDistance, float lightRadius)
@@ -270,11 +273,11 @@ void main()
 
     g_dotProducts.nDotV = dot(g_directions.normal, g_directions.viewDirection);
 
-    vec4 baseColorWithAlpha = /*texture(u_material.baseColorMap, vertexInput.textureCoordinates) * */ u_f_pushConstants.u_material.baseColor;
+    vec4 baseColorWithAlpha = texture(u_matBaseColorMap, vertexInput.textureCoordinates) * u_f_pushConstants.u_matGlobal.baseColor;
     g_materialProperties.baseColor = baseColorWithAlpha.rgb;
     g_materialProperties.alpha = baseColorWithAlpha.a;
-    g_materialProperties.roughness = /*texture(u_material.roughnessMap, vertexInput.textureCoordinates).r * */ u_f_pushConstants.u_material.roughness;
-    g_materialProperties.metalness = /*texture(u_material.metalnessMap, vertexInput.textureCoordinates).r * */ u_f_pushConstants.u_material.metalness;
+    g_materialProperties.roughness = texture(u_matRoughnessMap, vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.roughness;
+    g_materialProperties.metalness = texture(u_matMetalnessMap, vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.metalness;
     g_materialProperties.f0 = mix(F0_FOR_DIELECTRICS, g_materialProperties.baseColor, g_materialProperties.metalness);
 
     // Solve the reflectance equation by evaluating the contribution of each point light
@@ -294,18 +297,3 @@ void main()
     o_fragColor = vec4(fragmentColor, g_materialProperties.alpha);
     o_entityID = u_f_pushConstants.u_entityID;
 }
-
-// Material
-
-// struct Material
-// {
-//     vec4 baseColor;
-//     float roughness;
-//     float metalness;
-//     sampler2D baseColorMap;
-//     sampler2D roughnessMap;
-//     sampler2D metalnessMap;
-//     sampler2D normalMap;
-
-//     bool useNormalMap;
-// };

@@ -60,6 +60,8 @@ public:
 	void setMemberData(const std::string_view memberName, const glm::ivec3& data) override;
 	void setMemberData(const std::string_view memberName, const glm::ivec4& data) override;
 
+	void setMemberData(const std::string_view memberName, const uint32_t data) override;
+
 	void setMemberData(const std::string_view memberName, const bool data) override;
 
 	const UniformStructDescriptor& getDescriptor() const override { return m_descriptor; }

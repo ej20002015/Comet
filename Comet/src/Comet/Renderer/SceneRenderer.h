@@ -55,12 +55,20 @@ private:
 	};
 
 private:
+	static void initDefaultMatTextures();
+
 	static void setSceneUB(const PointLightList& pointLights, const glm::vec3 viewPosition);
 	static void setMaterialUniforms(const Material& material);
 
 private:
 	static Reference<Shader> s_PBRShader;
 	static Reference<Pipeline> s_PBRPipeline;
+
+
+	static Reference<Texture2D> s_defaultBaseColorMapTexture;
+	static Reference<Texture2D> s_defaultRoughnessMapTexture;
+	static Reference<Texture2D> s_defaultMetalnessMapTexture;
+
 };
 
 }

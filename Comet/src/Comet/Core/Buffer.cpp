@@ -42,6 +42,9 @@ Buffer::Buffer(Buffer&& other) noexcept
 
 Buffer& Buffer::operator=(const Buffer& other)
 {
+	if (m_data)
+		delete m_data;
+
 	m_data = new byte[other.m_size];
 	m_size = other.m_size;
 	memcpy(m_data, other.m_data, other.m_size);
@@ -51,6 +54,9 @@ Buffer& Buffer::operator=(const Buffer& other)
 
 Buffer& Buffer::operator=(Buffer&& other) noexcept
 {
+	if (m_data)
+		delete m_data;
+
 	m_data = other.m_data;
 	m_size = other.m_size;
 	other.m_data = nullptr;

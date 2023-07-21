@@ -51,6 +51,13 @@ void OpenGLShader::bind()
 	glUseProgram(m_rendererID);
 }
 
+MapStr2T<const UniformResource&> OpenGLShader::getResources() const
+{
+	MapStr2T<const UniformResource&> resources;
+	std::ranges::transform(m_resources, std::inserter(resources, resources.end()), [](const auto& resourcePair) -> std::pair<std::string, const UniformResource&> { return resourcePair; });
+	return resources;
+}
+
 std::string OpenGLShader::getSourceFromFile()
 {
 	std::string source;

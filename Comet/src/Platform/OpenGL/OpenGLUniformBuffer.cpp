@@ -124,6 +124,14 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 	glUniform4i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z, data.w);
 }
 
+void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const uint32_t data)
+{
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::UINT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::UINT))
+
+	glUniform1ui(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
+}
+
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const bool data)
 {
 	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);

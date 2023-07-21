@@ -7,8 +7,16 @@
 namespace Comet
 {
 
+#pragma region STATIC_DEFS
+
 Reference<Shader> SceneRenderer::s_PBRShader;
 Reference<Pipeline> SceneRenderer::s_PBRPipeline;
+
+Reference<Texture2D> SceneRenderer::s_defaultBaseColorMapTexture;
+Reference<Texture2D> SceneRenderer::s_defaultRoughnessMapTexture;
+Reference<Texture2D> SceneRenderer::s_defaultMetalnessMapTexture;
+
+#pragma endregion
 
 void SceneRenderer::init()
 {
@@ -33,6 +41,8 @@ void SceneRenderer::init()
 	};
 
 	s_PBRPipeline = Pipeline::create(quadPipelineSpecification);
+
+	initDefaultMatTextures();
 }
 
 void SceneRenderer::shutdown()
@@ -99,6 +109,16 @@ void SceneRenderer::drawModel(Reference<Model> model, const glm::mat4& transform
 	});
 }
 
+void SceneRenderer::initDefaultMatTextures()
+{
+	uint8_t whitePixelImageData[4] = { 0xff, 0xff, 0xff, 0xff };
+	uint8_t monoChannelSaturatedPixelImageData[1] = { 0xff };
+
+	s_defaultBaseColorMapTexture = Texture2D::create(whitePixelImageData, 4, Texture::Format::RGBA, 1, 1);
+	s_defaultRoughnessMapTexture = Texture2D::create(monoChannelSaturatedPixelImageData, 1, Texture::Format::R8, 1, 1);
+	s_defaultMetalnessMapTexture = Texture2D::create(monoChannelSaturatedPixelImageData, 1, Texture::Format::R8, 1, 1);
+}
+
 void SceneRenderer::setSceneUB(const PointLightList& pointLights, const glm::vec3 viewPosition)
 {
 	SceneDataUniformBuffer sceneUB;
@@ -125,10 +145,29 @@ void SceneRenderer::setSceneUB(const PointLightList& pointLights, const glm::vec
 
 void SceneRenderer::setMaterialUniforms(const Material& material)
 {
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.baseColor", glm::vec4(0.0f, 1.0f, 0.5f, 1.0f));
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.roughness", 1.0f);
-	s_PBRShader->setUniformData("u_f_pushConstants.u_material.metalness", 0.0f);
-	//s_PBRShader->setUniformData("u_f_pushConstants.u_material.useNormalMap", false);
+	static std::unordered_map<std::string, uint32_t> matBindings;
+	if (matBindings.empty())
+	{
+		matBindings.insert({ "u_matBaseColorMap", s_PBRShader->getResources().at("u_matBaseColorMap").getDescriptor().getBindingPoint() });
+		matBindings.insert({ "u_matRoughnessMap", s_PBRShader->getResources().at("u_matRoughnessMap").getDescriptor().getBindingPoint() });
+		matBindings.insert({ "u_matMetalnessMap", s_PBRShader->getResources().at("u_matMetalnessMap").getDescriptor().getBindingPoint() });
+		matBindings.insert({ "u_matNormalMap", s_PBRShader->getResources().at("u_matNormalMap").getDescriptor().getBindingPoint() });
+	}
+
+	s_PBRShader->setUniformData("u_f_pushConstants.u_matGlobal.baseColor", material.baseColor);
+	s_PBRShader->setUniformData("u_f_pushConstants.u_matGlobal.roughness", material.roughness);
+	s_PBRShader->setUniformData("u_f_pushConstants.u_matGlobal.metalness", material.metalness);
+
+	const auto& baseColorTexture = material.baseColorMap ? material.baseColorMap : s_defaultBaseColorMapTexture;
+	baseColorTexture->bind(matBindings.at("u_matBaseColorMap"));
+	const auto& roughnessTexture = material.roughnessMap ? material.roughnessMap : s_defaultRoughnessMapTexture;
+	roughnessTexture->bind(matBindings.at("u_matRoughnessMap"));
+	const auto& metallnessTexture = material.metalnessMap ? material.metalnessMap : s_defaultMetalnessMapTexture;
+	metallnessTexture->bind(matBindings.at("u_matMetalnessMap"));
+
+	s_PBRShader->setUniformData("u_f_pushConstants.u_matGlobal.useNormalMap", material.normalMap ? 1u : 0u);
+	if (material.normalMap)
+		material.normalMap->bind(matBindings.at("u_matNormalMap"));
 }
 
 }

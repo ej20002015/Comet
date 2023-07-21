@@ -52,9 +52,8 @@ void Renderer2D::init()
 
 	s_data.quadShader = Shader::create("assets/shaders/2DBatchShader.glsl");
 
-	s_data.whiteTexture = Texture2D::create(Texture::Format::RGBA, 1, 1);
 	uint32_t whitePixelData = 0xffffffff;
-	s_data.whiteTexture->setData(&whitePixelData, sizeof(whitePixelData));
+	s_data.whiteTexture = Texture2D::create(&whitePixelData, 4, Texture::Format::RGBA, 1, 1);
 
 	s_data.textureSlots[0] = s_data.whiteTexture;
 

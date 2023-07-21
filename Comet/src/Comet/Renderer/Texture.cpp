@@ -28,6 +28,7 @@ uint32_t Texture::getBPP(const Format format)
 	case Format::RGB:      return 3;
 	case Format::RGBA:     return 4;
 	case Format::FLOAT16:  return 8;
+    case Format::R8:       return 1;
 		
 	default:
 		CMT_COMET_ASSERT_MESSAGE(false, "Unknown texture format");
@@ -48,6 +49,13 @@ Reference<Texture2D> Texture2D::create(const Format format, const uint32_t width
         return nullptr;
         break;
     }
+}
+
+Reference<Texture2D> Texture2D::create(const void* const data, const uint32_t size, const Format format, const uint32_t width, const uint32_t height, const Filter magFilter, const Filter minFilter, const Wrap wrap)
+{
+    Reference<Texture2D> texture = Texture2D::create(format, width, height, magFilter, minFilter, wrap);
+    texture->setData(data, size);
+    return texture;
 }
 
 Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, const bool SRGB, const Filter magFilter, const Filter minFilter, const Wrap wrap)

@@ -12,7 +12,7 @@ struct Material
 
 	glm::vec4 baseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	float roughness = 1.0f;
-	float metalness = 1.0f;
+	float metalness = 0.0f;
 	Reference<const Texture> baseColorMap;
 	Reference<const Texture> roughnessMap;
 	Reference<const Texture> metalnessMap;

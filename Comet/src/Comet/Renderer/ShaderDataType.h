@@ -6,7 +6,7 @@ namespace Comet
 	
 enum class ShaderDataType
 {
-	NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4, UINT, INT, INT2, INT3, INT4, BOOL
+	NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4, INT, INT2, INT3, INT4, UINT, BOOL
 };
 
 uint32_t getShaderDataTypeSize(const ShaderDataType type);

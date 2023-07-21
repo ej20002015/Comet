@@ -155,9 +155,23 @@ struct SpriteComponent
 
 struct ModelComponent
 {
-	Reference<Model> model = ModelFactory::create(ModelFactory::MeshType::CUBE, createReference<Material>());
+	/*Reference<Model> model = ModelFactory::create(ModelFactory::MeshType::CUBE, createReference<Material>());
 
-	ModelComponent() = default;
+	ModelComponent() = default;*/
+	Reference<Model> model;
+	
+	ModelComponent()
+	{
+		Material material = {
+			.baseColorMap = Texture2D::create(R"(assets/materials/RustedIron/BaseColor.png)", true, Texture::Filter::LINEAR, Texture::Filter::LINEAR, Texture::Wrap::REPEAT),
+			.roughnessMap = Texture2D::create(R"(assets/materials/RustedIron/Roughness.png)", false, Texture::Filter::LINEAR, Texture::Filter::LINEAR, Texture::Wrap::REPEAT),
+			.metalnessMap = Texture2D::create(R"(assets/materials/RustedIron/Metalness.png)", false, Texture::Filter::LINEAR, Texture::Filter::LINEAR, Texture::Wrap::REPEAT),
+			.normalMap = Texture2D::create(R"(assets/materials/RustedIron/Normal.png)", false, Texture::Filter::LINEAR, Texture::Filter::LINEAR, Texture::Wrap::REPEAT)
+		};
+
+		model = ModelFactory::create(ModelFactory::MeshType::SPHERE, createReference<Material>(material));
+	}
+
 	ModelComponent(const Reference<Model>& model)
 		: model(model) {}
 };
