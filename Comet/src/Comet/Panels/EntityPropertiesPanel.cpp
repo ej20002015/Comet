@@ -31,7 +31,7 @@ void EntityPropertiesPanel::onImGuiRender()
 {
 	ImGui::Begin("Entity Properties");
 
-	if (!m_entity)
+	if (!m_getEntityCallback || !(m_entity = m_getEntityCallback()))
 	{
 		ImGui::End();
 		return;

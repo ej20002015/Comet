@@ -67,7 +67,7 @@ void ViewportPanel::onImGuiRender()
 
     m_guizmoOperationChangeLocked = false;
 
-    if (m_selectedEntity && m_guizmoOperation > -1)
+    if (m_getEntityCallback && (m_selectedEntity = m_getEntityCallback()) && m_guizmoOperation > -1)
     {
         //Editor Camera has a perspective projection
         ImGuizmo::SetOrthographic(false);

@@ -24,8 +24,8 @@ public:
 
 	EntityPropertiesPanel();
 
-
-	void setEntity(Entity entity) { m_entity = entity; }
+	using GetEntityCallback = std::function<Entity()>;
+	void setGetEntityCallback(const GetEntityCallback& getEntityCallback) { m_getEntityCallback = getEntityCallback; }
 
 	void onImGuiRender() override;
 
@@ -43,8 +43,10 @@ private:
 	static constexpr ImGuiTreeNodeFlags NODE_FLAGS = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 
 	static Buffer s_imgFileFilter;
-
+	
+	GetEntityCallback m_getEntityCallback;
 	Entity m_entity;
+
 	static const float s_labelColumnWidth;
 
 	Reference<Texture2D> m_noTextureIcon;

@@ -31,7 +31,8 @@ public:
 	void setFramebufferID(const RendererID textureID) { m_textureID = textureID; }
 	void setOnFilepathDropCallback(const std::function<void(std::filesystem::path)> f) { m_onFilepathDropCallback = f; }
 	void setMatrices(const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix) { m_projectionMatrix = projectionMatrix; m_viewMatrix = viewMatrix; }
-	void setEntity(const Entity entity) { m_selectedEntity = entity; }
+	using GetEntityCallback = std::function<Entity()>;
+	void setGetEntityCallback(const GetEntityCallback& getEntityCallback) { m_getEntityCallback = getEntityCallback; }
 
 	bool getGuizmoOperationChangeLocked() const { return m_guizmoOperationChangeLocked; }
 
@@ -46,6 +47,7 @@ private:
 	std::function<void(std::filesystem::path)> m_onFilepathDropCallback;
 	glm::mat4 m_projectionMatrix;
 	glm::mat4 m_viewMatrix;
+	GetEntityCallback m_getEntityCallback;
 	Entity m_selectedEntity;
 	int32_t m_guizmoOperation = -1;
 	bool m_isHovered = false;

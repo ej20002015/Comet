@@ -70,9 +70,6 @@ void CometEditorLayer::onImGuiRender()
 
     Entity selectedEntity = m_panelManager.get<SceneHierarchyPanel>().getSelectedEntity();
 
-    m_panelManager.get<EntityPropertiesPanel>().setEntity(selectedEntity);
-
-    m_panelManager.get<ViewportPanel>().setEntity(selectedEntity);
     m_panelManager.get<ViewportPanel>().setMatrices(m_editorCamera.getProjectionMatrix(), m_editorCamera.getViewMatrix());
     m_panelManager.get<ViewportPanel>().setGuizmoOperation(m_guizmoOperation);
 
@@ -132,6 +129,10 @@ void CometEditorLayer::initPanels()
 
     m_panelManager.get<SceneHierarchyPanel>().setScene(m_scene);
 
+    const auto getEntityCallback = CMT_BIND_METHOD_FROM_OBJ(SceneHierarchyPanel::getSelectedEntity, &m_panelManager.get<SceneHierarchyPanel>());
+
+    m_panelManager.get<EntityPropertiesPanel>().setGetEntityCallback(getEntityCallback);
+
     m_panelManager.get<SceneStateToolbarPanel>().setScenePlayedCallback(CMT_BIND_METHOD(CometEditorLayer::onScenePlay));
     m_panelManager.get<SceneStateToolbarPanel>().setSceneStoppedCallback(CMT_BIND_METHOD(CometEditorLayer::onSceneStop));
 
@@ -144,6 +145,7 @@ void CometEditorLayer::initPanels()
         }}
     });
 
+    m_panelManager.get<ViewportPanel>().setGetEntityCallback(getEntityCallback);
     m_panelManager.get<ViewportPanel>().setOnFilepathDropCallback(CMT_BIND_METHOD(openScene));
     m_panelManager.get<ViewportPanel>().setFramebufferID(m_framebuffer->getColorAttachmentRendererID());
 }
@@ -224,7 +226,6 @@ bool CometEditorLayer::onMouseButtonPressedEvent(MouseButtonPressedEvent& e)
 void CometEditorLayer::newScene()
 {
     m_guizmoOperation = -1;
-    m_panelManager.get<EntityPropertiesPanel>().setEntity(Entity::Null);
     m_scene = Scene::create();
     m_panelManager.get<SceneHierarchyPanel>().setScene(m_scene);
     m_scene->onViewportResized(static_cast<uint32_t>(m_panelManager.get<ViewportPanel>().getSize().x), static_cast<uint32_t>(m_panelManager.get<ViewportPanel>().getSize().y));

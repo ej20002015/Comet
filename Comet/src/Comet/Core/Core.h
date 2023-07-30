@@ -20,6 +20,7 @@ after (args) unpacks the arguments and passes them to the function.
 */
 #define CMT_BIND_METHOD(method) [this](auto&&... args) -> decltype(auto) { return this->method(std::forward<decltype(args)>(args)...); }
 #define CMT_BIND_FUNCTION(function) [](auto&&... args) -> decltype(auto) { return function(std::forward<decltype(args)>(args)...); }
+#define CMT_BIND_METHOD_FROM_OBJ(method, obj) [objPtr = obj](auto&&... args) -> decltype(auto) { return objPtr->method(std::forward<decltype(args)>(args)...); }
 
 #ifdef CMT_DEBUG
 	#ifdef CMT_PLATFORM_WINDOWS
