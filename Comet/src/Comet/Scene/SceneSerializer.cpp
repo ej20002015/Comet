@@ -293,12 +293,16 @@ static void serializeTagComponent(YAML::Emitter& out, const TagComponent& tagCom
 static void serializeTransformComponent(YAML::Emitter& out, const TransformComponent& transformComponent);
 static void serializeCameraComponent(YAML::Emitter& out, const CameraComponent& cameraComponent);
 static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& spriteComponent);
+static void serializeModelComponent(YAML::Emitter& out, const ModelComponent& modelComponent);
+static void serializePointLightComponent(YAML::Emitter& out, const PointLightComponent& pointLightComponent);
 
 static void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeTagComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeTransformComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeCameraComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity);
+static void deserializeModelComponent(const YAML::Node& componentNode, Entity entity);
+static void deserializePointLightComponent(const YAML::Node& componentNode, Entity entity);
 
 #pragma endregion
 
@@ -380,6 +384,8 @@ void SceneSerializer::serializeEntity(YAML::Emitter& out, Entity entity)
 	serializeComponent<TransformComponent>(out, entity, serializeTransformComponent);
 	serializeComponent<CameraComponent>(out, entity, serializeCameraComponent);
 	serializeComponent<SpriteComponent>(out, entity, serializeSpriteComponent);
+	serializeComponent<ModelComponent>(out, entity, serializeModelComponent);
+	serializeComponent<PointLightComponent>(out, entity, serializePointLightComponent);
 
 	out << YAML::EndMap;
 	out << YAML::EndMap;
@@ -394,6 +400,8 @@ void SceneSerializer::deserializeEntityNode(const YAML::Node& entityNode, const 
 	deserializeComponent<TransformComponent>(entityNode, deserializedEntity, deserializeTransformComponent);
 	deserializeComponent<CameraComponent>(entityNode, deserializedEntity, deserializeCameraComponent);
 	deserializeComponent<SpriteComponent>(entityNode, deserializedEntity, deserializeSpriteComponent);
+	deserializeComponent<ModelComponent>(entityNode, deserializedEntity, deserializeModelComponent);
+	deserializeComponent<PointLightComponent>(entityNode, deserializedEntity, deserializePointLightComponent);
 }
 
 template<typename T, typename SerializeComponentFunction>
@@ -489,6 +497,18 @@ static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& 
 	}
 }
 
+static void serializeModelComponent(YAML::Emitter& out, const ModelComponent& modelComponent)
+{
+	out << YAML::Key << "Model Path" << YAML::Value << modelComponent.model->getFilepath();
+}
+
+static void serializePointLightComponent(YAML::Emitter& out, const PointLightComponent& pointLightComponent)
+{
+	out << YAML::Key << "Color" << YAML::Value << pointLightComponent.pointLight->color;
+	out << YAML::Key << "Radius" << YAML::Value << pointLightComponent.pointLight->radius;
+	out << YAML::Key << "Luminous Power" << YAML::Value << pointLightComponent.pointLight->luminousPower;
+}
+
 void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity)
 {
 	const UUID uuid = componentNode["UUID"].as<UUID>();
@@ -582,6 +602,23 @@ void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity)
 	spriteComponent.color = color;
 	spriteComponent.tilingFactor = tilingFactor;
 	spriteComponent.spriteTextureType = spriteTextureType;
+}
+
+void deserializeModelComponent(const YAML::Node& componentNode, Entity entity)
+{
+	const auto modelFilepath = componentNode["Model Path"].as<std::filesystem::path>();
+	entity.addComponent<ModelComponent>(Model::create(modelFilepath));
+}
+
+void deserializePointLightComponent(const YAML::Node& componentNode, Entity entity)
+{
+	const Reference<PointLight> pointLight = PointLight::create();
+
+	pointLight->color = componentNode["Color"].as<glm::vec3>();
+	pointLight->radius = componentNode["Radius"].as<float>();
+	pointLight->luminousPower = componentNode["Luminous Power"].as<float>();
+
+	entity.addComponent<PointLightComponent>(pointLight);
 }
 
 }

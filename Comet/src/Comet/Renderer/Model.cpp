@@ -21,6 +21,8 @@ static const uint32_t ASSIMP_PREPROCESS_FLAGS =
 	aiPostProcessSteps::aiProcess_OptimizeMeshes           | // Try and merge meshes together to reduce the number of draw calls
 	aiPostProcessSteps::aiProcess_GlobalScale;               // Standardise the scaling of imported models
 
+const UnorderedStrSet Model::SUPPORTED_MODEL_FILE_TYPES = { ".fbx" };
+
 static glm::mat4 getGLMMat4FromAssimpMat4(const aiMatrix4x4 assimpMat4)
 {
 	glm::mat4 glmMat4;
@@ -31,11 +33,15 @@ static glm::mat4 getGLMMat4FromAssimpMat4(const aiMatrix4x4 assimpMat4)
 	return glmMat4;
 }
 
-Model::Model(const std::string_view filePath)
-	: m_modelIdentifier(filePath), m_filePath(filePath), m_modelDirectoryPath(std::filesystem::path(filePath).parent_path().string())
+Model::Model(const std::filesystem::path& filepath)
+	: m_modelIdentifier(filepath.string()), m_filepath(filepath), m_modelDirectoryPath(filepath.parent_path().string())
 {
+	const std::string filepathExtension = m_filepath.extension().string();
+	if (SUPPORTED_MODEL_FILE_TYPES.find(filepathExtension) == SUPPORTED_MODEL_FILE_TYPES.end())
+		throw CometException() << "Model file extension " << filepathExtension << " is not supported by the model importer";
+
 	Assimp::Importer importer;
-	m_assimpScene = importer.ReadFile(m_filePath, ASSIMP_PREPROCESS_FLAGS);
+	m_assimpScene = importer.ReadFile(m_filepath.string(), ASSIMP_PREPROCESS_FLAGS);
 
 	if (!m_assimpScene)
 		throw CometException() << "Error occured when importing model: " << importer.GetErrorString();
@@ -59,7 +65,7 @@ Model::Model(const std::string_view filePath)
 }
 
 Model::Model(const std::string_view modelIdentifier, const std::vector<Vertex>& vertices, const std::vector<TriangleIndex>& triangleIndices, const Reference<Material>& material)
-	: m_modelIdentifier(modelIdentifier), m_filePath("CREATED_USING_MODEL_FACTORY"), m_modelDirectoryPath("CREATED_USING_MODEL_FACTORY"),
+	: m_modelIdentifier(modelIdentifier), m_filepath("CREATED_USING_MODEL_FACTORY"), m_modelDirectoryPath("CREATED_USING_MODEL_FACTORY"),
 	  m_vertices(vertices), m_triangleIndices(triangleIndices), m_assimpScene(nullptr)
 {
 	createOneMeshForAllGeometry();
@@ -220,28 +226,28 @@ void Model::processMaterialTextures(const aiMaterial* const assimpMaterial, Refe
 {
 	// Depending on the model, the base color map may be a aiTextureType_BASE_COLOR or aiTextureType_DIFFUSE
 
-	aiString baseColorTextureFilePathRelativeToModel;
-	if (assimpMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &baseColorTextureFilePathRelativeToModel) == aiReturn_SUCCESS)
-		material->baseColorMap = loadMaterialTexture(baseColorTextureFilePathRelativeToModel.C_Str(), true);
+	aiString baseColorTextureFilepathRelativeToModel;
+	if (assimpMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &baseColorTextureFilepathRelativeToModel) == aiReturn_SUCCESS)
+		material->baseColorMap = loadMaterialTexture(baseColorTextureFilepathRelativeToModel.C_Str(), true);
 	else
 	{
-		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &baseColorTextureFilePathRelativeToModel) == aiReturn_SUCCESS)
-			material->baseColorMap = loadMaterialTexture(baseColorTextureFilePathRelativeToModel.C_Str(), true);
+		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &baseColorTextureFilepathRelativeToModel) == aiReturn_SUCCESS)
+			material->baseColorMap = loadMaterialTexture(baseColorTextureFilepathRelativeToModel.C_Str(), true);
 	}
 
 	// Roughness map can be found under aiTextureType_SHININESS, but not aiTextureType_DIFFUSE_ROUGHNESS for some reason
 
-	aiString roughnessTextureFilePathRelativeToModel;
-	if (assimpMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughnessTextureFilePathRelativeToModel) == aiReturn_SUCCESS)
-		material->roughnessMap = loadMaterialTexture(roughnessTextureFilePathRelativeToModel.C_Str());
+	aiString roughnessTextureFilepathRelativeToModel;
+	if (assimpMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughnessTextureFilepathRelativeToModel) == aiReturn_SUCCESS)
+		material->roughnessMap = loadMaterialTexture(roughnessTextureFilepathRelativeToModel.C_Str());
 
-	aiString metalnessTextureFilePathRelativeToModel;
-	if (assimpMaterial->GetTexture(aiTextureType_METALNESS, 0, &metalnessTextureFilePathRelativeToModel) == aiReturn_SUCCESS)
-		material->metalnessMap = loadMaterialTexture(metalnessTextureFilePathRelativeToModel.C_Str());
+	aiString metalnessTextureFilepathRelativeToModel;
+	if (assimpMaterial->GetTexture(aiTextureType_METALNESS, 0, &metalnessTextureFilepathRelativeToModel) == aiReturn_SUCCESS)
+		material->metalnessMap = loadMaterialTexture(metalnessTextureFilepathRelativeToModel.C_Str());
 
-	aiString normalTextureFilePathRelativeToModel;
-	if (assimpMaterial->GetTexture(aiTextureType_NORMALS, 0, &normalTextureFilePathRelativeToModel) == aiReturn_SUCCESS)
-		material->normalMap = loadMaterialTexture(normalTextureFilePathRelativeToModel.C_Str());
+	aiString normalTextureFilepathRelativeToModel;
+	if (assimpMaterial->GetTexture(aiTextureType_NORMALS, 0, &normalTextureFilepathRelativeToModel) == aiReturn_SUCCESS)
+		material->normalMap = loadMaterialTexture(normalTextureFilepathRelativeToModel.C_Str());
 }
 
 void Model::processMaterialConstants(const aiMaterial* assimpMaterial, Reference<Material>& material)
@@ -268,9 +274,9 @@ void Model::processMaterialConstants(const aiMaterial* assimpMaterial, Reference
 	}
 }
 
-Reference<Texture> Model::loadMaterialTexture(const std::filesystem::path& textureFilePathRelativeToModel, const bool SRGB)
+Reference<Texture> Model::loadMaterialTexture(const std::filesystem::path& textureFilepathRelativeToModel, const bool SRGB)
 {
-	const std::filesystem::path textureFilePath = m_modelDirectoryPath / textureFilePathRelativeToModel;
+	const std::filesystem::path textureFilePath = m_modelDirectoryPath / textureFilepathRelativeToModel;
 
 	if (m_textures.find(textureFilePath) == m_textures.end())
 		m_textures[textureFilePath] = Texture2D::create(textureFilePath, SRGB);

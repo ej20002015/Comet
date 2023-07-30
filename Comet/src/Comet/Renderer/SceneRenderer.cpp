@@ -134,9 +134,9 @@ void SceneRenderer::setSceneUB(const PointLightList& pointLights, const glm::vec
 	{
 		sceneUB.pointLights[i++] = {
 			.worldPosition = pointLight.second,
-			.lightColor = pointLight.first->lightColor,
+			.lightColor = pointLight.first->color,
 			.luminousPower = pointLight.first->luminousPower,
-			.lightRadius = pointLight.first->lightRadius
+			.lightRadius = pointLight.first->radius
 		};
 	});
 

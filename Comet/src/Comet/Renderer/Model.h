@@ -45,14 +45,17 @@ public:
 	};
 
 public:
+	static const UnorderedStrSet SUPPORTED_MODEL_FILE_TYPES;
+
 	Model() = delete;
-	Model(const std::string_view filePath);
+	Model(const std::filesystem::path& filepath);
 	Model(const std::string_view modelIdentifier, const std::vector<Vertex>& vertices, const std::vector<TriangleIndex>& triangleIndices, const Reference<Material>& material);
 	Model(const Model&) = delete;
 
-	static Reference<Model> create(const std::string_view filePath) { return createReference<Model>(filePath); }
+	static Reference<Model> create(const std::filesystem::path& filePath) { return createReference<Model>(filePath); }
 
 	const std::string& getModelIdentifier() const { return m_modelIdentifier; }
+	const std::filesystem::path& getFilepath() const { return m_filepath; }
 
 	const std::vector<Mesh>& getMeshes() const { return m_meshes; }
 
@@ -79,12 +82,12 @@ private:
 	void processMaterialTextures(const aiMaterial* const assimpMaterial, Reference<Material>& material);
 	void processMaterialConstants(const aiMaterial* const assimpMaterial, Reference<Material>& material);
 	// TODO: Create a Texture::Specification struct
-	Reference<Texture> loadMaterialTexture(const std::filesystem::path& textureFilePathRelativeToModel, const bool SRGB = false);
+	Reference<Texture> loadMaterialTexture(const std::filesystem::path& textureFilepathRelativeToModel, const bool SRGB = false);
 
 private:
 	std::string m_modelIdentifier;
-	std::string m_filePath;
-	std::string m_modelDirectoryPath;
+	std::filesystem::path m_filepath;
+	std::filesystem::path m_modelDirectoryPath;
 
 	std::vector<Mesh> m_meshes;
 

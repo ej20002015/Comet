@@ -22,7 +22,7 @@ public:
 	static constexpr uint32_t DEFAULT_LOD = 32;
 
 public:
-	static Reference<Model> create(MeshType meshType, const Reference<Material>& material, uint32_t LOD = DEFAULT_LOD);
+	static Reference<Model> create(MeshType meshType, const Reference<Material>& material = Material::create(), uint32_t LOD = DEFAULT_LOD);
 
 private:
 	static std::string getModelIdentifier(MeshType meshType);

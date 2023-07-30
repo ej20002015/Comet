@@ -7,7 +7,7 @@ namespace Comet
 {
 
 const std::filesystem::path Texture::NO_FILEPATH_NAME= "NONE";
-const UnorderedStrSet Texture::SUPPORTED_IMG_FILE_TYPES = { ".png", ".jpg" };
+const UnorderedStrSet Texture::SUPPORTED_IMG_FILE_TYPES = { ".png", ".jpg", ".tga"};
 std::unordered_map<std::filesystem::path, Reference<Texture>> TextureManager::s_texturePool;
 
 //Calculate how many times the largest dimension of the texture can be divided in two to calculate the required number of mip maps

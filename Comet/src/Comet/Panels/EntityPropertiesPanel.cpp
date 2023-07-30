@@ -18,13 +18,12 @@ namespace Comet
 REG_PANEL(EntityPropertiesPanel)
 
 const float EntityPropertiesPanel::s_labelColumnWidth = 160.0f;
-Buffer EntityPropertiesPanel::s_imgFileFilter;
 
 EntityPropertiesPanel::EntityPropertiesPanel()
 {
 	m_noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityPropertiesPanel/NoTextureIcon.png");
-
-	initImageFileFilter();
+	m_imgFileFilter = PlatformUtilities::constructFilter(Texture::SUPPORTED_IMG_FILE_TYPES, "All Supported Image Files", false);
+	m_modelFileFilter = PlatformUtilities::constructFilter(Model::SUPPORTED_MODEL_FILE_TYPES, "All Supported Model Files", false);
 }
 
 void EntityPropertiesPanel::onImGuiRender()
@@ -219,7 +218,7 @@ void EntityPropertiesPanel::onImGuiRender()
 
 		if (ImGuiUtilities::propertyImageButton("Texture", textureRendererID, { 64.0f, 64.0f }))
 		{
-			std::string textureFilepath = PlatformUtilities::openFile(s_imgFileFilter);
+			std::string textureFilepath = PlatformUtilities::openFile(m_imgFileFilter);
 
 			if (!textureFilepath.empty())
 			{
@@ -238,14 +237,11 @@ void EntityPropertiesPanel::onImGuiRender()
 				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
 				const std::filesystem::path textureFilepathPath(directoryEntryPathCString);
 				const std::string extension = textureFilepathPath.extension().string();
-				if (!extension.empty())
+				if (!extension.empty() && Texture::SUPPORTED_IMG_FILE_TYPES.find(extension) != Texture::SUPPORTED_IMG_FILE_TYPES.end())
 				{
-					if (Texture::SUPPORTED_IMG_FILE_TYPES.find(extension) != Texture::SUPPORTED_IMG_FILE_TYPES.end())
-					{
-						auto texture = Texture2D::create(directoryEntryPathCString);
-						spriteComponent.texture = texture;
-						spriteComponent.subTexture.setTextureAtlas(texture);
-					}
+					auto texture = Texture2D::create(directoryEntryPathCString);
+					spriteComponent.texture = texture;
+					spriteComponent.subTexture.setTextureAtlas(texture);
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -293,7 +289,33 @@ void EntityPropertiesPanel::onImGuiRender()
 
 	componentImGuiRender<ModelComponent>("Model Component", [this](ModelComponent& modelComponent)
 	{
+		ImGuiUtilities::beginPropertyGrid();
 
+		if (ImGuiUtilities::propertyButton("Name", modelComponent.model->getModelIdentifier()))
+		{
+			std::string modelFilepath = PlatformUtilities::openFile(m_modelFileFilter);
+			if (!modelFilepath.empty())
+				modelComponent.model = Model::create(modelFilepath);
+		}
+
+		//Set drag drop payload target for opening model files
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* dragDropPayload = nullptr;
+			if (dragDropPayload = ImGui::AcceptDragDropPayload("ContentBrowserEntryPathCString"))
+			{
+				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
+				const std::filesystem::path modelFilepathPath(directoryEntryPathCString);
+				const std::string extension = modelFilepathPath.extension().string();
+				if (!extension.empty() && Model::SUPPORTED_MODEL_FILE_TYPES.find(extension) != Model::SUPPORTED_MODEL_FILE_TYPES.end())
+				{
+					modelComponent.model = Model::create(modelFilepathPath);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGuiUtilities::endPropertyGrid();
 	});
 
 	componentImGuiRender<PointLightComponent>("Point Light Component", [this](PointLightComponent& pointLightComponent)
@@ -302,9 +324,9 @@ void EntityPropertiesPanel::onImGuiRender()
 
 		ImGuiUtilities::beginPropertyGrid();
 
-		ImGuiUtilities::propertyColorPicker("Color", pointLight.lightColor);
+		ImGuiUtilities::propertyColorPicker("Color", pointLight.color);
 
-		ImGuiUtilities::property("Radius", pointLight.lightRadius);
+		ImGuiUtilities::property("Radius", pointLight.radius);
 
 		ImGuiUtilities::property("Luminous Power", pointLight.luminousPower);
 
@@ -314,21 +336,6 @@ void EntityPropertiesPanel::onImGuiRender()
 	ImGui::PopID();
 
 	ImGui::End();
-}
-
-void EntityPropertiesPanel::initImageFileFilter()
-{
-	std::stringstream ss;
-	for (const auto& fileExtension : Texture::SUPPORTED_IMG_FILE_TYPES)
-		ss << "*" << fileExtension << ";";
-
-	std::string fileExtensions = ss.str();
-	//Remove trailing ;
-	fileExtensions.pop_back();
-
-	std::unordered_map<std::string, std::string> imgFilterFilterMap = { { "All Supported Image Files", fileExtensions } };
-
-	s_imgFileFilter = PlatformUtilities::constructFilter(imgFilterFilterMap, false);
 }
 
 template<typename T, typename ComponentUIFunction>
