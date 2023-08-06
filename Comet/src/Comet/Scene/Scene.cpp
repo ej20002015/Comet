@@ -36,19 +36,19 @@ void Scene::deleteEntity(const Entity entity)
 	m_registry.destroy(entity.m_entityHandle);
 }
 
-void Scene::onEditorUpdate(const Timestep ts, const EditorCamera& editorCamera)
+void Scene::onEditorUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer, const EditorCamera& editorCamera)
 {
 	const auto pointLights = getPointLights();
 	SceneRenderer::beginScene(editorCamera, pointLights);
 	renderModels();
-	SceneRenderer::endScene();
+	SceneRenderer::endScene(exposure, targetFrambuffer);
 
-	Renderer2D::beginScene(editorCamera, true); // Render with no depth testing for 2D scene
+	Renderer2D::beginScene(editorCamera, targetFrambuffer, false); // Render with no depth testing for 2D scene
 	renderSprites();
 	Renderer2D::endScene();
 }
 
-void Scene::onRuntimeUpdate(const Timestep ts)
+void Scene::onRuntimeUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer)
 {
 	// Update scripts
 
@@ -81,9 +81,9 @@ void Scene::onRuntimeUpdate(const Timestep ts)
 	const auto pointLights = getPointLights();
 	SceneRenderer::beginScene(camera, cameraTransform, pointLights);
 	renderModels();
-	SceneRenderer::endScene();
+	SceneRenderer::endScene(exposure, targetFrambuffer);
 
-	Renderer2D::beginScene(camera, cameraTransform, false); // Render with no depth testing for 2D scene
+	Renderer2D::beginScene(camera, cameraTransform, targetFrambuffer, false); // Render with no depth testing for 2D scene
 	renderSprites();
 	Renderer2D::endScene();
 }

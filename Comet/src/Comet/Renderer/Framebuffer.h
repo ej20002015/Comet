@@ -42,8 +42,8 @@ public:
 
 	struct Specification
 	{
-		uint32_t width = 1280;
-		uint32_t height = 720;
+		uint32_t width = DEFAULT_WIDTH;
+		uint32_t height = DEFAULT_HEIGHT;
 		glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 		ColorAttachmentsSpecification colorAttachments = { ColorAttachmentFormat::RGBA16F };
 		DepthAttachmentSpecification depthAttachment = DepthAttachmentFormat::DEPTH24STENCIL8;

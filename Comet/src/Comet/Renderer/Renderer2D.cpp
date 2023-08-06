@@ -74,22 +74,23 @@ void Renderer2D::shutdown()
 	delete[] s_data.quadVertexBufferBase;
 }
 
-void Renderer2D::beginScene(const glm::mat4& viewProjectionMatrix, const bool depthTest)
+void Renderer2D::beginScene(const glm::mat4& viewProjectionMatrix, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
 {
 	s_batchData.depthTest = depthTest;
+	s_batchData.targetFramebuffer = targetFramebuffer;
 	Shader::setUniformBuffer(0, &viewProjectionMatrix[0][0]);
 	setInitialBatchData();
 	resetStats();
 }
 
-void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest)
+void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
 {
-	beginScene(camera.getProjectionMatrix() * glm::inverse(cameraTransform), depthTest);
+	beginScene(camera.getProjectionMatrix() * glm::inverse(cameraTransform), targetFramebuffer, depthTest);
 }
 
-void Renderer2D::beginScene(const EditorCamera& editorCamera, const bool depthTest)
+void Renderer2D::beginScene(const EditorCamera& editorCamera, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
 {
-	beginScene(editorCamera.getViewProjectionMatrix(), depthTest);
+	beginScene(editorCamera.getViewProjectionMatrix(), targetFramebuffer, depthTest);
 }
 
 void Renderer2D::endScene()
@@ -209,6 +210,8 @@ void Renderer2D::flush()
 	if (!s_batchData.quadCount)
 		return;
 
+	s_batchData.targetFramebuffer->bind();
+
 	//Only upload the populated area of the batch buffer to the vertex buffer
 	uint32_t size = static_cast<uint32_t>((reinterpret_cast<uint8_t*>(s_batchData.quadVertexBufferPointer) - reinterpret_cast<uint8_t*>(s_data.quadVertexBufferBase)));
 	s_data.quadVertexBuffer->setData(s_data.quadVertexBufferBase, size);
@@ -227,7 +230,7 @@ void Renderer2D::flush()
 		RendererAPI::setDepthTesting(s_batchData.depthTest);
 
 	//Draw call
-	RendererAPI::drawIndexed(s_batchData.quadCount * 6, RendererAPI::PrimitiveType::TRIANGLES);
+	RendererAPI::drawIndexed(s_batchData.quadCount * 6);
 
 	s_stats.drawCalls++;
 }

@@ -105,4 +105,7 @@ private:
 	std::string m_str;
 };
 
+static constexpr uint32_t DEFAULT_WIDTH = 1280;
+static constexpr uint32_t DEFAULT_HEIGHT = 720;
+
 }

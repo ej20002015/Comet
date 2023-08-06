@@ -6,6 +6,7 @@
 #include "Panels/RenderingDeviceInfoPanel.h"
 #include "Panels/RendererStatsPanel.h"
 #include "Panels/SceneViewportPanels.h"
+#include "Panels/SceneSettingsPanel.h"
 
 #include "ImGuizmo.h"
 
@@ -19,8 +20,6 @@ void CometEditorLayer::onAttach()
     m_sceneFileFilter = PlatformUtilities::constructFilter(SCENE_FILE_FILTER_MAP);
     m_scene = Scene::create();
 
-    Log::cometInfo(SceneHierarchyPanel::s_registered);
-
     initRendererItems();
     initPanels();
     initImGuiStyle();
@@ -28,7 +27,7 @@ void CometEditorLayer::onAttach()
     
 void CometEditorLayer::onUpdate(const Timestep ts)
 {
-    //Resize framebuffer and set camera projection if viewport size has changed
+    // Resize framebuffer and set camera projection if viewport size has changed
     const glm::vec2 viewportSize = m_panelManager.get<ViewportPanel>().getSize();
 
     const bool isViewportSizeChanged = !(viewportSize.x < 1.0f || viewportSize.y < 1.0f) && (
@@ -40,22 +39,25 @@ void CometEditorLayer::onUpdate(const Timestep ts)
         m_framebuffer->resize(static_cast<uint32_t>(viewportSize.x), static_cast<uint32_t>(viewportSize.y));
         m_editorCamera.setViewportSize(viewportSize);
         m_scene->onViewportResized(static_cast<uint32_t>(viewportSize.x), static_cast<uint32_t>(viewportSize.y));
+        SceneRenderer::onResize(static_cast<uint32_t>(viewportSize.x), static_cast<uint32_t>(viewportSize.y));
     }
 
     m_framebuffer->bind();
     m_framebuffer->clear();
-    //Clear entityID color attachment specifically to -1
+    // Clear entityID color attachment to -1
     m_framebuffer->clearColorAttachment(1, -1);
+
+    const float exposure = m_panelManager.get<SceneSettingsPanel>().getExposure();
 
     switch (m_sceneState)
     {
         case SceneState::EDIT:
             m_editorCamera.onUpdate(ts);
-            m_scene->onEditorUpdate(ts, m_editorCamera);
+            m_scene->onEditorUpdate(ts, exposure, m_framebuffer, m_editorCamera);
             break;
 
         case SceneState::PLAY:
-            m_scene->onRuntimeUpdate(ts);
+            m_scene->onRuntimeUpdate(ts, exposure, m_framebuffer);
             break;
     }
 
@@ -64,7 +66,7 @@ void CometEditorLayer::onUpdate(const Timestep ts)
 
 void CometEditorLayer::onImGuiRender()
 {
-    //TODO: MOVE TOWARDS AN API FOR SETTING THE MINIMUM SIZE OF EACH WINDOW INDIVIDUALLY RATHER THAN GLOBALLY
+    // TODO: MOVE TOWARDS AN API FOR SETTING THE MINIMUM SIZE OF EACH WINDOW INDIVIDUALLY RATHER THAN GLOBALLY
 
     // Pass data to specific panels
 
@@ -78,10 +80,6 @@ void CometEditorLayer::onImGuiRender()
     ImGuiUtilities::beginDockspace();
     m_panelManager.render();
     ImGuiUtilities::endDockspace();
-
-    // Read data from specific panels
-
-    m_guizmoOperationChangeLocked = m_panelManager.get<ViewportPanel>().getGuizmoOperationChangeLocked();
 }
 
 void CometEditorLayer::onEvent(Event& e)
@@ -98,9 +96,6 @@ void CometEditorLayer::initRendererItems()
     Comet::RendererAPI::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 
     Framebuffer::Specification framebufferSpecification = {
-        .width = static_cast<uint32_t>(ViewportPanel::INITIAL_SIZE.x),
-        .height = static_cast<uint32_t>(ViewportPanel::INITIAL_SIZE.y),
-        .clearColor = { 0.1f, 0.1f, 0.1f, 1.0f },
         .colorAttachments = {
             Framebuffer::ColorAttachmentFormat::RGBA16F,
             Framebuffer::ColorAttachmentFormat::R32I
@@ -124,6 +119,7 @@ void CometEditorLayer::initPanels()
     m_panelManager.add<RendererStatsPanel>();
     m_panelManager.add<ViewportPanel>();
     m_panelManager.add<GuizmoOptionsPanel>();
+    m_panelManager.add<SceneSettingsPanel>();
 
     // Set context for specific panels where necessary
 
@@ -169,22 +165,24 @@ bool CometEditorLayer::onKeyPressedEvent(KeyPressedEvent& e)
     const bool controlPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_CONTROL) || Input::isKeyPressed(KeyCode::KEY_RIGHT_CONTROL);
     const bool shiftPressed = Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT) || Input::isKeyPressed(KeyCode::KEY_RIGHT_SHIFT);
 
+    const bool guizmoOperationChangeLocked = m_panelManager.get<ViewportPanel>().getGuizmoOperationChangeLocked();
+
     switch (keyCode)
     {
     case KeyCode::KEY_Q:
-        if (!m_guizmoOperationChangeLocked)
+        if (!guizmoOperationChangeLocked)
             m_guizmoOperation = -1;
         break;
     case KeyCode::KEY_W:
-        if (!m_guizmoOperationChangeLocked)
+        if (!guizmoOperationChangeLocked)
             m_guizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
         break;
     case KeyCode::KEY_E:
-        if (!m_guizmoOperationChangeLocked)
+        if (!guizmoOperationChangeLocked)
             m_guizmoOperation = ImGuizmo::OPERATION::ROTATE;
         break;
     case KeyCode::KEY_R:
-        if (!m_guizmoOperationChangeLocked)
+        if (!guizmoOperationChangeLocked)
             m_guizmoOperation = ImGuizmo::OPERATION::SCALE;
         break;
     case KeyCode::KEY_N:

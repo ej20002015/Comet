@@ -8,7 +8,7 @@ namespace Comet
 
 Reference<Framebuffer> Framebuffer::create(const Specification& specification)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         {

@@ -43,7 +43,7 @@ public:
     static void init();
     static void shutdown();
 
-    static void drawIndexed(const uint32_t count, const PrimitiveType primitive);
+    static void drawIndexed(const uint32_t count, const PrimitiveType primitive = PrimitiveType::TRIANGLES);
     static void drawIndexedFromVertexOffset(uint32_t count, const void* startOfIndices, uint32_t vertexOffset);
 
     static void setClearColor(const glm::vec4& color);
@@ -57,7 +57,7 @@ public:
 
     static const Capabilities& getCapabilities();
 
-    static Type getCurrrentRendererAPIType() { return s_currentRendererAPIType; }
+    static Type getCurrentRendererAPIType() { return s_currentRendererAPIType; }
 
 protected:
     RendererAPI() = default;

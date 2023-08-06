@@ -58,7 +58,6 @@ private:
 
 	//Guizmo
 	int32_t m_guizmoOperation = -1;
-	bool m_guizmoOperationChangeLocked = false;
 };
 
 }

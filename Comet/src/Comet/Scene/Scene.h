@@ -47,8 +47,8 @@ public:
 	Entity createEntity(const std::string_view tagString = "Unnamed Entity");
 	void deleteEntity(const Entity entity);
 
-	void onEditorUpdate(const Timestep ts, const EditorCamera& editorCamera);
-	void onRuntimeUpdate(const Timestep ts);
+	void onEditorUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer, const EditorCamera& editorCamera);
+	void onRuntimeUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer);
 
 	void onViewportResized(const uint32_t width, const uint32_t height);
 

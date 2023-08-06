@@ -66,7 +66,7 @@ struct VertexOutput
     mat3 TBN;
 };
 
-layout (location = 0) in VertexOutput vertexInput;
+layout (location = 0) in VertexOutput v_vertexInput;
 
 // UNIFORM BUFFER OBJECTS
 
@@ -199,13 +199,13 @@ vec3 getNormalisedSurfaceNormal()
 {
     if (u_f_pushConstants.u_matGlobal.useNormalMap)
     {
-        vec4 sampleFromNormalMap = texture(u_matNormalMap, vertexInput.textureCoordinates);
+        vec4 sampleFromNormalMap = texture(u_matNormalMap, v_vertexInput.textureCoordinates);
         vec3 sampledNormal = (sampleFromNormalMap.rgb * 2.0f) - 1.0f;
-        vec3 sampledNormalInWorldSpace = vertexInput.TBN * sampledNormal;
+        vec3 sampledNormalInWorldSpace = v_vertexInput.TBN * sampledNormal;
         return normalize(sampledNormalInWorldSpace);
     }
     else
-        return normalize(vertexInput.normal);
+        return normalize(v_vertexInput.normal);
 }
 
 float calculatePointLightAttenuationFactor(float lightDistance, float lightRadius)
@@ -229,7 +229,7 @@ vec3 calculatePointLightContribution(const PointLight pointLight)
 {
     // Calculate the incoming radiance from the point light
 
-    float lightDistance = length(pointLight.worldPosition - vertexInput.worldPosition);
+    float lightDistance = length(pointLight.worldPosition - v_vertexInput.worldPosition);
     float lightAttenuationFactor = calculatePointLightAttenuationFactor(lightDistance, pointLight.lightRadius);
 
     float luminousIntensity = pointLight.luminousPower / (4.0f * PI);
@@ -237,7 +237,7 @@ vec3 calculatePointLightContribution(const PointLight pointLight)
 
     // Initialise values
 
-    vec3 lightDirection = normalize(pointLight.worldPosition - vertexInput.worldPosition);
+    vec3 lightDirection = normalize(pointLight.worldPosition - v_vertexInput.worldPosition);
     vec3 halfVector = normalize(g_directions.viewDirection + lightDirection);
 
     float nDotL = dot(g_directions.normal, lightDirection);
@@ -269,15 +269,15 @@ void main()
     // Initialise global values
 
     g_directions.normal = getNormalisedSurfaceNormal();
-    g_directions.viewDirection = normalize(u_sceneData.u_viewPosition - vertexInput.worldPosition);
+    g_directions.viewDirection = normalize(u_sceneData.u_viewPosition - v_vertexInput.worldPosition);
 
     g_dotProducts.nDotV = dot(g_directions.normal, g_directions.viewDirection);
 
-    vec4 baseColorWithAlpha = texture(u_matBaseColorMap, vertexInput.textureCoordinates) * u_f_pushConstants.u_matGlobal.baseColor;
+    vec4 baseColorWithAlpha = texture(u_matBaseColorMap, v_vertexInput.textureCoordinates) * u_f_pushConstants.u_matGlobal.baseColor;
     g_materialProperties.baseColor = baseColorWithAlpha.rgb;
     g_materialProperties.alpha = baseColorWithAlpha.a;
-    g_materialProperties.roughness = texture(u_matRoughnessMap, vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.roughness;
-    g_materialProperties.metalness = texture(u_matMetalnessMap, vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.metalness;
+    g_materialProperties.roughness = texture(u_matRoughnessMap, v_vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.roughness;
+    g_materialProperties.metalness = texture(u_matMetalnessMap, v_vertexInput.textureCoordinates).r * u_f_pushConstants.u_matGlobal.metalness;
     g_materialProperties.f0 = mix(F0_FOR_DIELECTRICS, g_materialProperties.baseColor, g_materialProperties.metalness);
 
     // Solve the reflectance equation by evaluating the contribution of each point light

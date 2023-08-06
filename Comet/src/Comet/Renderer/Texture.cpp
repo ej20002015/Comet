@@ -38,7 +38,7 @@ uint32_t Texture::getBPP(const Format format)
 
 Reference<Texture2D> Texture2D::create(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter, const Filter minFilter, const Wrap wrap)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLTexture2D>(format, width, height, magFilter, minFilter, wrap);
@@ -71,7 +71,7 @@ Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, co
     if (texture)
         return std::static_pointer_cast<Texture2D>(texture);
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
     {
@@ -89,7 +89,7 @@ Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, co
 
 Reference<TextureCube> TextureCube::create(const Format textureFormat, const uint32_t width, const uint32_t height)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLTextureCube>(textureFormat, width, height);
@@ -115,7 +115,7 @@ Reference<TextureCube> TextureCube::create(const std::filesystem::path& filepath
     if (texture)
         return std::static_pointer_cast<TextureCube>(texture);
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
     {

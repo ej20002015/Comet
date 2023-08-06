@@ -13,7 +13,7 @@ Reference<Shader> Shader::create(const std::filesystem::path& filepath)
 	if (filepath.empty())
 		throw CometException() << "Shader filepath cannot be empty";
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
 	case RendererAPI::Type::OPENGL:
         return createReference<OpenGLShader>(filepath);

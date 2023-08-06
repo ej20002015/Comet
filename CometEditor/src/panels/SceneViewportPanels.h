@@ -38,12 +38,9 @@ public:
 
 	void onImGuiRender() override;
 
-public:
-	static constexpr glm::vec2 INITIAL_SIZE = { 1.0f, 1.0f };
-
 private:
 	RendererID m_textureID = 0;
-	glm::vec2 m_size = INITIAL_SIZE;
+	glm::vec2 m_size = { DEFAULT_WIDTH, DEFAULT_HEIGHT };
 	std::function<void(std::filesystem::path)> m_onFilepathDropCallback;
 	glm::mat4 m_projectionMatrix;
 	glm::mat4 m_viewMatrix;

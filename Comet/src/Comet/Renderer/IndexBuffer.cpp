@@ -10,7 +10,7 @@ Reference<IndexBuffer> IndexBuffer::create(const void* const data, const uint32_
 {
     CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLIndexBuffer>(data, count);
@@ -25,7 +25,7 @@ Reference<IndexBuffer> IndexBuffer::create(const void* const data, const uint32_
 
 Reference<IndexBuffer> IndexBuffer::create(const uint32_t count, const Usage indexBufferUsage)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLIndexBuffer>(count);

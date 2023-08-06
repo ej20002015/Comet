@@ -11,7 +11,7 @@ Reference<VertexBuffer> VertexBuffer::create(const void* const data, const uint3
 
     CMT_COMET_ASSERT_MESSAGE(data, "Data is null");
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLVertexBuffer>(data, size, usage);
@@ -26,7 +26,7 @@ Reference<VertexBuffer> VertexBuffer::create(const void* const data, const uint3
 
 Reference<VertexBuffer> VertexBuffer::create(const uint32_t size, const Usage usage)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLVertexBuffer>(size, usage);
