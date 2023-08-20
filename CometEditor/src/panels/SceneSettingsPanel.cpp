@@ -14,7 +14,7 @@ void SceneSettingsPanel::onImGuiRender()
 	ImGui::Begin("Scene Settings");
 	ImGuiUtilities::beginPropertyGrid();
 
-	ImGuiUtilities::property("Exposure", m_exposure, 0.05, "%.2f", 0.0f, 10.0f);
+	ImGuiUtilities::property("Exposure", m_exposure, 0.05f, "%.2f", 0.0f, 10.0f);
 
 	ImGuiUtilities::endPropertyGrid();
 	ImGui::End();

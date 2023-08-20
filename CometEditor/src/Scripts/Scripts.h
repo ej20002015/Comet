@@ -1,7 +1,7 @@
 #pragma once
 #include "CometPCH.h"
 
-#include "Comet/Scene/EntityNativeScript.h"
+#include "Comet.h"
 
 namespace Comet
 {

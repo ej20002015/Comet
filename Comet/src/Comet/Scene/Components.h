@@ -96,7 +96,7 @@ struct CameraComponent
 //Wrapper for a script - lifetime is controlled at runtime
 struct NativeScriptComponent
 {
-	std::string scriptName = "NullScript";
+	std::string scriptName = NullScript::getName();
 	EntityNativeScript* script = nullptr;
 
 	NativeScriptComponent() = default;

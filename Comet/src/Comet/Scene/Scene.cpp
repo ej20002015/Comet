@@ -106,7 +106,7 @@ void Scene::onRuntimeStop()
 	const auto view = m_registry.view<NativeScriptComponent>();
 	view.each([](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
 	{
-		if (!nativeScriptComponent.script)
+		if (nativeScriptComponent.script)
 			delete nativeScriptComponent.script;
 	});
 }
