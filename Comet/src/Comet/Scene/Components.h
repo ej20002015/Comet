@@ -96,32 +96,13 @@ struct CameraComponent
 //Wrapper for a script - lifetime is controlled at runtime
 struct NativeScriptComponent
 {
+	std::string scriptName = "NullScript";
 	EntityNativeScript* script = nullptr;
-
-	//Construction and Descruction occurs on runtime start and end
-	EntityNativeScript* (*constructScript)() = nullptr;
-	void (*destroyScript)(NativeScriptComponent&) = nullptr;
 
 	NativeScriptComponent() = default;
 
 	NativeScriptComponent(const NativeScriptComponent& other) = default;
 	~NativeScriptComponent() = default;
-
-	template<typename T>
-	void bind()
-	{
-		constructScript = []() -> EntityNativeScript*
-		{
-			T* script = new T();
-			return static_cast<EntityNativeScript*>(script);
-		};
-
-		destroyScript = [](NativeScriptComponent& nativeScriptComponent)
-		{
-			delete nativeScriptComponent.script;
-			nativeScriptComponent.script = nullptr;
-		};
-	}
 };
 
 struct SpriteComponent

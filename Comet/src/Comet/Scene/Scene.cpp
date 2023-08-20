@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Components.h"
+#include "ScriptRegistry.h"
 
 #include "Comet/Renderer/SceneRenderer.h"
 #include "Comet/Renderer/Renderer2D.h"
@@ -48,6 +49,25 @@ void Scene::onEditorUpdate(const Timestep ts, const float exposure, const Refere
 	Renderer2D::endScene();
 }
 
+void Scene::onRuntimeStart()
+{
+	// Create scripts
+
+	const auto view = m_registry.view<NativeScriptComponent>();
+	view.each([this](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
+	{
+		if (!nativeScriptComponent.script)
+		{
+			nativeScriptComponent.script = ScriptRegistry::createRegisteredScript(nativeScriptComponent.scriptName);
+			if (nativeScriptComponent.script)
+			{
+				nativeScriptComponent.script->m_entity = Entity{ this, entity };
+				nativeScriptComponent.script->onStart();
+			}
+		}
+	});
+}
+
 void Scene::onRuntimeUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer)
 {
 	// Update scripts
@@ -55,17 +75,8 @@ void Scene::onRuntimeUpdate(const Timestep ts, const float exposure, const Refer
 	const auto view = m_registry.view<NativeScriptComponent>();
 	view.each([this, ts](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
 	{
-		if (!nativeScriptComponent.script)
-		{
-			nativeScriptComponent.script = nativeScriptComponent.constructScript();
-			if (nativeScriptComponent.script)
-			{
-				nativeScriptComponent.script->m_entity = Entity{ this, entity };
-				nativeScriptComponent.script->onStart();
-			}
-		}
-
-		nativeScriptComponent.script->onUpdate(ts);
+		if (nativeScriptComponent.script)
+			nativeScriptComponent.script->onUpdate(ts);
 	});
 
 	const Entity primaryCameraEntity = getPrimaryCameraEntity();
@@ -86,6 +97,18 @@ void Scene::onRuntimeUpdate(const Timestep ts, const float exposure, const Refer
 	Renderer2D::beginScene(camera, cameraTransform, targetFrambuffer, false); // Render with no depth testing for 2D scene
 	renderSprites();
 	Renderer2D::endScene();
+}
+
+void Scene::onRuntimeStop()
+{
+	// Delete scripts
+
+	const auto view = m_registry.view<NativeScriptComponent>();
+	view.each([](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
+	{
+		if (!nativeScriptComponent.script)
+			delete nativeScriptComponent.script;
+	});
 }
 
 void Scene::onViewportResized(const uint32_t width, const uint32_t height)

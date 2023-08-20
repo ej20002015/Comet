@@ -256,11 +256,13 @@ void CometEditorLayer::onScenePlay()
 {
     m_sceneState = SceneState::PLAY;
     m_guizmoOperation = -1;
+    m_scene->onRuntimeStart();
 }
 
 void CometEditorLayer::onSceneStop()
 {
     m_sceneState = SceneState::EDIT;
+    m_scene->onRuntimeStop();
 }
 
 void CometEditorLayer::exitApplication()

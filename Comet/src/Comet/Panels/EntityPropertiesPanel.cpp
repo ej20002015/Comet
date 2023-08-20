@@ -2,6 +2,7 @@
 #include "EntityPropertiesPanel.h"
 
 #include "PanelRegistry.h"
+#include "Comet/Scene/ScriptRegistry.h"
 #include "Comet/Core/PlatformUtilities.h"
 #include "Comet/ImGui/ImGuiUtilities.h"
 
@@ -65,6 +66,15 @@ void EntityPropertiesPanel::onImGuiRender()
 			if (ImGui::MenuItem("Camera Component"))
 			{
 				m_entity.addComponent<CameraComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!m_entity.hasComponent<NativeScriptComponent>())
+		{
+			if (ImGui::MenuItem("Native Script Component"))
+			{
+				m_entity.addComponent<NativeScriptComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -202,6 +212,15 @@ void EntityPropertiesPanel::onImGuiRender()
 			if (ImGuiUtilities::property("Aspect Ratio", aspectRatio))
 				sceneCamera.setAspectRatio(aspectRatio);
 		}
+
+		ImGuiUtilities::endPropertyGrid();
+	});
+
+	componentImGuiRender<NativeScriptComponent>("Native Script Component", [this](NativeScriptComponent& spriteComponent)
+	{
+		ImGuiUtilities::beginPropertyGrid();
+
+		ImGuiUtilities::property<std::string>("Script", ScriptRegistry::getScriptNames(), spriteComponent.scriptName);
 
 		ImGuiUtilities::endPropertyGrid();
 	});

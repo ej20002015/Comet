@@ -8,6 +8,7 @@
 #include "Comet/Renderer/Framebuffer.h"
 #include "Comet/ImGui/ImGuiRenderer.h"
 #include "Comet/Panels/PanelRegistry.h"
+#include "Comet/Scene/ScriptRegistry.h"
 
 namespace Comet
 {
@@ -28,6 +29,7 @@ Application::Application(const std::string_view windowTitle)
 	Renderer::init();
 	
 	PanelRegistry::regLibPanels();
+	ScriptRegistry::regLibScripts();
 }
 
 void Application::initialiseWindow(const std::string_view windowTitle)
