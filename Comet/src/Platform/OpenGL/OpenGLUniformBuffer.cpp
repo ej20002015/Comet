@@ -35,18 +35,18 @@ OpenGLUniformStruct::OpenGLUniformStruct(const UniformStructDescriptor& descript
 	: m_descriptor(descriptor)
 {
 	//Retrieve locations of uniform struct members
-	for (UniformDescriptor member : descriptor)
+	for (UniformElementDescriptor member : descriptor)
 	{
 		std::string memberFullName = getMemberFullName(member.getName());
 		GLint location = glGetUniformLocation(programID, memberFullName.c_str());
-		CMT_COMET_ASSERT_MESSAGE(location != -1, fmt::format("Cannot get location of uniform {0}", m_descriptor.getName()))
+		CMT_COMET_ASSERT_MESSAGE(location != -1, fmt::format("Cannot get location of uniform {0}", memberFullName))
 		m_locations[memberFullName] = location;
 	}
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const float data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT))
 
 	glUniform1f(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
@@ -54,7 +54,7 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec2& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT2, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT2))
 	glUniform2f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y);
@@ -62,7 +62,7 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec3& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT3))
 
 	glUniform3f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z);
@@ -70,7 +70,7 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::vec4& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::FLOAT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::FLOAT4))
 
 	glUniform4f(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z, data.w);
@@ -78,23 +78,23 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::mat3& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::MAT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::MAT3))
 
-	glUniform3fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, &data[0][0]);
+	glUniformMatrix3fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, false, &data[0][0]);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::mat4& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::MAT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::MAT4))
 
-	glUniform4fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, &data[0][0]);
+	glUniformMatrix4fv(m_locations[getMemberFullName(uniformDescriptor.getName())], 1, false, &data[0][0]);
 }
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const int32_t data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT))
 
 	glUniform1i(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
@@ -102,7 +102,7 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec2& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT2, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT2))
 
 	glUniform2i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y);
@@ -110,7 +110,7 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec3& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT3, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT3))
 
 	glUniform3i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z);
@@ -118,23 +118,31 @@ void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const
 
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const glm::ivec4& data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::INT4, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::INT4))
 
 	glUniform4i(m_locations[getMemberFullName(uniformDescriptor.getName())], data.x, data.y, data.z, data.w);
 }
 
+void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const uint32_t data)
+{
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::UINT, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::UINT))
+
+	glUniform1ui(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
+}
+
 void OpenGLUniformStruct::setMemberData(const std::string_view memberName, const bool data)
 {
-	const UniformDescriptor uniformDescriptor = getMemberDescriptor(memberName);
+	const UniformElementDescriptor uniformDescriptor = getMemberDescriptor(memberName);
 	CMT_COMET_ASSERT_MESSAGE(uniformDescriptor.getType() == ShaderDataType::BOOL, fmt::format(TYPE_ERROR_STR, memberName, m_descriptor.getName(), ShaderDataType::BOOL))
 
 	glUniform1i(m_locations[getMemberFullName(uniformDescriptor.getName())], data);
 }
 
-UniformDescriptor OpenGLUniformStruct::getMemberDescriptor(const std::string_view memberName)
+UniformElementDescriptor OpenGLUniformStruct::getMemberDescriptor(const std::string_view memberName)
 {
-	std::vector<UniformDescriptor>::const_iterator it = std::find_if(m_descriptor.begin(), m_descriptor.end(), [memberName](const UniformDescriptor& uniformDescriptor)
+	std::vector<UniformElementDescriptor>::const_iterator it = std::find_if(m_descriptor.begin(), m_descriptor.end(), [memberName](const UniformElementDescriptor& uniformDescriptor)
 	{
 		return uniformDescriptor.getName() == memberName;
 	});

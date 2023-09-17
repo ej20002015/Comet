@@ -16,8 +16,8 @@ void PanelRegistry::regLibPanels()
 
 std::unordered_map<std::type_index, PanelRegistry::CreatePanelFunc>& PanelRegistry::panels()
 {
-	static std::unordered_map<std::type_index, CreatePanelFunc> s_registeredPanels;
-	return s_registeredPanels;
+	static std::unordered_map<std::type_index, CreatePanelFunc> registeredPanels;
+	return registeredPanels;
 }
 
 

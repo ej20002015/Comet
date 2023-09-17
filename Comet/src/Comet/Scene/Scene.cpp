@@ -3,7 +3,9 @@
 
 #include "Entity.h"
 #include "Components.h"
+#include "ScriptRegistry.h"
 
+#include "Comet/Renderer/SceneRenderer.h"
 #include "Comet/Renderer/Renderer2D.h"
 
 namespace Comet
@@ -22,10 +24,9 @@ Entity Scene::createEntity(const std::string_view tagString)
 {
 	Entity newEntity(this, m_registry.create());
 
-	//All entities will have a UUID and a transform
+	// All entities will have a UUID, a transform and a tag
 	newEntity.addComponent<UUIDComponent>();
 	newEntity.addComponent<TransformComponent>();
-
 	newEntity.addComponent<TagComponent>(tagString);
 
 	return newEntity;
@@ -36,61 +37,49 @@ void Scene::deleteEntity(const Entity entity)
 	m_registry.destroy(entity.m_entityHandle);
 }
 
-void Scene::onEditorUpdate(const Timestep ts, const EditorCamera& editorCamera)
+void Scene::onEditorUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer, const EditorCamera& editorCamera)
 {
-	//Render with no depth testing for 2D scene
-	Renderer2D::beginScene(editorCamera, true);
+	const auto pointLights = getPointLights();
+	SceneRenderer::beginScene(editorCamera, pointLights);
+	renderModels();
+	SceneRenderer::endScene(exposure, targetFrambuffer);
+
+	Renderer2D::beginScene(editorCamera, targetFrambuffer, false); // Render with no depth testing for 2D scene
 	renderSprites();
 	Renderer2D::endScene();
 }
 
-void Scene::renderSprites()
+void Scene::onRuntimeStart()
 {
-	//Partial owning group as transform will be used in other views/groups
-	auto group = m_registry.group<SpriteComponent>(entt::get<TransformComponent>);
+	// Create scripts
 
-	//Sort by transform z coordinate translation so sprites are drawn in the correct order
-	group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
+	const auto view = m_registry.view<NativeScriptComponent>();
+	view.each([this](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
 	{
-		return lhs.translation.z < rhs.translation.z;
+		if (!nativeScriptComponent.script)
+		{
+			nativeScriptComponent.script = ScriptRegistry::createRegisteredScript(nativeScriptComponent.scriptName);
+			if (nativeScriptComponent.script)
+			{
+				nativeScriptComponent.script->m_entity = Entity{ this, entity };
+				nativeScriptComponent.script->onStart();
+			}
+		}
 	});
-
-	for (entt::entity entity : group)
-	{
-		const SpriteComponent& spriteComponent = group.get<SpriteComponent>(entity);
-		const glm::mat4& transform = group.get<TransformComponent>(entity).getTransform();
-
-		if (spriteComponent.spriteTextureType == SpriteComponent::TextureType::NORMAL)
-			Renderer2D::drawQuad(transform, spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
-		else
-			Renderer2D::drawSubQuad(transform, spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
-	}
 }
 
-void Scene::onRuntimeUpdate(const Timestep ts)
+void Scene::onRuntimeUpdate(const Timestep ts, const float exposure, const Reference<Framebuffer>& targetFrambuffer)
 {
-	//Update scripts
+	// Update scripts
+
+	const auto view = m_registry.view<NativeScriptComponent>();
+	view.each([this, ts](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
 	{
-		auto view = m_registry.view<NativeScriptComponent>();
-		for (entt::entity entity : view)
-		{
-			NativeScriptComponent& nativeScriptComponent = view.get<NativeScriptComponent>(entity);
-			if (!nativeScriptComponent.script)
-			{
-				nativeScriptComponent.script = nativeScriptComponent.constructScript();
-				if (nativeScriptComponent.script)
-				{	
-					nativeScriptComponent.script->m_entity = Entity{ this, entity };
-					nativeScriptComponent.script->onStart();
-				}
-			}
-
+		if (nativeScriptComponent.script)
 			nativeScriptComponent.script->onUpdate(ts);
-		}
-	}
+	});
 
-	Entity primaryCameraEntity = getPrimaryCameraEntity();
-
+	const Entity primaryCameraEntity = getPrimaryCameraEntity();
 	if (!primaryCameraEntity)
 	{
 		Log::cometError("Cannot render scene - no primary camera set");
@@ -99,10 +88,31 @@ void Scene::onRuntimeUpdate(const Timestep ts)
 
 	const Camera& camera = primaryCameraEntity.getComponent<CameraComponent>().camera;
 	const glm::mat4& cameraTransform = primaryCameraEntity.getComponent<TransformComponent>().getTransform();
-	//Render with no depth testing for 2D scene
-	Renderer2D::beginScene(camera, cameraTransform, false);
+
+	const auto pointLights = getPointLights();
+	SceneRenderer::beginScene(camera, cameraTransform, pointLights);
+	renderModels();
+	SceneRenderer::endScene(exposure, targetFrambuffer);
+
+	Renderer2D::beginScene(camera, cameraTransform, targetFrambuffer, false); // Render with no depth testing for 2D scene
 	renderSprites();
 	Renderer2D::endScene();
+}
+
+void Scene::onRuntimeStop()
+{
+	// Delete scripts
+
+	const auto view = m_registry.view<NativeScriptComponent>();
+	view.each([](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
+	{
+		if (nativeScriptComponent.script)
+		{
+			delete nativeScriptComponent.script;
+			nativeScriptComponent.script = nullptr;
+		}
+
+	});
 }
 
 void Scene::onViewportResized(const uint32_t width, const uint32_t height)
@@ -110,30 +120,25 @@ void Scene::onViewportResized(const uint32_t width, const uint32_t height)
 	m_viewportWidth = width;
 	m_viewportHeight = height;
 
-	//Set viewport for all cameras in the scene that have a non-fixed aspect ratio
-	auto view = m_registry.view<CameraComponent>();
-	for (entt::entity entity : view)
+	// Set viewport for all cameras in the scene that have a non-fixed aspect ratio
+	const auto view = m_registry.view<CameraComponent>();
+	view.each([=](const auto entity, CameraComponent& cameraComponent)
 	{
-		auto& camera = view.get<CameraComponent>(entity).camera;
-		if (!camera.getFixedAspectRatio())
-			camera.setViewportSize(width, height);
-	}
+		if (!cameraComponent.camera.getFixedAspectRatio())
+			cameraComponent.camera.setViewportSize(width, height);
+	});
 }
 
 Entity Scene::getPrimaryCameraEntity()
 {
 	Entity primaryCameraEntity;
 
-	auto view = m_registry.view<CameraComponent>();
-	for (const entt::entity entity : view)
+	const auto view = m_registry.view<CameraComponent>();
+	view.each([&, this](const auto entity, const CameraComponent& cameraComponent)
 	{
-		CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
 		if (cameraComponent.primary)
-		{
 			primaryCameraEntity = { this, entity };
-			break;
-		}
-	}
+	});
 
 	return primaryCameraEntity;
 }
@@ -146,8 +151,53 @@ void Scene::onCameraComponentConstruction(Entity entity, CameraComponent& camera
 
 void Scene::onTagComponentCreation(Entity entity, TagComponent& tagComponent)
 {
-	UUIDComponent uuidComponent = entity.getComponent<UUIDComponent>();
+	const UUIDComponent& uuidComponent = entity.getComponent<UUIDComponent>();
 	Log::cometInfo("Creating entity with UUID = {0} and tag = '{1}'", static_cast<std::string>(uuidComponent), static_cast<std::string>(tagComponent));
+}
+
+void Scene::renderModels()
+{
+	// Partial owning group as transform will be used in other views/groups
+	const auto group = m_registry.group<ModelComponent>(entt::get<TransformComponent>);
+	group.each([](const entt::entity entity, const ModelComponent& modelComponent, const TransformComponent& transformComponent)
+	{
+		SceneRenderer::drawModel(modelComponent.model, transformComponent.getTransform(), static_cast<int32_t>(entity));
+	});
+}
+
+void Scene::renderSprites()
+{
+	// Partial owning group as transform will be used in other views/groups
+	auto group = m_registry.group<SpriteComponent>(entt::get<TransformComponent>);
+
+	// Sort by transform z coordinate translation so sprites are drawn in the correct order
+	group.sort<TransformComponent>([](const TransformComponent& lhs, const TransformComponent& rhs)
+	{
+		return lhs.translation.z < rhs.translation.z;
+	});
+
+	group.each([](const entt::entity entity, const SpriteComponent& spriteComponent, const TransformComponent& transformComponent)
+	{
+		if (spriteComponent.spriteTextureType == SpriteComponent::TextureType::NORMAL)
+			Renderer2D::drawQuad(transformComponent.getTransform(), spriteComponent.color, spriteComponent.texture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
+		else
+			Renderer2D::drawSubQuad(transformComponent.getTransform(), spriteComponent.color, spriteComponent.subTexture, spriteComponent.tilingFactor, static_cast<int32_t>(entity));
+	});
+}
+
+SceneRenderer::PointLightList Scene::getPointLights()
+{
+	SceneRenderer::PointLightList pointLights;
+
+	// Partial owning group as transform will be used in other views/groups
+	const auto group = m_registry.group<PointLightComponent>(entt::get<TransformComponent>);
+
+	group.each([&pointLights](const entt::entity entity, const PointLightComponent& pointLightComponent, const TransformComponent transformComponent)
+	{
+		pointLights.emplace_back(std::make_pair(pointLightComponent.pointLight, transformComponent.translation));
+	});
+
+	return pointLights;
 }
 
 }

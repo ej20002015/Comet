@@ -1,0 +1,43 @@
+Scene:
+  Scene Name: Unnamed Scene
+  Entities:
+    - Entity: "b06d-c24e-d851-55e7: Light 2"
+      Components:
+        UUIDComponent:
+          UUID: 12713030967029224935
+        TagComponent:
+          Tag: Light 2
+        TransformComponent:
+          Translation: [-1.37812042, -0.5, -0.5]
+          Rotation: [0, 0, 0, 1]
+          Scale: [1, 1, 1]
+        PointLightComponent:
+          Color: [1, 1, 1]
+          Radius: 10
+          Luminous Power: 39.4784203
+    - Entity: "14a8-9cd2-e694-cdc6: Light 1"
+      Components:
+        UUIDComponent:
+          UUID: 1488612106471525830
+        TagComponent:
+          Tag: Light 1
+        TransformComponent:
+          Translation: [1.35308063, 0.5, 0.5]
+          Rotation: [0, 0, 0, 1]
+          Scale: [1, 1, 1]
+        PointLightComponent:
+          Color: [1, 1, 1]
+          Radius: 10
+          Luminous Power: 39.4784203
+    - Entity: "f2f6-fd79-449e-ab86: Model"
+      Components:
+        UUIDComponent:
+          UUID: 17507459298733501318
+        TagComponent:
+          Tag: Model
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0, 0]
+          Scale: [1, 1, 1]
+        ModelComponent:
+          Model Path: assets\models\pistol\pistol.fbx

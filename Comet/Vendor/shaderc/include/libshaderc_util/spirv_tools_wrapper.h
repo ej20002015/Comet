@@ -46,7 +46,6 @@ enum class PassId {
   kLegalizationPasses,
   kPerformancePasses,
   kSizePasses,
-  kVulkanToWebGPUPasses,
 
   // SPIRV-Tools specific passes
   kNullPass,
@@ -61,6 +60,7 @@ enum class PassId {
 bool SpirvToolsOptimize(Compiler::TargetEnv env,
                         Compiler::TargetEnvVersion version,
                         const std::vector<PassId>& enabled_passes,
+                        spvtools::OptimizerOptions& optimizer_options,
                         std::vector<uint32_t>* binary, std::string* errors);
 
 }  // namespace shaderc_util

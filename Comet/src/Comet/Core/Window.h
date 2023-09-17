@@ -14,8 +14,8 @@ public:
 	struct WindowProperties
 	{
 		std::string_view title;
-		uint32_t width = 1280;
-		uint32_t height = 720;
+		uint32_t width = DEFAULT_WIDTH;
+		uint32_t height = DEFAULT_HEIGHT;
 	};
 
 

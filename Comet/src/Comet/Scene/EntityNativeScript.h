@@ -35,6 +35,15 @@ private:
 	friend class Scene;
 };
 
-//TODO: static library that keeps track of these types of scripts? Then the user can select one from the Editor Component Panel?
+#define DEF_SCRIPT(TYPE) static bool s_registered; \
+	static constexpr const char* const s_name = #TYPE; \
+	static const std::string getName() { return s_name; } \
+	friend class ScriptRegistry; \
+
+class NullScript : public EntityNativeScript
+{
+public:
+	DEF_SCRIPT(NullScript)
+};
 
 }

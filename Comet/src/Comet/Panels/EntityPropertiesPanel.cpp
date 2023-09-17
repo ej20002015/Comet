@@ -2,6 +2,7 @@
 #include "EntityPropertiesPanel.h"
 
 #include "PanelRegistry.h"
+#include "Comet/Scene/ScriptRegistry.h"
 #include "Comet/Core/PlatformUtilities.h"
 #include "Comet/ImGui/ImGuiUtilities.h"
 
@@ -18,20 +19,19 @@ namespace Comet
 REG_PANEL(EntityPropertiesPanel)
 
 const float EntityPropertiesPanel::s_labelColumnWidth = 160.0f;
-Buffer EntityPropertiesPanel::s_imgFileFilter;
 
 EntityPropertiesPanel::EntityPropertiesPanel()
 {
 	m_noTextureIcon = Texture2D::create("EditorResources/Textures/Icons/EntityPropertiesPanel/NoTextureIcon.png");
-
-	initImageFileFilter();
+	m_imgFileFilter = PlatformUtilities::constructFilter(Texture::SUPPORTED_IMG_FILE_TYPES, "All Supported Image Files", false);
+	m_modelFileFilter = PlatformUtilities::constructFilter(Model::SUPPORTED_MODEL_FILE_TYPES, "All Supported Model Files", false);
 }
 
 void EntityPropertiesPanel::onImGuiRender()
 {
 	ImGui::Begin("Entity Properties");
 
-	if (!m_entity)
+	if (!m_getEntityCallback || !(m_entity = m_getEntityCallback()))
 	{
 		ImGui::End();
 		return;
@@ -48,18 +48,16 @@ void EntityPropertiesPanel::onImGuiRender()
 	char textBuffer[256];
 	strcpy_s(textBuffer, sizeof(textBuffer), tag.c_str());
 	if (ImGui::InputText("##Tag", textBuffer, sizeof(textBuffer)))
-	{
 		tag = std::string(textBuffer);
-	}
 
 	const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 	const ImVec2 textSize = ImGui::CalcTextSize("Add Component");
 
 	ImGui::SameLine(contentRegion.x + GImGui->Style.FramePadding.x - textSize.x);
 	if (ImGui::Button("Add Component"))
-	{
 		ImGui::OpenPopup("ComponentMenu");
-	}
+
+	// TODO: clean up
 
 	if (ImGui::BeginPopup("ComponentMenu"))
 	{
@@ -72,11 +70,38 @@ void EntityPropertiesPanel::onImGuiRender()
 			}
 		}
 
+		if (!m_entity.hasComponent<NativeScriptComponent>())
+		{
+			if (ImGui::MenuItem("Native Script Component"))
+			{
+				m_entity.addComponent<NativeScriptComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
 		if (!m_entity.hasComponent<SpriteComponent>())
 		{
 			if (ImGui::MenuItem("Sprite Component"))
 			{
 				m_entity.addComponent<SpriteComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!m_entity.hasComponent<ModelComponent>())
+		{
+			if (ImGui::MenuItem("Model Component"))
+			{
+				m_entity.addComponent<ModelComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!m_entity.hasComponent<PointLightComponent>())
+		{
+			if (ImGui::MenuItem("Point Light Component"))
+			{
+				m_entity.addComponent<PointLightComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -191,6 +216,15 @@ void EntityPropertiesPanel::onImGuiRender()
 		ImGuiUtilities::endPropertyGrid();
 	});
 
+	componentImGuiRender<NativeScriptComponent>("Native Script Component", [this](NativeScriptComponent& spriteComponent)
+	{
+		ImGuiUtilities::beginPropertyGrid();
+
+		ImGuiUtilities::property<std::string>("Script", ScriptRegistry::getScriptNames(), spriteComponent.scriptName);
+
+		ImGuiUtilities::endPropertyGrid();
+	});
+
 	componentImGuiRender<SpriteComponent>("Sprite Component", [this](SpriteComponent& spriteComponent)
 	{
 		ImGuiUtilities::beginPropertyGrid();
@@ -203,7 +237,7 @@ void EntityPropertiesPanel::onImGuiRender()
 
 		if (ImGuiUtilities::propertyImageButton("Texture", textureRendererID, { 64.0f, 64.0f }))
 		{
-			std::string textureFilepath = PlatformUtilities::openFile(s_imgFileFilter);
+			std::string textureFilepath = PlatformUtilities::openFile(m_imgFileFilter);
 
 			if (!textureFilepath.empty())
 			{
@@ -222,14 +256,11 @@ void EntityPropertiesPanel::onImGuiRender()
 				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
 				const std::filesystem::path textureFilepathPath(directoryEntryPathCString);
 				const std::string extension = textureFilepathPath.extension().string();
-				if (!extension.empty())
+				if (!extension.empty() && Texture::SUPPORTED_IMG_FILE_TYPES.find(extension) != Texture::SUPPORTED_IMG_FILE_TYPES.end())
 				{
-					if (Texture::SUPPORTED_IMG_FILE_TYPES.find(extension) != Texture::SUPPORTED_IMG_FILE_TYPES.end())
-					{
-						auto texture = Texture2D::create(directoryEntryPathCString);
-						spriteComponent.texture = texture;
-						spriteComponent.subTexture.setTextureAtlas(texture);
-					}
+					auto texture = Texture2D::create(directoryEntryPathCString);
+					spriteComponent.texture = texture;
+					spriteComponent.subTexture.setTextureAtlas(texture);
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -275,24 +306,55 @@ void EntityPropertiesPanel::onImGuiRender()
 		ImGuiUtilities::endPropertyGrid();
 	});
 
+	componentImGuiRender<ModelComponent>("Model Component", [this](ModelComponent& modelComponent)
+	{
+		ImGuiUtilities::beginPropertyGrid();
+
+		if (ImGuiUtilities::propertyButton("Name", modelComponent.model->getModelIdentifier()))
+		{
+			std::string modelFilepath = PlatformUtilities::openFile(m_modelFileFilter);
+			if (!modelFilepath.empty())
+				modelComponent.model = Model::create(modelFilepath);
+		}
+
+		//Set drag drop payload target for opening model files
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* dragDropPayload = nullptr;
+			if (dragDropPayload = ImGui::AcceptDragDropPayload("ContentBrowserEntryPathCString"))
+			{
+				const char* directoryEntryPathCString = reinterpret_cast<const char*>(dragDropPayload->Data);
+				const std::filesystem::path modelFilepathPath(directoryEntryPathCString);
+				const std::string extension = modelFilepathPath.extension().string();
+				if (!extension.empty() && Model::SUPPORTED_MODEL_FILE_TYPES.find(extension) != Model::SUPPORTED_MODEL_FILE_TYPES.end())
+				{
+					modelComponent.model = Model::create(modelFilepathPath);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGuiUtilities::endPropertyGrid();
+	});
+
+	componentImGuiRender<PointLightComponent>("Point Light Component", [this](PointLightComponent& pointLightComponent)
+	{
+		PointLight& pointLight = *pointLightComponent.pointLight;
+
+		ImGuiUtilities::beginPropertyGrid();
+
+		ImGuiUtilities::propertyColorPicker("Color", pointLight.color);
+
+		ImGuiUtilities::property("Radius", pointLight.radius);
+
+		ImGuiUtilities::property("Luminous Power", pointLight.luminousPower);
+
+		ImGuiUtilities::endPropertyGrid();
+	});
+
 	ImGui::PopID();
 
 	ImGui::End();
-}
-
-void EntityPropertiesPanel::initImageFileFilter()
-{
-	std::stringstream ss;
-	for (const auto& fileExtension : Texture::SUPPORTED_IMG_FILE_TYPES)
-		ss << "*" << fileExtension << ";";
-
-	std::string fileExtensions = ss.str();
-	//Remove trailing ;
-	fileExtensions.pop_back();
-
-	std::unordered_map<std::string, std::string> imgFilterFilterMap = { { "All Supported Image Files", fileExtensions } };
-
-	s_imgFileFilter = PlatformUtilities::constructFilter(imgFilterFilterMap, false);
 }
 
 template<typename T, typename ComponentUIFunction>

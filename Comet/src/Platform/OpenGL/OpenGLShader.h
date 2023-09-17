@@ -34,11 +34,14 @@ public:
 	void setUniformData(const std::string_view uniformName, const glm::ivec3& data) override { setUniformDataTemplate(uniformName, data); }
 	void setUniformData(const std::string_view uniformName, const glm::ivec4& data) override { setUniformDataTemplate(uniformName, data); }
 
+	void setUniformData(const std::string_view uniformName, const uint32_t data) override    { setUniformDataTemplate(uniformName, data); }
+
 	void setUniformData(const std::string_view uniformName, const bool data) override        { setUniformDataTemplate(uniformName, data); }
 		
 	const std::string& getName() const override { return m_name; }
 	const std::filesystem::path& getFilepath() const override { return m_filepath; }
 	RendererID getRendererID() const override { return m_rendererID; }
+	MapStr2T<const UniformResource&> getResources() const;
 
 private:
 	std::string getSourceFromFile();

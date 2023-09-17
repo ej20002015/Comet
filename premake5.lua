@@ -21,9 +21,9 @@ workspace "Comet"
     includeDirectories["SPIRVCross"] = "%{wks.location}/Comet/Vendor/SPIRV-Cross/include"
     includeDirectories["stb"] = "%{wks.location}/Comet/Vendor/stb/include"
     includeDirectories["ImGuizmo"] = "%{wks.location}/Comet/Vendor/ImGuizmo"
-
     includeDirectories["EnTT"] = "%{wks.location}/Comet/Vendor/EnTT/include"
     includeDirectories["yaml_cpp"] = "%{wks.location}/Comet/Vendor/yaml-cpp/include"
+    includeDirectories["assimp"] = "%{wks.location}/Comet/Vendor/assimp/include"
 
     libDirectories = {}
     libDirectories["shaderc"] = "%{wks.location}/Comet/Vendor/shaderc/bin"
@@ -39,6 +39,7 @@ workspace "Comet"
         include "Comet/Vendor/Glad"
         include "Comet/Vendor/ImGui"
         include "Comet/Vendor/yaml-cpp"
+        include "Comet/Vendor/assimp"
     group ""
 
     -- Dependencies folder for Comet and client applications (no such dependencies at the moment)

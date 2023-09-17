@@ -34,11 +34,14 @@ public:
 	virtual void setUniformData(const std::string_view uniformName, const glm::ivec3& data) = 0;
 	virtual void setUniformData(const std::string_view uniformName, const glm::ivec4& data) = 0;
 
+	virtual void setUniformData(const std::string_view uniformName, const uint32_t data) = 0;
+
 	virtual void setUniformData(const std::string_view uniformName, const bool data) = 0;
 
 	virtual const std::string& getName() const = 0;
 	virtual const std::filesystem::path& getFilepath() const = 0;
 	virtual RendererID getRendererID() const = 0;
+	virtual MapStr2T<const UniformResource&> getResources() const = 0;
 
 protected:
 	constexpr static bool OPTIMISATION = true;

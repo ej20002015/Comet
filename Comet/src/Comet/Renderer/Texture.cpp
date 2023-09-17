@@ -7,7 +7,7 @@ namespace Comet
 {
 
 const std::filesystem::path Texture::NO_FILEPATH_NAME= "NONE";
-const UnorderedStrSet Texture::SUPPORTED_IMG_FILE_TYPES = { ".png", ".jpg" };
+const UnorderedStrSet Texture::SUPPORTED_IMG_FILE_TYPES = { ".png", ".jpg", ".tga"};
 std::unordered_map<std::filesystem::path, Reference<Texture>> TextureManager::s_texturePool;
 
 //Calculate how many times the largest dimension of the texture can be divided in two to calculate the required number of mip maps
@@ -28,6 +28,7 @@ uint32_t Texture::getBPP(const Format format)
 	case Format::RGB:      return 3;
 	case Format::RGBA:     return 4;
 	case Format::FLOAT16:  return 8;
+    case Format::R8:       return 1;
 		
 	default:
 		CMT_COMET_ASSERT_MESSAGE(false, "Unknown texture format");
@@ -37,7 +38,7 @@ uint32_t Texture::getBPP(const Format format)
 
 Reference<Texture2D> Texture2D::create(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter, const Filter minFilter, const Wrap wrap)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLTexture2D>(format, width, height, magFilter, minFilter, wrap);
@@ -48,6 +49,13 @@ Reference<Texture2D> Texture2D::create(const Format format, const uint32_t width
         return nullptr;
         break;
     }
+}
+
+Reference<Texture2D> Texture2D::create(const void* const data, const uint32_t size, const Format format, const uint32_t width, const uint32_t height, const Filter magFilter, const Filter minFilter, const Wrap wrap)
+{
+    Reference<Texture2D> texture = Texture2D::create(format, width, height, magFilter, minFilter, wrap);
+    texture->setData(data, size);
+    return texture;
 }
 
 Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, const bool SRGB, const Filter magFilter, const Filter minFilter, const Wrap wrap)
@@ -63,7 +71,7 @@ Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, co
     if (texture)
         return std::static_pointer_cast<Texture2D>(texture);
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
     {
@@ -81,7 +89,7 @@ Reference<Texture2D> Texture2D::create(const std::filesystem::path& filepath, co
 
 Reference<TextureCube> TextureCube::create(const Format textureFormat, const uint32_t width, const uint32_t height)
 {
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createReference<OpenGLTextureCube>(textureFormat, width, height);
@@ -107,7 +115,7 @@ Reference<TextureCube> TextureCube::create(const std::filesystem::path& filepath
     if (texture)
         return std::static_pointer_cast<TextureCube>(texture);
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
     {

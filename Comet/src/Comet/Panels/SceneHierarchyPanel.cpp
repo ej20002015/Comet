@@ -43,7 +43,7 @@ void SceneHierarchyPanel::openMenuIfNeeded()
 void SceneHierarchyPanel::deselectEntityIfNeeded()
 {
 	if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
-		m_selectedEntity = {};
+		m_selectedEntity = Entity::Null;
 }
 
 void SceneHierarchyPanel::drawEntityNode(Entity entity)
@@ -75,7 +75,7 @@ void SceneHierarchyPanel::drawEntityNode(Entity entity)
 	{
 		m_scene->deleteEntity(entity);
 		if (m_selectedEntity == entity)
-			m_selectedEntity = {};
+			m_selectedEntity = Entity::Null;
 	}
 }
 

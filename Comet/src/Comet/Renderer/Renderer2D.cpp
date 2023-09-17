@@ -16,12 +16,14 @@ Renderer2D::BatchData Renderer2D::s_batchData;
 void Renderer2D::init()
 {
 	Pipeline::Specification quadPipelineSpecification = {
-		.layout = {{ "a_position",           ShaderDataType::FLOAT3 },
-				   { "a_color",              ShaderDataType::FLOAT4 },
-				   { "a_textureCoordinates", ShaderDataType::FLOAT2 },
-				   { "a_textureIndex",       ShaderDataType::UINT },
-				   { "a_tilingFactor",       ShaderDataType::FLOAT },
-				   { "a_entityID",           ShaderDataType::INT }}
+		{
+			{ "a_position",           ShaderDataType::FLOAT3 },
+			{ "a_color",              ShaderDataType::FLOAT4 },
+			{ "a_textureCoordinates", ShaderDataType::FLOAT2 },
+			{ "a_textureIndex",       ShaderDataType::UINT },
+			{ "a_tilingFactor",       ShaderDataType::FLOAT },
+			{ "a_entityID",           ShaderDataType::INT }
+		}
 	};
 
 	s_data.quadPipeline = Pipeline::create(quadPipelineSpecification);
@@ -50,9 +52,8 @@ void Renderer2D::init()
 
 	s_data.quadShader = Shader::create("assets/shaders/2DBatchShader.glsl");
 
-	s_data.whiteTexture = Texture2D::create(Texture::Format::RGBA, 1, 1);
 	uint32_t whitePixelData = 0xffffffff;
-	s_data.whiteTexture->setData(&whitePixelData, sizeof(whitePixelData));
+	s_data.whiteTexture = Texture2D::create(&whitePixelData, 4, Texture::Format::RGBA, 1, 1);
 
 	s_data.textureSlots[0] = s_data.whiteTexture;
 
@@ -73,22 +74,23 @@ void Renderer2D::shutdown()
 	delete[] s_data.quadVertexBufferBase;
 }
 
-void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest)
+void Renderer2D::beginScene(const glm::mat4& viewProjectionMatrix, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
 {
 	s_batchData.depthTest = depthTest;
-	glm::mat4 viewProjectionMatrix = camera.getProjectionMatrix() * glm::inverse(cameraTransform);
+	s_batchData.targetFramebuffer = targetFramebuffer;
 	Shader::setUniformBuffer(0, &viewProjectionMatrix[0][0]);
 	setInitialBatchData();
 	resetStats();
 }
 
-void Renderer2D::beginScene(const EditorCamera& editorCamera, const bool depthTest)
+void Renderer2D::beginScene(const Camera& camera, const glm::mat4& cameraTransform, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
 {
-	s_batchData.depthTest = depthTest;
-	glm::mat4 viewProjectionMatrix = editorCamera.getViewProjectionMatrix();
-	Shader::setUniformBuffer(0, &viewProjectionMatrix[0][0]);
-	setInitialBatchData();
-	resetStats();
+	beginScene(camera.getProjectionMatrix() * glm::inverse(cameraTransform), targetFramebuffer, depthTest);
+}
+
+void Renderer2D::beginScene(const EditorCamera& editorCamera, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest)
+{
+	beginScene(editorCamera.getViewProjectionMatrix(), targetFramebuffer, depthTest);
 }
 
 void Renderer2D::endScene()
@@ -208,6 +210,8 @@ void Renderer2D::flush()
 	if (!s_batchData.quadCount)
 		return;
 
+	s_batchData.targetFramebuffer->bind();
+
 	//Only upload the populated area of the batch buffer to the vertex buffer
 	uint32_t size = static_cast<uint32_t>((reinterpret_cast<uint8_t*>(s_batchData.quadVertexBufferPointer) - reinterpret_cast<uint8_t*>(s_data.quadVertexBufferBase)));
 	s_data.quadVertexBuffer->setData(s_data.quadVertexBufferBase, size);
@@ -222,8 +226,11 @@ void Renderer2D::flush()
 
 	s_data.quadShader->bind();
 
+	if (RendererAPI::getDepthTesting() != s_batchData.depthTest)
+		RendererAPI::setDepthTesting(s_batchData.depthTest);
+
 	//Draw call
-	RendererAPI::drawIndexed(s_batchData.quadCount * 6, RendererAPI::PrimitiveType::TRIANGLES, s_batchData.depthTest);
+	RendererAPI::drawIndexed(s_batchData.quadCount * 6);
 
 	s_stats.drawCalls++;
 }

@@ -90,4 +90,5 @@ Buffer PlatformUtilities::constructFilter(const std::unordered_map<std::string, 
 
 	return buffer;
 }
+
 }

@@ -119,7 +119,7 @@ void OpenGLFramebuffer::resize(const uint32_t width, const uint32_t height, cons
 
 void OpenGLFramebuffer::createColorAttachments()
 {
-	//TODO: This shouldn't be a blanket setting for all color attachments?
+	// TODO: This shouldn't be a blanket setting for all color attachments?
 	glCreateTextures(isMultisampling() ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D, getColorAttachmentCount(), m_colorAttachmentsRendererID.data());
 
 	for (uint32_t i = 0; i < getColorAttachmentCount(); ++i)
@@ -130,7 +130,14 @@ void OpenGLFramebuffer::createColorAttachments()
 			glTextureStorage2D(m_colorAttachmentsRendererID[i], 1, getGLInternalColorTextureFormat(m_specification.colorAttachments.attachments[i]), m_specification.width, m_specification.height);
 
 		glNamedFramebufferTexture(m_rendererID, GL_COLOR_ATTACHMENT0 + i, m_colorAttachmentsRendererID[i], 0);
+
+		glTextureParameteri(m_colorAttachmentsRendererID[i], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_colorAttachmentsRendererID[i], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_colorAttachmentsRendererID[i], GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_colorAttachmentsRendererID[i], GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(m_colorAttachmentsRendererID[i], GL_TEXTURE_WRAP_R, GL_REPEAT);
 	}
+
 }
 
 void OpenGLFramebuffer::createDepthAttachment()

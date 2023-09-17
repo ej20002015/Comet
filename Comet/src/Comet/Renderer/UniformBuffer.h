@@ -45,6 +45,8 @@ public:
 	virtual void setMemberData(const std::string_view memberName, const glm::ivec3& data) = 0;
 	virtual void setMemberData(const std::string_view memberName, const glm::ivec4& data) = 0;
 
+	virtual void setMemberData(const std::string_view memberName, const uint32_t data) = 0;
+
 	virtual void setMemberData(const std::string_view memberName, const bool data) = 0;
 
 	virtual const UniformStructDescriptor& getDescriptor() const = 0;

@@ -292,13 +292,19 @@ static void serializeUUIDComponent(YAML::Emitter& out, const UUIDComponent& UUID
 static void serializeTagComponent(YAML::Emitter& out, const TagComponent& tagComponent);
 static void serializeTransformComponent(YAML::Emitter& out, const TransformComponent& transformComponent);
 static void serializeCameraComponent(YAML::Emitter& out, const CameraComponent& cameraComponent);
+static void serializeNativeScriptComponent(YAML::Emitter& out, const NativeScriptComponent& nativeScriptComponent);
 static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& spriteComponent);
+static void serializeModelComponent(YAML::Emitter& out, const ModelComponent& modelComponent);
+static void serializePointLightComponent(YAML::Emitter& out, const PointLightComponent& pointLightComponent);
 
 static void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeTagComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeTransformComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeCameraComponent(const YAML::Node& componentNode, Entity entity);
+static void deserializeNativeScriptComponent(const YAML::Node& componentNode, Entity entity);
 static void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity);
+static void deserializeModelComponent(const YAML::Node& componentNode, Entity entity);
+static void deserializePointLightComponent(const YAML::Node& componentNode, Entity entity);
 
 #pragma endregion
 
@@ -380,6 +386,8 @@ void SceneSerializer::serializeEntity(YAML::Emitter& out, Entity entity)
 	serializeComponent<TransformComponent>(out, entity, serializeTransformComponent);
 	serializeComponent<CameraComponent>(out, entity, serializeCameraComponent);
 	serializeComponent<SpriteComponent>(out, entity, serializeSpriteComponent);
+	serializeComponent<ModelComponent>(out, entity, serializeModelComponent);
+	serializeComponent<PointLightComponent>(out, entity, serializePointLightComponent);
 
 	out << YAML::EndMap;
 	out << YAML::EndMap;
@@ -394,6 +402,8 @@ void SceneSerializer::deserializeEntityNode(const YAML::Node& entityNode, const 
 	deserializeComponent<TransformComponent>(entityNode, deserializedEntity, deserializeTransformComponent);
 	deserializeComponent<CameraComponent>(entityNode, deserializedEntity, deserializeCameraComponent);
 	deserializeComponent<SpriteComponent>(entityNode, deserializedEntity, deserializeSpriteComponent);
+	deserializeComponent<ModelComponent>(entityNode, deserializedEntity, deserializeModelComponent);
+	deserializeComponent<PointLightComponent>(entityNode, deserializedEntity, deserializePointLightComponent);
 }
 
 template<typename T, typename SerializeComponentFunction>
@@ -419,12 +429,12 @@ void SceneSerializer::deserializeComponent(const YAML::Node& entityNode, Entity 
 		deserializeFunction(componentNode, deserializedEntity);
 }
 
-void serializeUUIDComponent(YAML::Emitter& out, const UUIDComponent& UUID)
+static void serializeUUIDComponent(YAML::Emitter& out, const UUIDComponent& UUID)
 {
 	out << YAML::Key << "UUID" << YAML::Value << UUID.ID;
 }
 
-void serializeTagComponent(YAML::Emitter& out, const TagComponent& tagComponent)
+static void serializeTagComponent(YAML::Emitter& out, const TagComponent& tagComponent)
 {
 	out << YAML::Key << "Tag" << YAML::Value << tagComponent.tag;
 }
@@ -453,6 +463,11 @@ static void serializeCameraComponent(YAML::Emitter& out, const CameraComponent& 
 	out << YAML::EndMap;
 
 	out << YAML::Key << "Primary" << YAML::Value << cameraComponent.primary;
+}
+
+static void serializeNativeScriptComponent(YAML::Emitter& out, const NativeScriptComponent& nativeScriptComponent)
+{
+	out << YAML::Key << "Script Name" << YAML::Value << nativeScriptComponent.scriptName;
 }
 
 static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& spriteComponent)
@@ -489,19 +504,31 @@ static void serializeSpriteComponent(YAML::Emitter& out, const SpriteComponent& 
 	}
 }
 
-void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity)
+static void serializeModelComponent(YAML::Emitter& out, const ModelComponent& modelComponent)
+{
+	out << YAML::Key << "Model Path" << YAML::Value << modelComponent.model->getFilepath();
+}
+
+static void serializePointLightComponent(YAML::Emitter& out, const PointLightComponent& pointLightComponent)
+{
+	out << YAML::Key << "Color" << YAML::Value << pointLightComponent.pointLight->color;
+	out << YAML::Key << "Radius" << YAML::Value << pointLightComponent.pointLight->radius;
+	out << YAML::Key << "Luminous Power" << YAML::Value << pointLightComponent.pointLight->luminousPower;
+}
+
+static void deserializeUUIDComponent(const YAML::Node& componentNode, Entity entity)
 {
 	const UUID uuid = componentNode["UUID"].as<UUID>();
 	entity.getComponent<UUIDComponent>().ID = uuid;
 }
 
-void deserializeTagComponent(const YAML::Node& componentNode, Entity entity)
+static void deserializeTagComponent(const YAML::Node& componentNode, Entity entity)
 {
 	const std::string tag = componentNode["Tag"].as<std::string>();
 	entity.getComponent<TagComponent>().tag = tag;
 }
 
-void deserializeTransformComponent(const YAML::Node& componentNode, Entity entity)
+static void deserializeTransformComponent(const YAML::Node& componentNode, Entity entity)
 {
 	const glm::vec3 translation = componentNode["Translation"].as<glm::vec3>();
 	const glm::quat rotation = componentNode["Rotation"].as<glm::quat>();
@@ -513,7 +540,7 @@ void deserializeTransformComponent(const YAML::Node& componentNode, Entity entit
 	transformComponent.scale = scale;
 }
 
-void deserializeCameraComponent(const YAML::Node& componentNode, Entity entity)
+static void deserializeCameraComponent(const YAML::Node& componentNode, Entity entity)
 {
 	YAML::Node sceneCameraNode = componentNode["Camera"];
 
@@ -546,7 +573,13 @@ void deserializeCameraComponent(const YAML::Node& componentNode, Entity entity)
 	cameraComponent.primary = primary;
 }
 
-void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity)
+static void deserializeNativeScriptComponent(const YAML::Node& componentNode, Entity entity)
+{
+	const std::string scriptName = componentNode["Script Name"].as<std::string>();
+	entity.addComponent<NativeScriptComponent>(scriptName);
+}
+
+static void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity)
 {
 	YAML::Node textureNode = componentNode["Texture"];
 
@@ -582,6 +615,23 @@ void deserializeSpriteComponent(const YAML::Node& componentNode, Entity entity)
 	spriteComponent.color = color;
 	spriteComponent.tilingFactor = tilingFactor;
 	spriteComponent.spriteTextureType = spriteTextureType;
+}
+
+static void deserializeModelComponent(const YAML::Node& componentNode, Entity entity)
+{
+	const auto modelFilepath = componentNode["Model Path"].as<std::filesystem::path>();
+	entity.addComponent<ModelComponent>(Model::create(modelFilepath));
+}
+
+static void deserializePointLightComponent(const YAML::Node& componentNode, Entity entity)
+{
+	const Reference<PointLight> pointLight = PointLight::create();
+
+	pointLight->color = componentNode["Color"].as<glm::vec3>();
+	pointLight->radius = componentNode["Radius"].as<float>();
+	pointLight->luminousPower = componentNode["Luminous Power"].as<float>();
+
+	entity.addComponent<PointLightComponent>(pointLight);
 }
 
 }

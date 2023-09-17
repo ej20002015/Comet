@@ -81,11 +81,15 @@ public:
 	static bool property(const std::string_view label, glm::vec3& value, const float delta = 0.1f, const std::string_view format = "%.1f", const float min = 0.0f, const float max = 0.0f);
 
 	static bool propertyColorPicker(const std::string_view label, glm::vec4& value);
+	static bool propertyColorPicker(const std::string_view label, glm::vec3 & value);
 
 	static bool propertyButton(const std::string_view label, const std::string_view buttonText);
 	static bool propertyImageButton(const std::string_view label, const uint32_t textureRendererID, const glm::vec2& size);
 
 	static bool property(const std::string_view label, bool& value);
+
+	template<typename StrType>
+	static bool property(const std::string_view label, const std::span<const StrType> options, StrType& selected);
 
 	template<typename TEnum>
 	static bool property(const std::string_view label, const std::span<const std::string_view> options, TEnum& selected);
@@ -131,6 +135,44 @@ bool ImGuiUtilities::property(const std::string_view label, const std::span<cons
 			{
 				currentOption = options[i];
 				selected = static_cast<TEnum>(i);
+				modified = true;
+			}
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::PopItemWidth();
+
+	ImGui::NextColumn();
+
+	return modified;
+}
+
+template<typename StrType>
+bool ImGuiUtilities::property(const std::string_view label, const std::span<const StrType> options, StrType& selected)
+{
+	bool modified = false;
+
+	pushFont(ImGuiFontType::FONT_BOLD);
+	ImGui::Text(label.data());
+	popFont();
+
+	ImGui::NextColumn();
+
+	ImGui::PushItemWidth(-1.0f);
+
+	if (ImGui::BeginCombo(generateItemID(), selected.data(), ImGuiComboFlags_NoArrowButton))
+	{
+		for (const auto& option : options)
+		{
+			bool isSelected = option == selected;
+			if (ImGui::Selectable(option.data(), isSelected))
+			{
+				selected = option;
 				modified = true;
 			}
 

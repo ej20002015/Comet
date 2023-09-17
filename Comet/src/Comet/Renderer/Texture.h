@@ -12,7 +12,7 @@ public:
 
 	enum class Format
 	{
-		RGB, RGBA, FLOAT16
+		RGB, RGBA, FLOAT16, R8
 	};
 
 	enum class Wrap
@@ -54,8 +54,9 @@ class Texture2D : public Texture
 public:
 	virtual ~Texture2D() = default;
 
-	static Reference<Texture2D> create(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_EDGE);
-	static Reference<Texture2D> create(const std::filesystem::path& filepath, const bool SRGB = false, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::CLAMP_TO_BORDER);
+	static Reference<Texture2D> create(const Format format, const uint32_t width, const uint32_t height, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::REPEAT);
+	static Reference<Texture2D> create(const void* const data, const uint32_t size, const Format format, const uint32_t width, const uint32_t height, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::REPEAT);
+	static Reference<Texture2D> create(const std::filesystem::path& filepath, const bool SRGB = false, const Filter magFilter = Filter::LINEAR, const Filter minFilter = Filter::LINEAR, const Wrap wrap = Wrap::REPEAT);
 
 	virtual void setData(const void* const data, const uint32_t size) = 0;
 

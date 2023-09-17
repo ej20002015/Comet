@@ -13,7 +13,7 @@ Unique<RenderingContext> RenderingContext::create(void* const implementationWind
 {
     CMT_COMET_ASSERT_MESSAGE(implementationWindowHandle, "Window handle is null")
 
-    switch (RendererAPI::getCurrrentRendererAPIType())
+    switch (RendererAPI::getCurrentRendererAPIType())
     {
     case RendererAPI::Type::OPENGL:
         return createUnique<OpenGLContext>(reinterpret_cast<GLFWwindow* const>(implementationWindowHandle));

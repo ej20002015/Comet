@@ -348,6 +348,24 @@ bool ImGuiUtilities::propertyColorPicker(const std::string_view label, glm::vec4
     return modified;
 }
 
+bool ImGuiUtilities::propertyColorPicker(const std::string_view label, glm::vec3& value)
+{
+    bool modified = false;
+
+    propertyLabel(label);
+
+    ImGui::NextColumn();
+
+    ImGui::PushItemWidth(-1.0f);
+    if (ImGui::ColorEdit3(generateItemID(), glm::value_ptr(value)))
+        modified = true;
+    ImGui::PopItemWidth();
+
+    ImGui::NextColumn();
+
+    return modified;
+}
+
 bool ImGuiUtilities::propertyButton(const std::string_view label, const std::string_view buttonText)
 {
     bool pressed = false;

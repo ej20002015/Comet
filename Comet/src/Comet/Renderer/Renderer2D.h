@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "EditorCamera.h"
+#include "Framebuffer.h"
 
 namespace Comet
 {
@@ -29,8 +30,9 @@ public:
 	static void init();
 	static void shutdown();
 
-	static void beginScene(const Camera& camera, const glm::mat4& cameraTransform, const bool depthTest = true);
-	static void beginScene(const EditorCamera& editorCamera, const bool depthTest = true);
+	static void beginScene(const glm::mat4& viewProjectionMatrix, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest = false);
+	static void beginScene(const Camera& camera, const glm::mat4& cameraTransform, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest = false);
+	static void beginScene(const EditorCamera& editorCamera, const Reference<Framebuffer>& targetFramebuffer, const bool depthTest = false);
 
 	static void endScene();
 
@@ -95,6 +97,8 @@ private:
 		QuadVertex* quadVertexBufferPointer;
 
 		uint32_t textureSlotIndex;
+
+		Reference<Framebuffer> targetFramebuffer;
 
 		bool depthTest;
 	};

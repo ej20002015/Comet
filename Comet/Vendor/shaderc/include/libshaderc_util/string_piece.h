@@ -57,6 +57,8 @@ class string_piece {
     end_ = other.end_;
   }
 
+  string_piece& operator=(const string_piece& other) = default;
+
   // Clears the string_piece removing any reference to the original string.
   void clear() {
     begin_ = nullptr;
@@ -330,7 +332,7 @@ inline std::ostream& operator<<(std::ostream& os, const string_piece& piece) {
 }
 
 inline bool operator==(const char* first, const string_piece second) {
-  return second == first;
+  return second == string_piece(first);
 }
 
 inline bool operator!=(const char* first, const string_piece second) {

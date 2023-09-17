@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 #include "Renderer2D.h"
+#include "SceneRenderer.h"
 
 namespace Comet
 {
@@ -12,39 +13,15 @@ RendererAPI::Type RendererAPI::s_currentRendererAPIType = Type::OPENGL;
 void Renderer::init()
 {
 	RendererAPI::init();
+	SceneRenderer::init();
 	Renderer2D::init();
 }
 
 void Renderer::shutdown()
 {
 	Renderer2D::shutdown();
+	SceneRenderer::shutdown();
 	RendererAPI::shutdown();
-}
-
-void Renderer::setClearColor(const glm::vec4& color)
-{
-	//TODO: RENDER COMMAND QUEUE
-	RendererAPI::setClearColor(color);
-}
-
-void Renderer::clear()
-{
-	RendererAPI::clear();
-}
-
-bool Renderer::getBackfaceCulling()
-{
-	return RendererAPI::getBackfaceCulling();
-}
-
-void Renderer::setBackfaceCulling(const bool culling)
-{
-	RendererAPI::setBackfaceCulling(culling);
-}
-
-void Renderer::drawIndexed(const uint32_t count, const RendererAPI::PrimitiveType primitive, const bool depthTest)
-{
-	RendererAPI::drawIndexed(count, primitive, depthTest);
 }
 
 }

@@ -12,7 +12,11 @@
 #include "SceneCamera.h"
 #include "EntityNativeScript.h"
 
+#include "Comet/Renderer/Material.h"
 #include "Comet/Renderer/Texture.h"
+#include "Comet/Renderer/Model.h"
+#include "Comet/Renderer/ModelFactory.h"
+#include "Comet/Renderer/PointLight.h"
 
 namespace Comet
 {
@@ -92,32 +96,15 @@ struct CameraComponent
 //Wrapper for a script - lifetime is controlled at runtime
 struct NativeScriptComponent
 {
+	std::string scriptName = NullScript::getName();
 	EntityNativeScript* script = nullptr;
 
-	//Construction and Descruction occurs on runtime start and end
-	EntityNativeScript* (*constructScript)() = nullptr;
-	void (*destroyScript)(NativeScriptComponent&) = nullptr;
-
 	NativeScriptComponent() = default;
+	NativeScriptComponent(const std::string_view scriptName)
+		: scriptName(scriptName) {}
 
 	NativeScriptComponent(const NativeScriptComponent& other) = default;
 	~NativeScriptComponent() = default;
-
-	template<typename T>
-	void bind()
-	{
-		constructScript = []() -> EntityNativeScript*
-		{
-			T* script = new T();
-			return static_cast<EntityNativeScript*>(script);
-		};
-
-		destroyScript = [](NativeScriptComponent& nativeScriptComponent)
-		{
-			delete nativeScriptComponent.script;
-			nativeScriptComponent.script = nullptr;
-		};
-	}
 };
 
 struct SpriteComponent
@@ -147,6 +134,24 @@ struct SpriteComponent
 
 	SpriteComponent(const SpriteComponent& other) = default;
 	~SpriteComponent() = default;
+};
+
+struct ModelComponent
+{
+	Reference<Model> model = ModelFactory::create(ModelFactory::MeshType::CUBE);
+
+	ModelComponent() = default;
+	ModelComponent(const Reference<Model>& model)
+		: model(model) {}
+};
+
+struct PointLightComponent
+{
+	Reference<PointLight> pointLight = PointLight::create();
+
+	PointLightComponent() = default;
+	PointLightComponent(const Reference<PointLight>& pointLight)
+		: pointLight(pointLight) {}
 };
 
 }
