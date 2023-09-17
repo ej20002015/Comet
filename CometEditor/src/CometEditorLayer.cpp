@@ -73,7 +73,7 @@ void CometEditorLayer::onImGuiRender()
     Entity selectedEntity = m_panelManager.get<SceneHierarchyPanel>().getSelectedEntity();
 
     m_panelManager.get<ViewportPanel>().setMatrices(m_editorCamera.getProjectionMatrix(), m_editorCamera.getViewMatrix());
-    m_panelManager.get<ViewportPanel>().setGuizmoOperation(m_guizmoOperation);
+    m_panelManager.get<ViewportPanel>().setGuizmoOperation(m_sceneState != SceneState::PLAY ? m_guizmoOperation : -1);
 
     // Render
 
@@ -255,7 +255,7 @@ void CometEditorLayer::openScene(const std::filesystem::path& path)
 void CometEditorLayer::onScenePlay()
 {
     m_sceneState = SceneState::PLAY;
-    m_guizmoOperation = -1;
+    Application::get().getImGuiLayer().setBlocking(false); // Allow events to be picked up by the scripts in the scene
     m_scene->onRuntimeStart();
 }
 

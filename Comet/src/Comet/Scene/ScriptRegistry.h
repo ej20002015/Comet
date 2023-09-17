@@ -34,7 +34,9 @@ public:
 
 	static EntityNativeScript* createRegisteredScript(const std::string& scriptName)
 	{
-		CMT_COMET_ASSERT_MESSAGE(scripts().find(scriptName) != scripts().end(), "Given script is not registered");
+		if (scripts().find(scriptName) == scripts().end())
+			throw CometException() << "Given script is not registered";
+
 		return scripts()[scriptName]();
 	}
 

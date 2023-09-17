@@ -107,7 +107,11 @@ void Scene::onRuntimeStop()
 	view.each([](const entt::entity entity, NativeScriptComponent& nativeScriptComponent)
 	{
 		if (nativeScriptComponent.script)
+		{
 			delete nativeScriptComponent.script;
+			nativeScriptComponent.script = nullptr;
+		}
+
 	});
 }
 

@@ -100,6 +100,8 @@ struct NativeScriptComponent
 	EntityNativeScript* script = nullptr;
 
 	NativeScriptComponent() = default;
+	NativeScriptComponent(const std::string_view scriptName)
+		: scriptName(scriptName) {}
 
 	NativeScriptComponent(const NativeScriptComponent& other) = default;
 	~NativeScriptComponent() = default;
