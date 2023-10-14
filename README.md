@@ -1,5 +1,5 @@
 # Comet
-A simple 2D game engine based on the Cherno's Game Engine YouTube series.
+A game engine featuring 3D physically based rendering, 2D sprite rendering, an ECS, scripting, scene serialisation and a scene editor application. Inspired by the Cherno's Game Engine YouTube series.
 
 Currently Comet only supports Windows.
 
