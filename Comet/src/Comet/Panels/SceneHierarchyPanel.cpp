@@ -15,7 +15,7 @@ void SceneHierarchyPanel::onImGuiRender()
 {
 	ImGui::Begin("Scene Hierarchy");
 
-	m_scene->m_registry.each([&](entt::entity entityHandle)
+	m_scene->m_registry.view<entt::entity>().each([&](entt::entity entityHandle)
 	{
 		Entity entity = { m_scene.get(), entityHandle };
 		drawEntityNode(entity);
