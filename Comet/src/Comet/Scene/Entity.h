@@ -41,13 +41,13 @@ public:
 		if (!hasComponent<T>())
 			throw CometException() << "Cannot remove '" << ComponentUtils::getComponentName<T>() << "' component - entity does not have component";
 
-		return m_scene->m_registry.remove<T>(m_entityHandle);
+		m_scene->m_registry.remove<T>(m_entityHandle);
 	}
 
 	template<typename T>
 	bool hasComponent() const
 	{
-		return m_scene->m_registry.has<T>(m_entityHandle);
+		return m_scene->m_registry.any_of<T>(m_entityHandle);
 	}
 
 	template<typename T>

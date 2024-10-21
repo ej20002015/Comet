@@ -323,7 +323,7 @@ void SceneSerializer::serialize(const std::filesystem::path& filepath, Reference
 	out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 	//Serialize the entities
-	scene->m_registry.each([&out, scene](entt::entity entityHandle)
+	scene->m_registry.view<entt::entity>().each([&out, scene](entt::entity entityHandle)
 	{
 		Entity entity(scene.get(), entityHandle);
 		if (!entity)
