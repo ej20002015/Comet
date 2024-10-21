@@ -24,25 +24,30 @@ workspace "Comet"
     includeDirectories["EnTT"] = "%{wks.location}/Comet/Vendor/EnTT/include"
     includeDirectories["yaml_cpp"] = "%{wks.location}/Comet/Vendor/yaml-cpp/include"
     includeDirectories["assimp"] = "%{wks.location}/Comet/Vendor/assimp/include"
+    includeDirectories["nethost"] = "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/8.0.10/runtimes/win-x64/native"
 
     libDirectories = {}
     libDirectories["shaderc"] = "%{wks.location}/Comet/Vendor/shaderc/bin"
     libDirectories["SPIRVCross"] = "%{wks.location}/Comet/Vendor/SPIRV-Cross/bin"
+    libDirectories["nethost"] = "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/8.0.10/runtimes/win-x64/native"
 
-    include "Comet"
-    include "Application"
-    include "CometEditor"
+    group "Core"
+        include "Comet"
+        include "CometScriptEngine"
+    group ""
 
-    -- Dependencies virtual folder for Comet
+    group "Runtime"
+        include "Application"
+    group ""
+
+    group "Editor"
+        include "CometEditor"
+    group ""
+
     group "CometDependencies"
         include "Comet/Vendor/GLFW"
         include "Comet/Vendor/Glad"
         include "Comet/Vendor/ImGui"
         include "Comet/Vendor/yaml-cpp"
         include "Comet/Vendor/assimp"
-    group ""
-
-    -- Dependencies folder for Comet and client applications (no such dependencies at the moment)
-
-    group "CometAndClientDependencies"
     group ""

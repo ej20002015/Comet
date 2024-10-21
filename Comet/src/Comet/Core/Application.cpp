@@ -9,6 +9,7 @@
 #include "Comet/ImGui/ImGuiRenderer.h"
 #include "Comet/Panels/PanelRegistry.h"
 #include "Comet/Scene/ScriptRegistry.h"
+#include "Comet/Scene/Scripting.h"
 
 namespace Comet
 {
@@ -20,6 +21,8 @@ Application::Application(const std::string_view windowTitle)
 {
 	CMT_COMET_ASSERT_MESSAGE(!s_instance, "Application already exists");
 	s_instance = this;
+
+	initScripting();
 
 	initialiseWindow(windowTitle);
 

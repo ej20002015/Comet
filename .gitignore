@@ -21,3 +21,7 @@ bin-int/
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**.csproj
+**.csproj.filters
+**.csproj.user
+**/obj

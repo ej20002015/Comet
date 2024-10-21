@@ -38,6 +38,11 @@ project "CometEditor"
         {
             "CMT_PLATFORM_WINDOWS"
         }
+
+        postbuildcommands
+        {
+            "{COPYFILE} %[%{!libDirectories.nethost}/nethost.dll] %[%{!cfg.targetdir}]"
+        }
     
     filter "configurations:Debug"
         defines "CMT_DEBUG"

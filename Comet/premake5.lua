@@ -42,7 +42,8 @@ project "Comet"
         "%{includeDirectories.ImGuizmo}",
         "%{includeDirectories.EnTT}",
         "%{includeDirectories.yaml_cpp}",
-        "%{includeDirectories.assimp}"
+        "%{includeDirectories.assimp}",
+        "%{includeDirectories.nethost}"
     }
 
     links
@@ -77,6 +78,11 @@ project "Comet"
         {
             "src/Platform/Windows/**.h",
             "src/Platform/Windows/**.cpp"
+        }
+
+        links
+        {
+            "%{libDirectories.nethost}/nethost.lib"
         }
     
     filter "configurations:Debug"
